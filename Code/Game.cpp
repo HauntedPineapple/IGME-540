@@ -37,8 +37,12 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	// Create UI
 	ImGui::Begin("Application Info"); // create the window with given name
 
-	// creates text on a new line
 	ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
+	ImGui::Text("Window Width: %i", this->windowWidth);
+	ImGui::Text("Window Height: %i", this->windowHeight);
+	ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+	
+	/* Example Stuff
 	ImGui::Text("This is some useful text.");
 
 	// Edit 1 float using a slider from 0.0f to 1.0f
@@ -70,10 +74,11 @@ void Game::updateGUI(float deltaTime, float totalTime)
 		// Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 		ImGui::Begin("Another Window", &show_another_window);
 		ImGui::Text("Hello from another window!");
-		/*if (ImGui::Button("Close Me"))
-			show_another_window = false;*/
+		// if (ImGui::Button("Close Me"))
+			// show_another_window = false;
 		ImGui::End();
 	}
+	*/
 
 	ImGui::End();
 }
