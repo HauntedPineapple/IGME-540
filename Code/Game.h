@@ -43,4 +43,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
 	std::vector<std::shared_ptr<Mesh>> meshes;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstantBuffer;
+	DirectX::XMFLOAT3 offsetValue;
+	DirectX::XMFLOAT4 colorTintValue;
 };
