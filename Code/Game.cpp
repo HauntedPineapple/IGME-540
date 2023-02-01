@@ -35,13 +35,46 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	input.SetMouseCapture(io.WantCaptureMouse);
 
 	// Create UI
-	ImGui::Begin("Application Settings"); // create the window with given name
-	ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate); // creates text
+	ImGui::Begin("Application Info"); // create the window with given name
 
-	if (ImGui::Button("Click me"))
-	{	// This will execute only when the button is clicked
-		ImGui::Text("UWU"); // creates text
+	// creates text on a new line
+	ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
+	ImGui::Text("This is some useful text.");
+
+	// Edit 1 float using a slider from 0.0f to 1.0f
+	static float f = 0.0f;
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+	// Provide the address of the first element to create a
+	// 3-component, draggable editor for a vector
+	XMFLOAT3 vec(10.0f, -2.0f, 99.0f);
+	ImGui::DragFloat3("Edit a vector", &vec.x);
+
+	// Edit 3 floats representing a color
+	static ImVec4 color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	ImGui::ColorEdit3("color", (float*)&color);
+
+	static int counter = 0;
+	// Most widgets return true when edited/activated
+	if (ImGui::Button("Button")) {
+		counter++;
 	}
+	ImGui::SameLine();
+	ImGui::Text("counter = %d", counter);
+
+	static bool show_another_window = false;
+	// Edit bools storing our window open/close state
+	ImGui::Checkbox("Open a new window", &show_another_window);
+	if (show_another_window)
+	{
+		// Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Begin("Another Window", &show_another_window);
+		ImGui::Text("Hello from another window!");
+		/*if (ImGui::Button("Close Me"))
+			show_another_window = false;*/
+		ImGui::End();
+	}
+
 	ImGui::End();
 }
 // --------------------------------------------------------
