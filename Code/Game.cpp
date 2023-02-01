@@ -2,13 +2,14 @@
 #include "Vertex.h"
 #include "Input.h"
 #include "Helpers.h"
-
-#include "string"
-#include "cmath"
+#include "BufferStructs.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
+
+#include "string"
+#include "cmath"
 
 // Needed for a helper function to load pre-compiled shader files
 #pragma comment(lib, "d3dcompiler.lib")
@@ -17,71 +18,6 @@
 // For the DirectX Math library
 using namespace DirectX;
 
-void Game::updateGUI(float deltaTime, float totalTime)
-{
-	// Feed fresh input data to ImGui
-	ImGuiIO& io = ImGui::GetIO();
-	io.DeltaTime = deltaTime;
-	io.DisplaySize.x = (float)this->windowWidth;
-	io.DisplaySize.x = (float)this->windowWidth;
-	io.DisplaySize.y = (float)this->windowHeight;
-	// Reset the frame
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	// Determine new input capture
-	Input& input = Input::GetInstance();
-	input.SetKeyboardCapture(io.WantCaptureKeyboard);
-	input.SetMouseCapture(io.WantCaptureMouse);
-
-	// Create UI
-	ImGui::Begin("Application Info"); // create the window with given name
-
-	ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
-	ImGui::Text("Window Width: %i", this->windowWidth);
-	ImGui::Text("Window Height: %i", this->windowHeight);
-	ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-	
-	/* Example Stuff
-	ImGui::Text("This is some useful text.");
-
-	// Edit 1 float using a slider from 0.0f to 1.0f
-	static float f = 0.0f;
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
-	// Provide the address of the first element to create a
-	// 3-component, draggable editor for a vector
-	XMFLOAT3 vec(10.0f, -2.0f, 99.0f);
-	ImGui::DragFloat3("Edit a vector", &vec.x);
-
-	// Edit 3 floats representing a color
-	static ImVec4 color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	ImGui::ColorEdit3("color", (float*)&color);
-
-	static int counter = 0;
-	// Most widgets return true when edited/activated
-	if (ImGui::Button("Button")) {
-		counter++;
-	}
-	ImGui::SameLine();
-	ImGui::Text("counter = %d", counter);
-
-	static bool show_another_window = false;
-	// Edit bools storing our window open/close state
-	ImGui::Checkbox("Open a new window", &show_another_window);
-	if (show_another_window)
-	{
-		// Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Begin("Another Window", &show_another_window);
-		ImGui::Text("Hello from another window!");
-		// if (ImGui::Button("Close Me"))
-			// show_another_window = false;
-		ImGui::End();
-	}
-	*/
-
-	ImGui::End();
-}
 // --------------------------------------------------------
 // Constructor
 //
@@ -329,18 +265,75 @@ void Game::Update(float deltaTime, float totalTime)
 		Quit();
 }
 
+void Game::updateGUI(float deltaTime, float totalTime)
+{
+	// Feed fresh input data to ImGui
+	ImGuiIO& io = ImGui::GetIO();
+	io.DeltaTime = deltaTime;
+	io.DisplaySize.x = (float)this->windowWidth;
+	io.DisplaySize.x = (float)this->windowWidth;
+	io.DisplaySize.y = (float)this->windowHeight;
+	// Reset the frame
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	// Determine new input capture
+	Input& input = Input::GetInstance();
+	input.SetKeyboardCapture(io.WantCaptureKeyboard);
+	input.SetMouseCapture(io.WantCaptureMouse);
 
+	// Create UI
+	ImGui::Begin("Application Info"); // create the window with given name
 
+	ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
+	ImGui::Text("Window Dimensions: %i x %i", this->windowWidth, this->windowHeight);
+	ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
 
+	static XMFLOAT3 offset = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	ImGui::DragFloat3("Offset", (float*)&offset);
+	static ImVec4 color = ImVec4(0.47f, 0.15f, 0.58f, 1.00f);
+	ImGui::ColorEdit4("Color", (float*)&color);
 
+	/* Example Stuff
+	ImGui::Text("This is some useful text.");
 
+	// Edit 1 float using a slider from 0.0f to 1.0f
+	static float f = 0.0f;
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
+	// Provide the address of the first element to create a
+	// 3-component, draggable editor for a vector
+	XMFLOAT3 vec(10.0f, -2.0f, 99.0f);
+	ImGui::DragFloat3("Edit a vector", &vec.x);
 
+	// Edit 3 floats representing a color
+	static ImVec4 color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	ImGui::ColorEdit3("color", (float*)&color);
 
+	static int counter = 0;
+	// Most widgets return true when edited/activated
+	if (ImGui::Button("Button")) {
+		counter++;
+	}
+	ImGui::SameLine();
+	ImGui::Text("counter = %d", counter);
 
+	static bool show_another_window = false;
+	// Edit bools storing our window open/close state
+	ImGui::Checkbox("Open a new window", &show_another_window);
+	if (show_another_window)
+	{
+		// Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Begin("Another Window", &show_another_window);
+		ImGui::Text("Hello from another window!");
+		// if (ImGui::Button("Close Me"))
+			// show_another_window = false;
+		ImGui::End();
+	}
+	*/
 
-
-
+	ImGui::End();
+}
 
 // --------------------------------------------------------
 // Clear the screen, redraw everything, present to the user

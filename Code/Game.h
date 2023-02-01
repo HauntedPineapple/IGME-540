@@ -4,14 +4,13 @@
 #include <DirectXMath.h>
 #include <wrl/client.h> // Used for ComPtr - a smart pointer for COM objects
 #include "Mesh.h"
+
 #include <memory>
 #include <vector>
 
 
-class Game
-	: public DXCore
+class Game : public DXCore
 {
-
 public:
 	Game(HINSTANCE hInstance);
 	~Game();
@@ -25,7 +24,6 @@ public:
 	void Draw(float deltaTime, float totalTime);
 
 private:
-
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
 	void CreateGeometry();
@@ -46,4 +44,3 @@ private:
 
 	std::vector<std::shared_ptr<Mesh>> meshes;
 };
-
