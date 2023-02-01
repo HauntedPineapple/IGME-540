@@ -3,6 +3,9 @@
 #include "Input.h"
 #include "Helpers.h"
 
+#include "string"
+#include "cmath"
+
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -14,6 +17,33 @@
 // For the DirectX Math library
 using namespace DirectX;
 
+void Game::updateGUI(float deltaTime, float totalTime)
+{
+	// Feed fresh input data to ImGui
+	ImGuiIO& io = ImGui::GetIO();
+	io.DeltaTime = deltaTime;
+	io.DisplaySize.x = (float)this->windowWidth;
+	io.DisplaySize.x = (float)this->windowWidth;
+	io.DisplaySize.y = (float)this->windowHeight;
+	// Reset the frame
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	// Determine new input capture
+	Input& input = Input::GetInstance();
+	input.SetKeyboardCapture(io.WantCaptureKeyboard);
+	input.SetMouseCapture(io.WantCaptureMouse);
+
+	// Create UI
+	ImGui::Begin("Application Settings"); // create the window with given name
+	ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate); // creates text
+
+	if (ImGui::Button("Click me"))
+	{	// This will execute only when the button is clicked
+		ImGui::Text("UWU"); // creates text
+	}
+	ImGui::End();
+}
 // --------------------------------------------------------
 // Constructor
 //
@@ -238,7 +268,6 @@ void Game::CreateGeometry()
 	//shape = std::make_shared<Mesh>(shapeVertices, sizeof(shapeVertices)/sizeof(shapeVertices[0]), shapeIndices, sizeof(shapeIndices)/sizeof(shapeIndices[0]), device, context);
 }
 
-
 // --------------------------------------------------------
 // Handle resizing to match the new window size.
 //  - DXCore needs to resize the back buffer
@@ -255,26 +284,25 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
-	// Feed fresh input data to ImGui
-	ImGuiIO& io = ImGui::GetIO();
-	io.DeltaTime = deltaTime;
-	io.DisplaySize.x = (float)this->windowWidth;
-	io.DisplaySize.y = (float)this->windowHeight;
-	// Reset the frame
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	// Determine new input capture
-	Input& input = Input::GetInstance();
-	input.SetKeyboardCapture(io.WantCaptureKeyboard);
-	input.SetMouseCapture(io.WantCaptureMouse);
-	// Show the demo window
-	ImGui::ShowDemoWindow();
+	this->updateGUI(deltaTime, totalTime);
 
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // --------------------------------------------------------
 // Clear the screen, redraw everything, present to the user
@@ -307,6 +335,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		//  - Without this, the user never sees anything
 		bool vsyncNecessary = vsync || !deviceSupportsTearing || isFullscreen;
 
+		// Draw GUI - must be BEFORE swapchain
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
