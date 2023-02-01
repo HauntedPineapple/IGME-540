@@ -8,7 +8,7 @@
 #include <vector>
 
 
-class Game 
+class Game
 	: public DXCore
 {
 
@@ -26,7 +26,7 @@ public:
 private:
 
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
-	void LoadShaders(); 
+	void LoadShaders();
 	void CreateGeometry();
 
 	// Note the usage of ComPtr below
@@ -37,7 +37,7 @@ private:
 	// Buffers to hold actual geometry data
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
-	
+
 	// Shaders and shader-related constructs
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
