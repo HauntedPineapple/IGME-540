@@ -2,10 +2,11 @@
 IGME-540: Foundations of Game Graphics Programming
 
 ## Helpful Links
-* [Dear ImGui GitHub page](https://github.com/ocornut/imgui)
 * [GGP Starter Code Repo](https://github.com/vixorien/DX11Starter)
 * [GGP Demos Repo](https://github.com/vixorien/ggp-demos)
 * [Microsoft: Direct3D Guides](https://learn.microsoft.com/en-us/windows/win32/direct3d)
+* [Dear ImGui GitHub page](https://github.com/ocornut/imgui)
+* [Dear ImGui Online Interactive Manual](https://pthom.github.io/imgui_manual_online/)
 <!-- * [NAME](URL) -->
 
 ## Assignment Instructions
