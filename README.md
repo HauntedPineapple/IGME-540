@@ -10,6 +10,9 @@ IGME-540: Foundations of Game Graphics Programming
 * [DirectXMath programming guide](https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-progguide)
 * [DirectXMath programming reference](https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference)
 * [TutorialsPoint DirectX Guide](https://www.tutorialspoint.com/directx/directx_quick_guide.htm)
+* [TutorialsPoint C++ Guide](https://www.tutorialspoint.com/cplusplus/index.htm)
+* [geeksforgeeks C++ Tutorials](https://www.geeksforgeeks.org/cpp-tutorial/)
+* [C++.com](https://cplusplus.com/)
 <!-- * [NAME](URL) -->
 
 ## Assignment Instructions
