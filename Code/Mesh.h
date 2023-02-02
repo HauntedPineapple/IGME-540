@@ -4,18 +4,6 @@
 #include "Vertex.h"
 
 class Mesh {
-private:
-	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
-	int indexBufferCount;
-
-	/* USAGE: ---
-	ARGUMENTS: ---
-	OUTPUT: ---
-	*/
-	//void Method();
-
 public:
 	// Constructor
 	Mesh(Vertex* vertexArray, int numVerts, unsigned int* indexArray, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
@@ -33,4 +21,16 @@ public:
 
 	/* USAGE: sets the buffers and tells DirectX to draw the correct number of indices */
 	void Draw();
+
+private:
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
+	int m_indexBufferCount;
+
+	/* USAGE: ---
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
+	//void MethodName();
 };
