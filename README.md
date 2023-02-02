@@ -9,6 +9,7 @@ IGME-540: Foundations of Game Graphics Programming
 * [Dear ImGui Online Interactive Manual](https://pthom.github.io/imgui_manual_online/)
 * [DirectXMath programming guide](https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-progguide)
 * [DirectXMath programming reference](https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference)
+* [TutorialsPoint DirectX Guide](https://www.tutorialspoint.com/directx/directx_quick_guide.htm)
 <!-- * [NAME](URL) -->
 
 ## Assignment Instructions
