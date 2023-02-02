@@ -12,9 +12,18 @@ IGME-540: Foundations of Game Graphics Programming
 <!-- * [NAME](URL) -->
 
 ## Assignment Instructions
+* [Preparing a Visual Studio project for Upload](./Assignment%20Instructions/Preparing%20a%20Visual%20Studio%20project%20for%20Upload.pdf)
 * [Assignment 1](./Assignment%20Instructions/Assignment%201%20-%20Starter%20Code.pdf)
 * [Assignment 2](./Assignment%20Instructions/Assignment%202%20-%20Meshes.pdf)
 * [Assignment 3](./Assignment%20Instructions/Assignment%203%20-%20User%20Interface%20%26%20Constant%20Buffers.pdf)
+* [Assignment 3](./Assignment%20Instructions/Assignment%204%20-%20Making%20Things%20Move.pdf)
+<!-- * [Assignment 4](./Assignment%20Instructions/) -->
+<!-- * [Assignment 5](./Assignment%20Instructions/) -->
+<!-- * [Assignment 6](./Assignment%20Instructions/) -->
+<!-- * [Assignment 7](./Assignment%20Instructions/) -->
+<!-- * [Assignment 8](./Assignment%20Instructions/) -->
+<!-- * [Assignment 9](./Assignment%20Instructions/) -->
+<!-- * [Assignment 10](./Assignment%20Instructions/) -->
 
 ## Readings
 * [Starter Code Documentation](./Readings/1%20-%20Starter%20Code%20Documentation.pdf)
