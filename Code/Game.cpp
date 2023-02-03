@@ -121,9 +121,10 @@ void Game::Init()
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbDesc.Usage = D3D11_USAGE_DYNAMIC;
 
-	device->CreateBuffer(&cbDesc, 0, vsConstantBuffer.GetAddressOf());
-	offsetValue = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	colorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
+	device->CreateBuffer(&cbDesc, 0, m_vsConstantBuffer.GetAddressOf());
+
+	//m_offsetValue = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_colorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
 }
 
 // --------------------------------------------------------
@@ -222,8 +223,11 @@ void Game::CreateGeometry()
 	// Set up indices, which tell us which vertices to use and in which order
 	unsigned int triangleIndices[] = { 0, 1, 2 };
 	// Create mesh object
-	meshes.push_back(std::make_shared<Mesh>(triangleVertices, sizeof(triangleVertices) / sizeof(triangleVertices[0]), triangleIndices, sizeof(triangleIndices) / sizeof(triangleIndices[0]), device, context));
-	//triangle = std::make_shared<Mesh>(triangleVertices, sizeof(triangleVertices) / sizeof(triangleVertices[0]), triangleIndices, sizeof(triangleIndices) / sizeof(triangleIndices[0]), device, context);
+	m_meshes.push_back(std::make_shared<Mesh>(triangleVertices, 
+		sizeof(triangleVertices) / sizeof(triangleVertices[0]), 
+		triangleIndices, 
+		sizeof(triangleIndices) / sizeof(triangleIndices[0]), 
+		device, context));
 
 	Vertex quadVertices[] =
 	{
@@ -236,8 +240,11 @@ void Game::CreateGeometry()
 									0, 1, 2,
 									0, 2, 3
 	};
-	meshes.push_back(std::make_shared<Mesh>(quadVertices, sizeof(quadVertices) / sizeof(quadVertices[0]), quadIndices, sizeof(quadIndices) / sizeof(quadIndices[0]), device, context));
-	//quad = std::make_shared<Mesh>(quadVertices, sizeof(quadVertices)/sizeof(quadVertices[0]), quadIndices, sizeof(quadIndices) / sizeof(quadIndices[0]), device, context);
+	m_meshes.push_back(std::make_shared<Mesh>(quadVertices, 
+		sizeof(quadVertices) / sizeof(quadVertices[0]), 
+		quadIndices, 
+		sizeof(quadIndices) /
+		sizeof(quadIndices[0]), device, context));
 
 	Vertex shapeVertices[] =
 	{
@@ -254,8 +261,15 @@ void Game::CreateGeometry()
 									5, 2, 4,
 									4, 2, 3
 	};
-	meshes.push_back(std::make_shared<Mesh>(shapeVertices, sizeof(shapeVertices) / sizeof(shapeVertices[0]), shapeIndices, sizeof(shapeIndices) / sizeof(shapeIndices[0]), device, context));
-	//shape = std::make_shared<Mesh>(shapeVertices, sizeof(shapeVertices)/sizeof(shapeVertices[0]), shapeIndices, sizeof(shapeIndices)/sizeof(shapeIndices[0]), device, context);
+	m_meshes.push_back(std::make_shared<Mesh>(shapeVertices, 
+		sizeof(shapeVertices) / sizeof(shapeVertices[0]), 
+		shapeIndices, 
+		sizeof(shapeIndices) / sizeof(shapeIndices[0]), 
+		device, context));
+
+	for (std::shared_ptr<Mesh> mesh : m_meshes) {
+		m_entities.push_back(std::make_shared<Entity>(mesh));
+	}
 }
 
 // --------------------------------------------------------
@@ -305,8 +319,10 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	ImGui::Text("Window Dimensions: %i x %i", this->windowWidth, this->windowHeight);
 	ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
 
-	ImGui::DragFloat3("Offset", (float*)&offsetValue, 0.01f, -1.0f, 1.0f);
-	ImGui::ColorEdit4("Color", (float*)&colorTintValue);
+
+
+	//ImGui::DragFloat3("Offset", (float*)&m_offsetValue, 0.01f, -1.0f, 1.0f);
+	//ImGui::ColorEdit4("Color", (float*)&m_colorTintValue);
 	
 	/* Example Stuff
 	ImGui::Text("This is some useful text.");
@@ -366,24 +382,9 @@ void Game::Draw(float deltaTime, float totalTime)
 		context->ClearDepthStencilView(depthBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
-	// Create local data for the constant buffer struct
-	VertexShaderExternalData vsData;
-	vsData.offset = offsetValue;
-	vsData.colorTint = colorTintValue;
-	// Copy the data by mapping, copying, then unmapping
-	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
-	context->Map(vsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);
-	memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
-	context->Unmap(vsConstantBuffer.Get(), 0);
-	// Bind the constant buffer to the right place
-	context->VSSetConstantBuffers(
-		0, // Which slot (register) to bind the buffer to?
-		1, // How many are we activating? Can do multiple at once
-		vsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
-
 	// DRAW geometry
-	for (std::shared_ptr<Mesh> mesh : meshes) {
-		mesh->Draw();
+	for (std::shared_ptr<Entity> entity : m_entities) {
+		entity->Draw(context,m_vsConstantBuffer);
 	}
 
 	// Frame END
