@@ -67,7 +67,16 @@ Game::~Game()
 // are initialized but before the game loop.
 // --------------------------------------------------------
 void Game::Init()
-{
+{	// Initialize ImGui itself & platform/renderer backends
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplWin32_Init(hWnd);
+	ImGui_ImplDX11_Init(device.Get(), context.Get());
+	// Pick a style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsLight();
+	//ImGui::StyleColorsClassic();
+
 	// Helper methods for loading shaders, creating some basic
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
@@ -96,16 +105,6 @@ void Game::Init()
 		context->PSSetShader(pixelShader.Get(), 0, 0);
 	}
 
-	// Initialize ImGui itself & platform/renderer backends
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui_ImplWin32_Init(hWnd);
-	ImGui_ImplDX11_Init(device.Get(), context.Get());
-	// Pick a style (uncomment one of these 3)
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-	//ImGui::StyleColorsClassic();
-
 	// The byte width of our buffer needs to be a multiple of 16.
 	// It also needs to be greater than or equal to the size(in bytes)
 	// of the struct we defined to match our vertex shader's constant buffer
@@ -124,7 +123,7 @@ void Game::Init()
 	device->CreateBuffer(&cbDesc, 0, m_vsConstantBuffer.GetAddressOf());
 
 	//m_offsetValue = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_colorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
+	//m_colorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
 }
 
 // --------------------------------------------------------
@@ -223,10 +222,10 @@ void Game::CreateGeometry()
 	// Set up indices, which tell us which vertices to use and in which order
 	unsigned int triangleIndices[] = { 0, 1, 2 };
 	// Create mesh object
-	m_meshes.push_back(std::make_shared<Mesh>(triangleVertices, 
-		sizeof(triangleVertices) / sizeof(triangleVertices[0]), 
-		triangleIndices, 
-		sizeof(triangleIndices) / sizeof(triangleIndices[0]), 
+	m_meshes.push_back(std::make_shared<Mesh>(triangleVertices,
+		sizeof(triangleVertices) / sizeof(triangleVertices[0]),
+		triangleIndices,
+		sizeof(triangleIndices) / sizeof(triangleIndices[0]),
 		device, context));
 
 	Vertex quadVertices[] =
@@ -240,13 +239,13 @@ void Game::CreateGeometry()
 									0, 1, 2,
 									0, 2, 3
 	};
-	m_meshes.push_back(std::make_shared<Mesh>(quadVertices, 
-		sizeof(quadVertices) / sizeof(quadVertices[0]), 
-		quadIndices, 
+	m_meshes.push_back(std::make_shared<Mesh>(quadVertices,
+		sizeof(quadVertices) / sizeof(quadVertices[0]),
+		quadIndices,
 		sizeof(quadIndices) /
 		sizeof(quadIndices[0]), device, context));
 
-	Vertex shapeVertices[] =
+	Vertex hexaVerts[] =
 	{
 		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), white},
 		{ XMFLOAT3(+0.35f, -0.25f, +0.0f), green},
@@ -255,16 +254,16 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(-0.35f, -0.65f, +0.0f), black},
 		{ XMFLOAT3(-0.35f, -0.25f, +0.0f), purple},
 	};
-	unsigned int shapeIndices[] = {
+	unsigned int hexaIndices[] = {
 									0, 1, 5,
 									5, 1, 2,
 									5, 2, 4,
 									4, 2, 3
 	};
-	m_meshes.push_back(std::make_shared<Mesh>(shapeVertices, 
-		sizeof(shapeVertices) / sizeof(shapeVertices[0]), 
-		shapeIndices, 
-		sizeof(shapeIndices) / sizeof(shapeIndices[0]), 
+	m_meshes.push_back(std::make_shared<Mesh>(hexaVerts,
+		sizeof(hexaVerts) / sizeof(hexaVerts[0]),
+		hexaIndices,
+		sizeof(hexaIndices) / sizeof(hexaIndices[0]),
 		device, context));
 
 	for (std::shared_ptr<Mesh> mesh : m_meshes) {
@@ -313,54 +312,24 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	input.SetMouseCapture(io.WantCaptureMouse);
 
 	// Create UI
-	ImGui::Begin("Application Info"); // create the window with given name
-
-	ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
-	ImGui::Text("Window Dimensions: %i x %i", this->windowWidth, this->windowHeight);
-	ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-
-
+	ImGui::Begin("App Interface"); // create the window with given name
 
 	//ImGui::DragFloat3("Offset", (float*)&m_offsetValue, 0.01f, -1.0f, 1.0f);
 	//ImGui::ColorEdit4("Color", (float*)&m_colorTintValue);
-	
-	/* Example Stuff
-	ImGui::Text("This is some useful text.");
 
-	// Edit 1 float using a slider from 0.0f to 1.0f
-	static float f = 0.0f;
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
-	// Provide the address of the first element to create a
-	// 3-component, draggable editor for a vector
-	XMFLOAT3 vec(10.0f, -2.0f, 99.0f);
-	ImGui::DragFloat3("Edit a vector", &vec.x);
-
-	// Edit 3 floats representing a color
-	static ImVec4 color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	ImGui::ColorEdit3("color", (float*)&color);
-
-	static int counter = 0;
-	// Most widgets return true when edited/activated
-	if (ImGui::Button("Button")) {
-		counter++;
-	}
-	ImGui::SameLine();
-	ImGui::Text("counter = %d", counter);
-
-	static bool show_another_window = false;
-	// Edit bools storing our window open/close state
-	ImGui::Checkbox("Open a new window", &show_another_window);
-	if (show_another_window)
+	if (ImGui::TreeNode("App Info"))
 	{
-		// Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Begin("Another Window", &show_another_window);
-		ImGui::Text("Hello from another window!");
-		// if (ImGui::Button("Close Me"))
-			// show_another_window = false;
-		ImGui::End();
+		ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
+		ImGui::Text("Window Dimensions: %i x %i", this->windowWidth, this->windowHeight);
+		ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+		ImGui::TreePop();
 	}
-	*/
+
+	if (ImGui::TreeNode("Entity Controls"))
+	{
+		
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 }
@@ -384,7 +353,7 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_entities) {
-		entity->Draw(context,m_vsConstantBuffer);
+		entity->Draw(context, m_vsConstantBuffer);
 	}
 
 	// Frame END
