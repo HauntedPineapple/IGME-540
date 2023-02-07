@@ -22,6 +22,7 @@ public:
 	void OnResize();
 	void Update(float deltaTime, float totalTime);
 	void updateGUI(float deltaTime, float totalTime);
+	void entityGUI(std::shared_ptr<Entity> entity);
 	void Draw(float deltaTime, float totalTime);
 
 private:

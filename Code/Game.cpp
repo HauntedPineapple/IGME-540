@@ -122,6 +122,12 @@ void Game::Init()
 
 	device->CreateBuffer(&cbDesc, 0, m_vsConstantBuffer.GetAddressOf());
 
+	// Bind the constant buffer to the right place
+	context->VSSetConstantBuffers(
+		0, // Which slot (register) to bind the buffer to?
+		1, // How many are we activating? Can do multiple at once
+		m_vsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
+
 	//m_offsetValue = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	//m_colorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
 }
@@ -248,11 +254,11 @@ void Game::CreateGeometry()
 	Vertex hexaVerts[] =
 	{
 		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), white},
-		{ XMFLOAT3(+0.35f, -0.25f, +0.0f), green},
-		{ XMFLOAT3(+0.35f, -0.65f, +0.0f), red},
-		{ XMFLOAT3(+0.0f, -0.9f, +0.0f), blue},
-		{ XMFLOAT3(-0.35f, -0.65f, +0.0f), black},
-		{ XMFLOAT3(-0.35f, -0.25f, +0.0f), purple},
+		{ XMFLOAT3(+0.15f, -0.15f, +0.0f), green},
+		{ XMFLOAT3(+0.15f, -0.45f, +0.0f), red},
+		{ XMFLOAT3(+0.0f, -0.6f, +0.0f), blue},
+		{ XMFLOAT3(-0.15f, -0.45f, +0.0f), black},
+		{ XMFLOAT3(-0.15f, -0.15f, +0.0f), purple},
 	};
 	unsigned int hexaIndices[] = {
 									0, 1, 5,
@@ -260,15 +266,27 @@ void Game::CreateGeometry()
 									5, 2, 4,
 									4, 2, 3
 	};
-	m_meshes.push_back(std::make_shared<Mesh>(hexaVerts,
+	std::shared_ptr<Mesh> hexMesh = std::make_shared<Mesh>(hexaVerts,
 		sizeof(hexaVerts) / sizeof(hexaVerts[0]),
 		hexaIndices,
 		sizeof(hexaIndices) / sizeof(hexaIndices[0]),
-		device, context));
+		device, context);
+	m_meshes.push_back(hexMesh);
 
 	for (std::shared_ptr<Mesh> mesh : m_meshes) {
 		m_entities.push_back(std::make_shared<Entity>(mesh));
 	}
+
+	// Make a bunch more hexagon entities that share the same mesh and move them
+	std::shared_ptr<Entity> extraHex1 = std::make_shared<Entity>(hexMesh);
+	extraHex1->GetTransform()->Scale(0.25f, 0.25f, 0.0f);
+	extraHex1->GetTransform()->MoveAbsolute(0.6f, 0.1f, 0.0f);
+	m_entities.push_back(extraHex1);
+	std::shared_ptr<Entity> extraHex2 = std::make_shared<Entity>(hexMesh);
+	extraHex2->GetTransform()->Scale(0.5f, 0.5f, 0.0f);
+	extraHex2->GetTransform()->MoveAbsolute(-0.5f, -0.5f, 0.0f);
+	extraHex2->GetTransform()->Rotate(0.0f,0.0f, 0.6f);
+	m_entities.push_back(extraHex2);
 }
 
 // --------------------------------------------------------
@@ -292,6 +310,16 @@ void Game::Update(float deltaTime, float totalTime)
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
+
+
+	// Move stuff around
+	float sinTime = sin(totalTime);
+	m_entities[0]->GetTransform()->SetPosition(sinTime,0,0);
+	float cosTime = cos(totalTime);
+	m_entities[1]->GetTransform()->SetPosition(0, cosTime,0);
+	float scale = abs(sinTime);
+	m_entities[2]->GetTransform()->SetScale(scale, scale, scale);
+	m_entities[3]->GetTransform()->SetRotation(0, 0, scale*3);
 }
 
 void Game::updateGUI(float deltaTime, float totalTime)
@@ -317,21 +345,66 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	//ImGui::DragFloat3("Offset", (float*)&m_offsetValue, 0.01f, -1.0f, 1.0f);
 	//ImGui::ColorEdit4("Color", (float*)&m_colorTintValue);
 
-	if (ImGui::TreeNode("App Info"))
+	if (ImGui::CollapsingHeader("App Info"))
 	{
 		ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
 		ImGui::Text("Window Dimensions: %i x %i", this->windowWidth, this->windowHeight);
 		ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-		ImGui::TreePop();
 	}
 
-	if (ImGui::TreeNode("Entity Controls"))
-	{
-		
-		ImGui::TreePop();
-	}
+	if (ImGui::CollapsingHeader("Entity Controls"))
+	{ // TODO: Make this more compact later
+		if (ImGui::TreeNode("Entity 1"))
+		{
+			entityGUI(m_entities[0]);
+			ImGui::TreePop();
+		}
 
+		if (ImGui::TreeNode("Entity 2"))
+		{
+			entityGUI(m_entities[1]);
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Entity 3"))
+		{
+			entityGUI(m_entities[2]);
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Entity 4"))
+		{
+			entityGUI(m_entities[3]);
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Entity 5"))
+		{
+			entityGUI(m_entities[4]);
+			ImGui::TreePop();
+		}
+	}
 	ImGui::End();
+}
+
+void Game::entityGUI(std::shared_ptr<Entity> entity)
+{
+	Transform* p_entityTransform = entity->GetTransform();
+
+	XMFLOAT3 positionVec = p_entityTransform->GetPosition();
+	if (ImGui::DragFloat3("Position", &positionVec.x, 0.01f)) {
+		p_entityTransform->SetPosition(positionVec);
+	}
+
+	XMFLOAT3 scaleVec = p_entityTransform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scaleVec.x, 0.01f)) {
+		p_entityTransform->SetScale(scaleVec);
+	}
+
+	XMFLOAT3 rotationVec = p_entityTransform->GetRotation();
+	if (ImGui::DragFloat3("Rotation", &rotationVec.x, 0.01f)) {
+		p_entityTransform->SetRotation(rotationVec);
+	}
 }
 
 // --------------------------------------------------------

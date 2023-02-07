@@ -4,7 +4,7 @@ using namespace DirectX;
 
 Transform::Transform() :
 	m_position(0, 0, 0),
-	m_pitchYawRoll(0, 0, 0),
+	m_rotation(0, 0, 0),
 	m_scale(1, 1, 1)
 {
 	XMStoreFloat4x4(&m_worldMatrix, XMMatrixIdentity());
@@ -14,7 +14,7 @@ Transform::Transform() :
 // ================ GETTERS ================
 DirectX::XMFLOAT3 Transform::GetPosition() { return m_position; }
 
-DirectX::XMFLOAT3 Transform::GetPitchYawRoll() { return m_pitchYawRoll; }
+DirectX::XMFLOAT3 Transform::GetRotation() { return m_rotation; }
 
 DirectX::XMFLOAT3 Transform::GetScale() { return m_scale; }
 
@@ -41,11 +41,11 @@ void Transform::SetPosition(DirectX::XMFLOAT3 newPosition) { m_position = newPos
 
 void Transform::SetRotation(float pitch, float yaw, float roll)
 {
-	m_pitchYawRoll.x = pitch;
-	m_pitchYawRoll.y = yaw;
-	m_pitchYawRoll.z = roll;
+	m_rotation.x = pitch;
+	m_rotation.y = yaw;
+	m_rotation.z = roll;
 }
-void Transform::SetRotation(DirectX::XMFLOAT3 pitchYawRoll) { m_pitchYawRoll = pitchYawRoll; }
+void Transform::SetRotation(DirectX::XMFLOAT3 pitchYawRoll) { m_rotation = pitchYawRoll; }
 
 void Transform::SetScale(float x, float y, float z)
 {
@@ -73,16 +73,16 @@ void Transform::MoveAbsolute(DirectX::XMFLOAT3 offset)
 
 void Transform::Rotate(float p, float y, float r)
 {
-	m_pitchYawRoll.x += p;
-	m_pitchYawRoll.y += y;
-	m_pitchYawRoll.z += r;
+	m_rotation.x += p;
+	m_rotation.y += y;
+	m_rotation.z += r;
 }
 
 void Transform::Rotate(DirectX::XMFLOAT3 pitchYawRoll)
 {
-	m_pitchYawRoll.x += pitchYawRoll.x;
-	m_pitchYawRoll.y += pitchYawRoll.y;
-	m_pitchYawRoll.z += pitchYawRoll.z;
+	m_rotation.x += pitchYawRoll.x;
+	m_rotation.y += pitchYawRoll.y;
+	m_rotation.z += pitchYawRoll.z;
 }
 
 void Transform::Scale(float x, float y, float z)
@@ -102,7 +102,7 @@ void Transform::Scale(DirectX::XMFLOAT3 scale)
 void Transform::UpdateMatrices()
 {
 	XMMATRIX t = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
-	XMMATRIX r = XMMatrixRotationRollPitchYaw(m_pitchYawRoll.x, m_pitchYawRoll.y, m_pitchYawRoll.z);
+	XMMATRIX r = XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z);
 	XMMATRIX s = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
 
 	XMMATRIX world = s * r * t;

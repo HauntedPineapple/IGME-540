@@ -20,7 +20,7 @@ public:
 	int GetIndexCount();
 
 	/* USAGE: sets the buffers and tells DirectX to draw the correct number of indices */
-	void Draw();
+	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;

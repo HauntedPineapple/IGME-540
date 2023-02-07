@@ -18,9 +18,8 @@ void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft
 {
 	// Create local data for the constant buffer struct
 	VertexShaderExternalData vsData;
-	//vsData.offset = m_offsetValue;
-	vsData.worldMatrix = m_transform.GetWorldMatrix();
 	vsData.colorTint = m_colorTintValue;
+	vsData.worldMatrix = m_transform.GetWorldMatrix();
 	
 	// Copy the data by mapping, copying, then unmapping
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
@@ -28,11 +27,5 @@ void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft
 	memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
 	context->Unmap(vsConstantBuffer.Get(), 0);
 
-	// Bind the constant buffer to the right place
-	context->VSSetConstantBuffers(
-		0, // Which slot (register) to bind the buffer to?
-		1, // How many are we activating? Can do multiple at once
-		vsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
-
-	m_mesh->Draw();
+	m_mesh->Draw(context);
 }

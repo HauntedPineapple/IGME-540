@@ -57,17 +57,17 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer() { return m_vertexBu
 Microsoft::WRL::ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer() { return m_indexBuffer; }
 int Mesh::GetIndexCount() { return m_indexBufferCount; }
 
-void Mesh::Draw()
+void Mesh::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
 	// Set buffers in the input assembler (IA) stage
-	this->m_context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
-	this->m_context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// Tell Direct3D to draw
-	this->m_context->DrawIndexed(
+	context->DrawIndexed(
 		this->m_indexBufferCount,     // The number of indices to use (we could draw a subset if we wanted)
 		0,     // Offset to the first index we want to use
 		0);    // Offset to add to each index when looking up vertices
