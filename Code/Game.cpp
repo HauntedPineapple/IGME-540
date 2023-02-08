@@ -120,16 +120,16 @@ void Game::Init()
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbDesc.Usage = D3D11_USAGE_DYNAMIC;
 
-	device->CreateBuffer(&cbDesc, 0, m_vsConstantBuffer.GetAddressOf());
+	device->CreateBuffer(&cbDesc, 0, m_pVsConstantBuffer.GetAddressOf());
 
 	// Bind the constant buffer to the right place
 	context->VSSetConstantBuffers(
 		0, // Which slot (register) to bind the buffer to?
 		1, // How many are we activating? Can do multiple at once
-		m_vsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
+		m_pVsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
 
 	//m_offsetValue = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	//m_colorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
+	//m_v4ColorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
 }
 
 // --------------------------------------------------------
@@ -228,7 +228,7 @@ void Game::CreateGeometry()
 	// Set up indices, which tell us which vertices to use and in which order
 	unsigned int triangleIndices[] = { 0, 1, 2 };
 	// Create mesh object
-	m_meshes.push_back(std::make_shared<Mesh>(triangleVertices,
+	m_pMeshes.push_back(std::make_shared<Mesh>(triangleVertices,
 		sizeof(triangleVertices) / sizeof(triangleVertices[0]),
 		triangleIndices,
 		sizeof(triangleIndices) / sizeof(triangleIndices[0]),
@@ -244,8 +244,8 @@ void Game::CreateGeometry()
 	unsigned int quadIndices[] = {
 									0, 1, 2,
 									0, 2, 3
-	};
-	m_meshes.push_back(std::make_shared<Mesh>(quadVertices,
+								 };
+	m_pMeshes.push_back(std::make_shared<Mesh>(quadVertices,
 		sizeof(quadVertices) / sizeof(quadVertices[0]),
 		quadIndices,
 		sizeof(quadIndices) /
@@ -265,28 +265,28 @@ void Game::CreateGeometry()
 									5, 1, 2,
 									5, 2, 4,
 									4, 2, 3
-	};
+								 };
 	std::shared_ptr<Mesh> hexMesh = std::make_shared<Mesh>(hexaVerts,
 		sizeof(hexaVerts) / sizeof(hexaVerts[0]),
 		hexaIndices,
 		sizeof(hexaIndices) / sizeof(hexaIndices[0]),
 		device, context);
-	m_meshes.push_back(hexMesh);
+	m_pMeshes.push_back(hexMesh);
 
-	for (std::shared_ptr<Mesh> mesh : m_meshes) {
-		m_entities.push_back(std::make_shared<Entity>(mesh));
+	for (std::shared_ptr<Mesh> mesh : m_pMeshes) {
+		m_pEntities.push_back(std::make_shared<Entity>(mesh));
 	}
 
 	// Make a bunch more hexagon entities that share the same mesh and move them
 	std::shared_ptr<Entity> extraHex1 = std::make_shared<Entity>(hexMesh);
 	extraHex1->GetTransform()->Scale(0.25f, 0.25f, 0.0f);
 	extraHex1->GetTransform()->MoveAbsolute(0.6f, 0.1f, 0.0f);
-	m_entities.push_back(extraHex1);
+	m_pEntities.push_back(extraHex1);
 	std::shared_ptr<Entity> extraHex2 = std::make_shared<Entity>(hexMesh);
 	extraHex2->GetTransform()->Scale(0.5f, 0.5f, 0.0f);
 	extraHex2->GetTransform()->MoveAbsolute(-0.5f, -0.5f, 0.0f);
 	extraHex2->GetTransform()->Rotate(0.0f,0.0f, 0.6f);
-	m_entities.push_back(extraHex2);
+	m_pEntities.push_back(extraHex2);
 }
 
 // --------------------------------------------------------
@@ -314,12 +314,12 @@ void Game::Update(float deltaTime, float totalTime)
 
 	// Move stuff around
 	float sinTime = sin(totalTime);
-	m_entities[0]->GetTransform()->SetPosition(sinTime,0,0);
+	m_pEntities[0]->GetTransform()->SetPosition(sinTime,0,0);
 	float cosTime = cos(totalTime);
-	m_entities[1]->GetTransform()->SetPosition(0, cosTime,0);
+	m_pEntities[1]->GetTransform()->SetPosition(0, cosTime,0);
 	float scale = abs(sinTime);
-	m_entities[2]->GetTransform()->SetScale(scale, scale, scale);
-	m_entities[3]->GetTransform()->SetRotation(0, 0, scale*3);
+	m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
+	m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale*3);
 }
 
 void Game::updateGUI(float deltaTime, float totalTime)
@@ -343,7 +343,7 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	ImGui::Begin("App Interface"); // create the window with given name
 
 	//ImGui::DragFloat3("Offset", (float*)&m_offsetValue, 0.01f, -1.0f, 1.0f);
-	//ImGui::ColorEdit4("Color", (float*)&m_colorTintValue);
+	//ImGui::ColorEdit4("Color", (float*)&m_v4ColorTintValue);
 
 	if (ImGui::CollapsingHeader("App Info"))
 	{
@@ -356,31 +356,31 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	{ // TODO: Make this more compact later
 		if (ImGui::TreeNode("Entity 1"))
 		{
-			entityGUI(m_entities[0]);
+			entityGUI(m_pEntities[0]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 2"))
 		{
-			entityGUI(m_entities[1]);
+			entityGUI(m_pEntities[1]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 3"))
 		{
-			entityGUI(m_entities[2]);
+			entityGUI(m_pEntities[2]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 4"))
 		{
-			entityGUI(m_entities[3]);
+			entityGUI(m_pEntities[3]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 5"))
 		{
-			entityGUI(m_entities[4]);
+			entityGUI(m_pEntities[4]);
 			ImGui::TreePop();
 		}
 	}
@@ -425,8 +425,8 @@ void Game::Draw(float deltaTime, float totalTime)
 	}
 
 	// DRAW geometry
-	for (std::shared_ptr<Entity> entity : m_entities) {
-		entity->Draw(context, m_vsConstantBuffer);
+	for (std::shared_ptr<Entity> entity : m_pEntities) {
+		entity->Draw(context, m_pVsConstantBuffer);
 	}
 
 	// Frame END

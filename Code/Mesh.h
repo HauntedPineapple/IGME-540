@@ -6,31 +6,25 @@
 class Mesh {
 public:
 	// Constructor
-	Mesh(Vertex* vertexArray, int numVerts, unsigned int* indexArray, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
+	Mesh(Vertex* a_VertexArray, int a_nVertCount, unsigned int* a_IndexArray, int a_nIndicesCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext);
 	// Destructor
 	~Mesh();
 
-	/* USAGE: returns the pointer to the vertex buffer object */
+	/* Returns the pointer to the vertex buffer object */
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer();
 
-	/* USAGE: returns the pointer to the index buffer object */
+	/* Returns the pointer to the index buffer object */
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer();
 
-	/* USAGE: returns the number of indices this mesh contains */
+	/* Returns the number of indices this mesh contains */
 	int GetIndexCount();
 
-	/* USAGE: sets the buffers and tells DirectX to draw the correct number of indices */
-	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
+	/* Sets the buffers and tells DirectX to draw the correct number of indices */
+	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext);
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
-	int m_indexBufferCount;
-
-	/* USAGE: ---
-	ARGUMENTS: ---
-	OUTPUT: ---
-	*/
-	//void MethodName();
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pIndexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pContext;
+	int m_nIndexBufferCount;
 };

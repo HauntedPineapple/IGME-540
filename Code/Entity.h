@@ -10,16 +10,16 @@
 class Entity
 {
 public:
-	Entity(std::shared_ptr<Mesh> mesh);
+	Entity(std::shared_ptr<Mesh> a_pMesh);
 
 	// Getters
 	std::shared_ptr<Mesh> GetMesh();
 	Transform* GetTransform();
 
-	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstantBuffer);
+	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer);
 private:
-	std::shared_ptr<Mesh> m_mesh;
-	Transform m_transform;
-	DirectX::XMFLOAT4 m_colorTintValue;
+	std::shared_ptr<Mesh> m_pMesh;
+	Transform m_Transform;
+	DirectX::XMFLOAT4 m_v4ColorTintValue;
 };
 

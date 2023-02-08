@@ -3,29 +3,28 @@
 
 using namespace DirectX;
 
-Entity::Entity(std::shared_ptr<Mesh> mesh)
-	:m_mesh(mesh)
+Entity::Entity(std::shared_ptr<Mesh> a_pMesh)
+	:m_pMesh(a_pMesh)
 {
-	m_transform = Transform();
-	m_colorTintValue = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Transform = Transform();
+	m_v4ColorTintValue = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-std::shared_ptr<Mesh> Entity::GetMesh() { return m_mesh; }
+std::shared_ptr<Mesh> Entity::GetMesh() { return m_pMesh; }
+Transform* Entity::GetTransform() { return &m_Transform; }
 
-Transform* Entity::GetTransform() { return &m_transform; }
-
-void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstantBuffer)
+void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer)
 {
 	// Create local data for the constant buffer struct
 	VertexShaderExternalData vsData;
-	vsData.colorTint = m_colorTintValue;
-	vsData.worldMatrix = m_transform.GetWorldMatrix();
+	vsData.colorTint = m_v4ColorTintValue;
+	vsData.worldMatrix = m_Transform.GetWorldMatrix();
 	
 	// Copy the data by mapping, copying, then unmapping
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
-	context->Map(vsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);
+	a_pContext->Map(a_pVsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);
 	memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
-	context->Unmap(vsConstantBuffer.Get(), 0);
+	a_pContext->Unmap(a_pVsConstantBuffer.Get(), 0);
 
-	m_mesh->Draw(context);
+	m_pMesh->Draw(a_pContext);
 }

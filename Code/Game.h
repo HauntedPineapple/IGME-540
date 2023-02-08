@@ -44,10 +44,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
-	std::vector<std::shared_ptr<Mesh>> m_meshes;
-	std::vector<std::shared_ptr<Entity>> m_entities;
+	// ----------------------------------------------------------
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vsConstantBuffer;
-	//DirectX::XMFLOAT3 m_offsetValue;
-	DirectX::XMFLOAT4 m_colorTintValue;
+	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
+	std::vector<std::shared_ptr<Entity>> m_pEntities;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVsConstantBuffer;
+	DirectX::XMFLOAT4 m_v4ColorTintValue;
 };
