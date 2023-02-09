@@ -39,10 +39,16 @@ private:
 	DirectX::XMFLOAT3 m_position;
 	DirectX::XMFLOAT3 m_rotation;
 	DirectX::XMFLOAT3 m_scale;
+
+	DirectX::XMFLOAT3 m_right;
+	DirectX::XMFLOAT3 m_up;
+	DirectX::XMFLOAT3 m_forward;
+
 	DirectX::XMFLOAT4X4 m_worldMatrix;
 	DirectX::XMFLOAT4X4 m_worldInverseTransposeMatrix;
 
-	bool m_isMatrixDirty;
+	bool m_isMatricesChanged;
+	bool m_isVectorsChanged;
 
 	// Helpers
 	void UpdateMatrices();
