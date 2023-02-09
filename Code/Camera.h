@@ -5,27 +5,28 @@
 
 class Camera {
 public:
-	Camera(DirectX::XMFLOAT3 a_initPos, float a_moveSpeed, float a_rotationSpeed, float a_FOV, float a_aspectRatio);
+	/* FOV must be in radians */
+	Camera(DirectX::XMFLOAT3 a_initPos, float a_aspectRatio, float a_moveSpeed = 5.0f, float a_rotationSpeed = 0.001f, float a_fieldOfView = DirectX::XM_PIDIV4, float a_nearClipDistance = 0.1f, float a_farClipDistance = 100, bool a_isOrthographic = false);
 
-	DirectX::XMFLOAT4X4 GetView();
-	DirectX::XMFLOAT4X4 GetProjection();
+	DirectX::XMFLOAT4X4 GetViewMatrix();
+	DirectX::XMFLOAT4X4 GetProjectionMatrix();
 
-	void Update(float a_dt);
+	void Update(float a_deltaTime);
 	void UpdateViewMatrix();
 	void UpdateProjectionMatrix(float a_aspectRatio);
 
 private:
+	Transform m_transform;
+
 	DirectX::XMFLOAT4X4 m_viewMatrix;
 	DirectX::XMFLOAT4X4 m_projectionMatrix;
 
-	Transform m_Transform;
-
 	float m_moveSpeed;
 	float m_rotationSpeed;
-	float m_fieldOfView;
-	//float m_mouseLookSpeed;
-	//float m_nearClipDistance;
-	//float m_farClipDistance;
+	float m_aspectRatio;
+	float m_fieldOfView; //radians
+	float m_nearClipDistance;
+	float m_farClipDistance;
 
-	//bool isOrthographic;
+	bool m_isOrthographic;
 };

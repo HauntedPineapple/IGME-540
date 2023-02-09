@@ -12,12 +12,14 @@ Entity::Entity(std::shared_ptr<Mesh> a_pMesh)
 std::shared_ptr<Mesh> Entity::GetMesh() { return m_pMesh; }
 Transform* Entity::GetTransform() { return &m_transform; }
 
-void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer)
+void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer, std::shared_ptr<Camera> a_pCamera)
 {
 	// Create local data for the constant buffer struct
 	VertexShaderExternalData vsData;
 	vsData.colorTint = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	vsData.worldMatrix = m_transform.GetWorldMatrix();
+	vsData.viewMatrix = a_pCamera->GetViewMatrix();
+	vsData.projectionMatrix = a_pCamera->GetProjectionMatrix();
 	
 	// Copy the data by mapping, copying, then unmapping
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};

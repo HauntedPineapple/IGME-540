@@ -3,34 +3,51 @@
 
 using namespace DirectX;
 
-Camera::Camera(DirectX::XMFLOAT3 a_initPos, float a_moveSpeed, float a_rotationSpeed, float a_FOV, float a_aspectRatio) :
+Camera::Camera(DirectX::XMFLOAT3 a_initPos, float a_aspectRatio, float a_moveSpeed, float a_rotationSpeed, float a_fieldOfView, float a_nearClipDistance, float a_farClipDistance, bool a_isOrthographic) :
+	m_aspectRatio(a_aspectRatio),
 	m_moveSpeed(a_moveSpeed),
 	m_rotationSpeed(a_rotationSpeed),
-	m_fieldOfView(a_FOV)
+	m_fieldOfView(a_fieldOfView),
+	m_nearClipDistance(a_nearClipDistance),
+	m_farClipDistance(a_farClipDistance),
+	m_isOrthographic(a_isOrthographic)
 {
-	m_Transform.SetPosition(a_initPos);
+	m_transform.SetPosition(a_initPos);
 	UpdateViewMatrix();
 	UpdateProjectionMatrix(a_aspectRatio);
 }
 
-DirectX::XMFLOAT4X4 Camera::GetView() { return m_viewMatrix; }
-DirectX::XMFLOAT4X4 Camera::GetProjection() { return m_projectionMatrix; }
+DirectX::XMFLOAT4X4 Camera::GetViewMatrix() { return m_viewMatrix; }
+DirectX::XMFLOAT4X4 Camera::GetProjectionMatrix() { return m_projectionMatrix; }
 
-void Camera::Update(float a_dt)
+void Camera::Update(float a_deltaTime)
 {
 	Input& input = Input::GetInstance();
 
-	if (input.KeyDown('W')) m_Transform.MoveAbsolute(0, 0, m_moveSpeed * a_dt);
-	if (input.KeyDown('A')) m_Transform.MoveAbsolute(-m_moveSpeed * a_dt, 0, 0);
-	if (input.KeyDown('S')) m_Transform.MoveAbsolute(0, 0, -m_moveSpeed * a_dt);
-	if (input.KeyDown('D')) m_Transform.MoveAbsolute(m_moveSpeed * a_dt, 0, 0);
+	// Scale movement by delta time
+	if (input.KeyDown('W')) m_transform.MoveRelative(0, 0, m_moveSpeed * a_deltaTime);
+	if (input.KeyDown('A')) m_transform.MoveRelative(-m_moveSpeed * a_deltaTime, 0, 0);
+	if (input.KeyDown('S')) m_transform.MoveRelative(0, 0, -m_moveSpeed * a_deltaTime);
+	if (input.KeyDown('D')) m_transform.MoveRelative(m_moveSpeed * a_deltaTime, 0, 0);
+	if (input.KeyDown(' ')) m_transform.MoveAbsolute(0, m_moveSpeed * a_deltaTime, 0);
+	if (input.KeyDown('X')) m_transform.MoveAbsolute(0, -m_moveSpeed * a_deltaTime, 0);
+
+	//if (input.KeyDown(VK_SHIFT)) { /* Shift is down */ }
+	//if (input.KeyDown(VK_CONTROL)) { /* Control is down */ }
 
 	// Check for mouse movement when dragging
 	if (input.MouseLeftDown())
 	{
 		float xDiff = input.GetMouseXDelta() * m_rotationSpeed;
 		float yDiff = input.GetMouseYDelta() * m_rotationSpeed;
-		m_Transform.Rotate(yDiff, xDiff, 0);
+		m_transform.Rotate(yDiff, xDiff, 0);
+
+		if (m_transform.GetRotation().x > XM_2PI) {
+			m_transform.SetRotation(XM_2PI, m_transform.GetRotation().y, m_transform.GetRotation().z);
+		}
+		if (m_transform.GetRotation().x < -XM_2PI) {
+			m_transform.SetRotation(-XM_2PI, m_transform.GetRotation().y, m_transform.GetRotation().z);
+		}
 	}
 
 	UpdateViewMatrix();
@@ -39,16 +56,15 @@ void Camera::Update(float a_dt)
 void Camera::UpdateViewMatrix()
 {
 	// Grab the position from the transform
-	XMFLOAT3 pos = m_Transform.GetPosition();
+	XMFLOAT3 pos = m_transform.GetPosition();
 	XMVECTOR posVector = XMLoadFloat3(&pos);
-
 	// Grab the rotation
-	XMFLOAT3 rot = m_Transform.GetRotation();
+	XMFLOAT3 rot = m_transform.GetRotation();
 	XMVECTOR rotVector = XMLoadFloat3(&rot);
 	// Make a quaternion
 	XMVECTOR rotQuat = XMQuaternionRotationRollPitchYawFromVector(rotVector);
 
-	XMVECTOR defaultForward = XMVectorSet(0, 0, 1, 0);
+	XMVECTOR defaultForward = XMVectorSet(0, 0, 1, 0); // z-axis
 	XMVECTOR currentForward = XMVector3Rotate(defaultForward, rotQuat);
 
 	XMMATRIX view = XMMatrixLookToLH(posVector, currentForward, XMVectorSet(0, 1, 0, 0));
@@ -57,6 +73,10 @@ void Camera::UpdateViewMatrix()
 
 void Camera::UpdateProjectionMatrix(float a_aspectRatio)
 {
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(m_fieldOfView, a_aspectRatio, 0.01f, 1000.0f);
-	XMStoreFloat4x4(&m_projectionMatrix, proj);
+	if (m_isOrthographic) {
+		// XMStoreFloat4x4(&m_projectionMatrix, XMMatrixOrthographicLH(ViewWidth, ViewHeight, m_nearClipDistance, m_farClipDistance));
+	}
+	else {
+		XMStoreFloat4x4(&m_projectionMatrix, XMMatrixPerspectiveFovLH(m_fieldOfView, a_aspectRatio, m_nearClipDistance, m_farClipDistance));
+	}
 }

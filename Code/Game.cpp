@@ -3,7 +3,6 @@
 #include "Input.h"
 #include "Helpers.h"
 #include "BufferStructs.h"
-#include "Camera.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
@@ -128,6 +127,16 @@ void Game::Init()
 		0, // Which slot (register) to bind the buffer to?
 		1, // How many are we activating? Can do multiple at once
 		m_pVsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
+
+	// Create our camera
+	XMFLOAT3 cameraStartPos = XMFLOAT3(0.0f, 0.0f, -5.0f);
+	float aspectRatio = (float)this->windowWidth / this->windowHeight;
+	float moveSpeed = 10.0f;
+	float rotationSpeed = 0.005f;
+	float fieldOfView = DirectX::XM_PIDIV4;
+	float nearClipDistance = 0.01f;
+	float farClipDistance = 100;
+	m_pCamera = std::make_shared<Camera>(cameraStartPos, aspectRatio, moveSpeed, rotationSpeed, fieldOfView, nearClipDistance, farClipDistance);
 }
 
 // --------------------------------------------------------
@@ -242,7 +251,7 @@ void Game::CreateGeometry()
 	unsigned int quadIndices[] = {
 									0, 1, 2,
 									0, 2, 3
-								 };
+	};
 	m_pMeshes.push_back(std::make_shared<Mesh>(quadVertices,
 		sizeof(quadVertices) / sizeof(quadVertices[0]),
 		quadIndices,
@@ -263,7 +272,7 @@ void Game::CreateGeometry()
 									5, 1, 2,
 									5, 2, 4,
 									4, 2, 3
-								 };
+	};
 	std::shared_ptr<Mesh> hexMesh = std::make_shared<Mesh>(hexaVerts,
 		sizeof(hexaVerts) / sizeof(hexaVerts[0]),
 		hexaIndices,
@@ -295,6 +304,7 @@ void Game::OnResize()
 {
 	// Handle base-level DX resize stuff
 	DXCore::OnResize();
+	m_pCamera->UpdateProjectionMatrix(this->windowWidth / this->windowHeight);
 }
 
 // --------------------------------------------------------
@@ -308,15 +318,16 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
-
 	// Move stuff around
 	float sinTime = sin(totalTime);
-	m_pEntities[0]->GetTransform()->SetPosition(sinTime,0,0);
+	m_pEntities[0]->GetTransform()->SetPosition(sinTime, 0, 0);
 	float cosTime = cos(totalTime);
-	m_pEntities[1]->GetTransform()->SetPosition(0, cosTime,0);
+	m_pEntities[1]->GetTransform()->SetPosition(0, cosTime, 0);
 	float scale = abs(sinTime);
 	m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
-	m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale*3);
+	m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale * 3);
+
+	m_pCamera->Update(deltaTime);
 }
 
 void Game::UpdateGUI(float deltaTime, float totalTime)
@@ -394,7 +405,7 @@ void Game::CameraGUI()
 	ImGui::RadioButton("Camera 2", &currentCamIndex, 1);
 	ImGui::SameLine();
 	ImGui::RadioButton("Camera 3", &currentCamIndex, 2);
-	
+
 	ImGui::RadioButton("Camera 4", &currentCamIndex, 3);
 	ImGui::SameLine();
 	ImGui::RadioButton("Camera 5", &currentCamIndex, 4);
@@ -441,7 +452,7 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
-		entity->Draw(context, m_pVsConstantBuffer);
+		entity->Draw(context, m_pVsConstantBuffer, m_pCamera);
 	}
 
 	// Frame END

@@ -17,7 +17,7 @@ public:
 	std::shared_ptr<Mesh> GetMesh();
 	Transform* GetTransform();
 
-	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer);
+	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer, std::shared_ptr<Camera> a_pCamera);
 
 private:
 	std::shared_ptr<Mesh> m_pMesh;
