@@ -17,7 +17,7 @@ void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Micros
 	// Create local data for the constant buffer struct
 	VertexShaderExternalData vsData;
 	vsData.colorTint = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	vsData.world = m_transform.GetWorldMatrix();
+	vsData.worldMatrix = m_transform.GetWorldMatrix();
 	
 	// Copy the data by mapping, copying, then unmapping
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};

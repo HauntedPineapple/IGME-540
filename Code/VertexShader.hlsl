@@ -2,7 +2,9 @@
 cbuffer ExternalData:register(b0)
 {
 	float4 colorTint;
-	matrix world;
+	matrix worldMatrix;
+	matrix viewMatrix;
+	matrix projectionMatrix;
 }
 
 // Struct representing a single vertex worth of data
@@ -50,18 +52,10 @@ VertexToPixel main(VertexShaderInput input)
 	VertexToPixel output;
 
 	// Combine all matrices
-	//matrix wvp = mul(mul(projection, view), world);
+	matrix wvp = mul(mul(projectionMatrix, viewMatrix), worldMatrix);
 
-	// Here we're essentially passing the input position directly through to the next
-	// stage (rasterizer), though it needs to be a 4-component vector now.
-	// - To be considered within the bounds of the screen, the X and Y components
-	//   must be between -1 and 1.
-	// - The Z component must be between 0 and 1.
-	// - Each of these components is then automatically divided by the W component, 
-	//   which we're leaving at 1.0 for now (this is more useful when dealing with 
-	//   a perspective projection matrix, which we'll get to in the future).
-	output.screenPosition = mul(world, float4(input.localPosition, 1.0f));
-	//output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
+	//output.screenPosition = mul(worldMatrix, float4(input.localPosition, 1.0f));
+	output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
 
 	// Pass the color through 
 	// - The values will be interpolated per-pixel by the rasterizer

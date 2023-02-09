@@ -2,17 +2,17 @@
 IGME-540: Foundations of Game Graphics Programming
 
 ## Helpful Links
+* [GGP Starter Code Repo](https://github.com/vixorien/DX11Starter)
+* [GGP Demos Repo](https://github.com/vixorien/ggp-demos)
+* [C++ Cheatsheat](https://github.com/mortennobel/cpp-cheatsheet)
 * [TutorialsPoint C++ Guide](https://www.tutorialspoint.com/cplusplus/index.htm)
 * [geeksforgeeks C++ Tutorials](https://www.geeksforgeeks.org/cpp-tutorial/)
 * [C++.com](https://cplusplus.com/)
-* [GGP Starter Code Repo](https://github.com/vixorien/DX11Starter)
-* [GGP Demos Repo](https://github.com/vixorien/ggp-demos)
 * [Microsoft: Direct3D Guides](https://learn.microsoft.com/en-us/windows/win32/direct3d)
 * [Dear ImGui GitHub page](https://github.com/ocornut/imgui)
 * [DirectXMath programming guide](https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-progguide)
 * [DirectXMath programming reference](https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference)
 * [TutorialsPoint DirectX Guide](https://www.tutorialspoint.com/directx/directx_quick_guide.htm)
-* [C++ Cheatsheat](https://github.com/mortennobel/cpp-cheatsheet)
 <!-- * [NAME](URL) -->
 <!-- * [NAME](URL) -->
 
