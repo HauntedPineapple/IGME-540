@@ -2,7 +2,7 @@
 cbuffer ExternalData:register(b0)
 {
 	float4 colorTint;
-	matrix worldMatrix;
+	matrix world;
 }
 
 // Struct representing a single vertex worth of data
@@ -11,7 +11,7 @@ cbuffer ExternalData:register(b0)
 // - The name of the struct itself is unimportant, but should be descriptive
 // - Each variable must have a semantic, which defines its usage
 struct VertexShaderInput
-{ 
+{
 	// Data type
 	//  |
 	//  |   Name          Semantic
@@ -44,10 +44,13 @@ struct VertexToPixel
 // - Output is a single struct of data to pass down the pipeline
 // - Named "main" because that's the default the shader compiler looks for
 // --------------------------------------------------------
-VertexToPixel main( VertexShaderInput input )
+VertexToPixel main(VertexShaderInput input)
 {
 	// Set up output struct
 	VertexToPixel output;
+
+	// Combine all matrices
+	//matrix wvp = mul(mul(projection, view), world);
 
 	// Here we're essentially passing the input position directly through to the next
 	// stage (rasterizer), though it needs to be a 4-component vector now.
@@ -57,7 +60,8 @@ VertexToPixel main( VertexShaderInput input )
 	// - Each of these components is then automatically divided by the W component, 
 	//   which we're leaving at 1.0 for now (this is more useful when dealing with 
 	//   a perspective projection matrix, which we'll get to in the future).
-	output.screenPosition = mul(worldMatrix, float4(input.localPosition, 1.0f));
+	output.screenPosition = mul(world, float4(input.localPosition, 1.0f));
+	//output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
 
 	// Pass the color through 
 	// - The values will be interpolated per-pixel by the rasterizer

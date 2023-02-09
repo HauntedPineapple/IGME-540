@@ -13,6 +13,9 @@ public:
 	DirectX::XMFLOAT3 GetScale();
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
 	DirectX::XMFLOAT4X4 GetWorldInverseTransposeMatrix();
+	DirectX::XMFLOAT3 GetRight();
+	DirectX::XMFLOAT3 GetUp();
+	DirectX::XMFLOAT3 GetForward();
 
 	// Setters
 	void SetPosition(float a_fX, float a_fY, float a_fZ);
@@ -25,19 +28,19 @@ public:
 	// Transformers
 	void MoveAbsolute(float a_fX, float a_fY, float a_fZ);
 	void MoveAbsolute(DirectX::XMFLOAT3 a_v3Offset);
-	//void MoveRelative(float a_fX, float a_fY, float a_fZ);
-	//void MoveRelative(DirectX::XMFLOAT3 a_v3Offset);
+	void MoveRelative(float a_fX, float a_fY, float a_fZ);
+	void MoveRelative(DirectX::XMFLOAT3 a_v3Offset);
 	void Rotate(float a_fPitch, float a_fYaw, float a_fRoll);
 	void Rotate(DirectX::XMFLOAT3 v3PitchYawRoll);
 	void Scale(float a_fX, float a_fY, float a_fZ);
 	void Scale(DirectX::XMFLOAT3 a_v3Scale);
 
 private:
-	DirectX::XMFLOAT3 m_v3Position;
-	DirectX::XMFLOAT3 m_v3Rotation;
-	DirectX::XMFLOAT3 m_v3Scale;
-	DirectX::XMFLOAT4X4 m_m4WorldMatrix;
-	DirectX::XMFLOAT4X4 m_m4WorldInverseTransposeMatrix;
+	DirectX::XMFLOAT3 m_position;
+	DirectX::XMFLOAT3 m_rotation;
+	DirectX::XMFLOAT3 m_scale;
+	DirectX::XMFLOAT4X4 m_worldMatrix;
+	DirectX::XMFLOAT4X4 m_worldInverseTransposeMatrix;
 
 	// Helpers
 	void UpdateMatrices();

@@ -1,8 +1,8 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex* a_VertexArray, int a_nVertCount, unsigned int* a_IndexArray, int a_nIndicesCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext)
+Mesh::Mesh(Vertex* a_vertexArray, int a_vertCount, unsigned int* a_indexArray, int a_indicesCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext)
 {
-	this->m_nIndexBufferCount = a_nIndicesCount;
+	this->m_indexBufferCount = a_indicesCount;
 	this->m_pContext = a_pContext;
 
 	// Create a VERTEX BUFFER
@@ -14,7 +14,7 @@ Mesh::Mesh(Vertex* a_VertexArray, int a_nVertCount, unsigned int* a_IndexArray, 
 		//  - After the buffer is created, this description variable is unnecessary
 	D3D11_BUFFER_DESC vbd = {};
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;	// Will NEVER change
-	vbd.ByteWidth = sizeof(Vertex) * a_nVertCount;
+	vbd.ByteWidth = sizeof(Vertex) * a_vertCount;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Tells Direct3D this is a vertex buffer
 	vbd.CPUAccessFlags = 0;	// Note: We cannot access the data from C++ (this is good)
 	vbd.MiscFlags = 0;
@@ -23,7 +23,7 @@ Mesh::Mesh(Vertex* a_VertexArray, int a_nVertCount, unsigned int* a_IndexArray, 
 	// - This is how we initially fill the buffer with data
 	// - Essentially, we're specifying a pointer to the data to copy
 	D3D11_SUBRESOURCE_DATA initialVertexData = {};
-	initialVertexData.pSysMem = a_VertexArray; // pSysMem = Pointer to System Memory
+	initialVertexData.pSysMem = a_vertexArray; // pSysMem = Pointer to System Memory
 	// Actually create the buffer on the GPU with the initial data
 	// - Once we do this, we'll NEVER CHANGE DATA IN THE BUFFER AGAIN
 	a_pDevice->CreateBuffer(&vbd, &initialVertexData, m_pVertexBuffer.GetAddressOf());
@@ -38,14 +38,14 @@ Mesh::Mesh(Vertex* a_VertexArray, int a_nVertCount, unsigned int* a_IndexArray, 
 		//  - Bind Flag (used as an index buffer instead of a vertex buffer) 
 	D3D11_BUFFER_DESC ibd = {};
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;	// Will NEVER change
-	ibd.ByteWidth = sizeof(unsigned int) * a_nIndicesCount;
+	ibd.ByteWidth = sizeof(unsigned int) * a_indicesCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;	// Tells Direct3D this is an index buffer
 	ibd.CPUAccessFlags = 0;	// Note: We cannot access the data from C++ (this is good)
 	ibd.MiscFlags = 0;
 	ibd.StructureByteStride = 0;
 	// Specify the initial data for this buffer, similar to above
 	D3D11_SUBRESOURCE_DATA initialIndexData = {};
-	initialIndexData.pSysMem = a_IndexArray; // pSysMem = Pointer to System Memory
+	initialIndexData.pSysMem = a_indexArray; // pSysMem = Pointer to System Memory
 	// Actually create the buffer with the initial data
 	// - Once we do this, we'll NEVER CHANGE THE BUFFER AGAIN
 	a_pDevice->CreateBuffer(&ibd, &initialIndexData, m_pIndexBuffer.GetAddressOf());
@@ -55,7 +55,7 @@ Mesh::~Mesh() {}
 
 Microsoft::WRL::ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer() { return m_pVertexBuffer; }
 Microsoft::WRL::ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer() { return m_pIndexBuffer; }
-int Mesh::GetIndexCount() { return m_nIndexBufferCount; }
+int Mesh::GetIndexCount() { return m_indexBufferCount; }
 
 void Mesh::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext)
 {
@@ -68,7 +68,7 @@ void Mesh::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext)
 
 	// Tell Direct3D to draw
 	a_pContext->DrawIndexed(
-		this->m_nIndexBufferCount,     // The number of indices to use (we could draw a subset if we wanted)
+		this->m_indexBufferCount,     // The number of indices to use (we could draw a subset if we wanted)
 		0,     // Offset to the first index we want to use
 		0);    // Offset to add to each index when looking up vertices
 }

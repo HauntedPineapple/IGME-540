@@ -6,7 +6,7 @@
 class Mesh {
 public:
 	// Constructor
-	Mesh(Vertex* a_VertexArray, int a_nVertCount, unsigned int* a_IndexArray, int a_nIndicesCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext);
+	Mesh(Vertex* a_vertexArray, int a_vertCount, unsigned int* a_indexArray, int a_indicesCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext);
 	// Destructor
 	~Mesh();
 
@@ -26,5 +26,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pIndexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pContext;
-	int m_nIndexBufferCount;
+	int m_indexBufferCount;
 };

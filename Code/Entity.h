@@ -6,6 +6,7 @@
 
 #include "Mesh.h"
 #include "Transform.h"
+#include "Camera.h"
 
 class Entity
 {
@@ -17,9 +18,9 @@ public:
 	Transform* GetTransform();
 
 	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer);
+
 private:
 	std::shared_ptr<Mesh> m_pMesh;
-	Transform m_Transform;
-	DirectX::XMFLOAT4 m_v4ColorTintValue;
+	Transform m_transform;
 };
 

@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Helpers.h"
 #include "BufferStructs.h"
+#include "Camera.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
@@ -127,9 +128,6 @@ void Game::Init()
 		0, // Which slot (register) to bind the buffer to?
 		1, // How many are we activating? Can do multiple at once
 		m_pVsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
-
-	//m_offsetValue = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	//m_v4ColorTintValue = XMFLOAT4(0.47f, 0.75f, 0.88f, 1.00f);
 }
 
 // --------------------------------------------------------
@@ -285,7 +283,6 @@ void Game::CreateGeometry()
 	std::shared_ptr<Entity> extraHex2 = std::make_shared<Entity>(hexMesh);
 	extraHex2->GetTransform()->Scale(0.5f, 0.5f, 0.0f);
 	extraHex2->GetTransform()->MoveAbsolute(-0.5f, -0.5f, 0.0f);
-	extraHex2->GetTransform()->Rotate(0.0f,0.0f, 0.6f);
 	m_pEntities.push_back(extraHex2);
 }
 
@@ -305,7 +302,7 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
-	this->updateGUI(deltaTime, totalTime);
+	this->UpdateGUI(deltaTime, totalTime);
 
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
@@ -322,7 +319,7 @@ void Game::Update(float deltaTime, float totalTime)
 	m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale*3);
 }
 
-void Game::updateGUI(float deltaTime, float totalTime)
+void Game::UpdateGUI(float deltaTime, float totalTime)
 {
 	// Feed fresh input data to ImGui
 	ImGuiIO& io = ImGui::GetIO();
@@ -342,9 +339,6 @@ void Game::updateGUI(float deltaTime, float totalTime)
 	// Create UI
 	ImGui::Begin("App Interface"); // create the window with given name
 
-	//ImGui::DragFloat3("Offset", (float*)&m_offsetValue, 0.01f, -1.0f, 1.0f);
-	//ImGui::ColorEdit4("Color", (float*)&m_v4ColorTintValue);
-
 	if (ImGui::CollapsingHeader("App Info"))
 	{
 		ImGui::Text("Framerate: %f", ImGui::GetIO().Framerate);
@@ -352,42 +346,63 @@ void Game::updateGUI(float deltaTime, float totalTime)
 		ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
 	}
 
+	if (ImGui::CollapsingHeader("Camera Controls"))
+	{
+		CameraGUI();
+	}
+
 	if (ImGui::CollapsingHeader("Entity Controls"))
 	{ // TODO: Make this more compact later
 		if (ImGui::TreeNode("Entity 1"))
 		{
-			entityGUI(m_pEntities[0]);
+			EntityGUI(m_pEntities[0]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 2"))
 		{
-			entityGUI(m_pEntities[1]);
+			EntityGUI(m_pEntities[1]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 3"))
 		{
-			entityGUI(m_pEntities[2]);
+			EntityGUI(m_pEntities[2]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 4"))
 		{
-			entityGUI(m_pEntities[3]);
+			EntityGUI(m_pEntities[3]);
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Entity 5"))
 		{
-			entityGUI(m_pEntities[4]);
+			EntityGUI(m_pEntities[4]);
 			ImGui::TreePop();
 		}
 	}
 	ImGui::End();
 }
 
-void Game::entityGUI(std::shared_ptr<Entity> entity)
+void Game::CameraGUI()
+{
+	static int currentCamIndex = 0;
+	ImGui::RadioButton("Camera 1", &currentCamIndex, 0);
+	ImGui::SameLine();
+	ImGui::RadioButton("Camera 2", &currentCamIndex, 1);
+	ImGui::SameLine();
+	ImGui::RadioButton("Camera 3", &currentCamIndex, 2);
+	
+	ImGui::RadioButton("Camera 4", &currentCamIndex, 3);
+	ImGui::SameLine();
+	ImGui::RadioButton("Camera 5", &currentCamIndex, 4);
+	ImGui::SameLine();
+	ImGui::RadioButton("Camera 6", &currentCamIndex, 5);
+}
+
+void Game::EntityGUI(std::shared_ptr<Entity> entity)
 {
 	Transform* p_entityTransform = entity->GetTransform();
 

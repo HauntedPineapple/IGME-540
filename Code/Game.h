@@ -21,8 +21,9 @@ public:
 	void Init();
 	void OnResize();
 	void Update(float deltaTime, float totalTime);
-	void updateGUI(float deltaTime, float totalTime);
-	void entityGUI(std::shared_ptr<Entity> entity);
+	void UpdateGUI(float deltaTime, float totalTime);
+	void CameraGUI();
+	void EntityGUI(std::shared_ptr<Entity> entity);
 	void Draw(float deltaTime, float totalTime);
 
 private:
@@ -50,5 +51,4 @@ private:
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVsConstantBuffer;
-	DirectX::XMFLOAT4 m_v4ColorTintValue;
 };
