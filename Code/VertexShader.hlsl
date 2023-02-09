@@ -54,8 +54,8 @@ VertexToPixel main(VertexShaderInput input)
 	// Combine all matrices
 	matrix wvp = mul(mul(projectionMatrix, viewMatrix), worldMatrix);
 
-	//output.screenPosition = mul(worldMatrix, float4(input.localPosition, 1.0f));
-	output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
+	output.screenPosition = mul(worldMatrix, float4(input.localPosition, 1.0f));
+	//output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
 
 	// Pass the color through 
 	// - The values will be interpolated per-pixel by the rasterizer

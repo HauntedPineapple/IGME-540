@@ -5,7 +5,8 @@ using namespace DirectX;
 Transform::Transform() :
 	m_position(0, 0, 0),
 	m_rotation(0, 0, 0),
-	m_scale(1, 1, 1)
+	m_scale(1, 1, 1),
+	m_isMatrixDirty(false)
 {
 	XMStoreFloat4x4(&m_worldMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_worldInverseTransposeMatrix, XMMatrixIdentity());
@@ -30,77 +31,141 @@ DirectX::XMFLOAT4X4 Transform::GetWorldInverseTransposeMatrix()
 	return m_worldInverseTransposeMatrix;
 }
 
+DirectX::XMFLOAT3 Transform::GetRight()
+{
+	return DirectX::XMFLOAT3();
+}
+
+DirectX::XMFLOAT3 Transform::GetUp()
+{
+	return DirectX::XMFLOAT3();
+}
+
+DirectX::XMFLOAT3 Transform::GetForward()
+{
+	return DirectX::XMFLOAT3();
+}
+
 // ================ SETTERS ================
-void Transform::SetPosition(float a_fX, float a_fY, float a_fZ)
+void Transform::SetPosition(float x, float y, float z)
 {
-	m_position.x = a_fX;
-	m_position.y = a_fY;
-	m_position.z = a_fZ;
+	m_position.x = x;
+	m_position.y = y;
+	m_position.z = z;
+	m_isMatrixDirty = true;
 }
-void Transform::SetPosition(DirectX::XMFLOAT3 a_v3Position) { m_position = a_v3Position; }
+void Transform::SetPosition(DirectX::XMFLOAT3 newPosition) {
+	m_position = newPosition;
+	m_isMatrixDirty = true;
+}
 
-void Transform::SetRotation(float a_fPitch, float a_fYaw, float a_fRoll)
+void Transform::SetRotation(float pitch, float yaw, float roll)
 {
-	m_rotation.x = a_fPitch;
-	m_rotation.y = a_fYaw;
-	m_rotation.z = a_fRoll;
+	m_rotation.x = pitch;
+	m_rotation.y = yaw;
+	m_rotation.z = roll;
+	m_isMatrixDirty = true;
 }
-void Transform::SetRotation(DirectX::XMFLOAT3 a_fPitchYawRoll) { m_rotation = a_fPitchYawRoll; }
+void Transform::SetRotation(DirectX::XMFLOAT3 pitchYawRoll) {
+	m_rotation = pitchYawRoll;
+	m_isMatrixDirty = true;
+}
 
-void Transform::SetScale(float a_fX, float a_fY, float a_fZ)
+void Transform::SetScale(float x, float y, float z)
 {
-	m_scale.x = a_fX;
-	m_scale.y = a_fY;
-	m_scale.z = a_fZ;
+	m_scale.x = x;
+	m_scale.y = y;
+	m_scale.z = z;
+	m_isMatrixDirty = true;
 }
-void Transform::SetScale(DirectX::XMFLOAT3 a_v3Scale) { m_scale = a_v3Scale; }
+void Transform::SetScale(DirectX::XMFLOAT3 scale) {
+	m_scale = scale;
+	m_isMatrixDirty = true;
+}
 
 
 // ================ TRANSFORMERS ================
-void Transform::MoveAbsolute(float a_fX, float a_fY, float a_fZ)
+void Transform::MoveAbsolute(float x, float y, float z)
 {
-	m_position.x += a_fX;
-	m_position.y += a_fY;
-	m_position.z += a_fZ;
+	m_position.x += x;
+	m_position.y += y;
+	m_position.z += z;
+	m_isMatrixDirty = true;
 }
 
-void Transform::MoveAbsolute(DirectX::XMFLOAT3 a_fOffset)
+void Transform::MoveAbsolute(DirectX::XMFLOAT3 offset)
 {
-	m_position.x += a_fOffset.x;
-	m_position.y += a_fOffset.y;
-	m_position.z += a_fOffset.z;
+	m_position.x += offset.x;
+	m_position.y += offset.y;
+	m_position.z += offset.z;
+	m_isMatrixDirty = true;
 }
 
-void Transform::Rotate(float a_fPitch, float a_fYaw, float a_fRoll)
+void Transform::MoveRelative(float a_x, float a_y, float a_z)
 {
-	m_rotation.x += a_fPitch;
-	m_rotation.y += a_fYaw;
-	m_rotation.z += a_fRoll;
+	XMVECTOR moveBy = XMVectorSet(a_x, a_y, a_z, 0);
+	XMVECTOR currentRotation = XMLoadFloat3(&m_rotation);
+	XMVECTOR currentPosition = XMLoadFloat3(&m_position);
+
+	XMVECTOR rotQuat = XMQuaternionRotationRollPitchYawFromVector(currentRotation);
+	XMVECTOR relativeOffset = XMVector3Rotate(moveBy, rotQuat);
+
+	currentPosition += relativeOffset;
+
+	XMStoreFloat3(&m_position, currentPosition);
+	m_isMatrixDirty = true;
 }
 
-void Transform::Rotate(DirectX::XMFLOAT3 a_fPitchYawRoll)
+void Transform::MoveRelative(DirectX::XMFLOAT3 a_offset)
 {
-	m_rotation.x += a_fPitchYawRoll.x;
-	m_rotation.y += a_fPitchYawRoll.y;
-	m_rotation.z += a_fPitchYawRoll.z;
+	XMVECTOR moveBy = XMLoadFloat3(&a_offset);
+	XMVECTOR currentRotation = XMLoadFloat3(&m_rotation);
+	XMVECTOR currentPosition = XMLoadFloat3(&m_position);
+
+	XMVECTOR rotQuat = XMQuaternionRotationRollPitchYawFromVector(currentRotation);
+	XMVECTOR relativeOffset = XMVector3Rotate(moveBy, rotQuat);
+
+	currentPosition += relativeOffset;
+
+	XMStoreFloat3(&m_position, currentPosition);
 }
 
-void Transform::Scale(float a_fX, float a_fY, float a_fZ)
+void Transform::Rotate(float p, float y, float r)
 {
-	m_scale.x *= a_fX;
-	m_scale.y *= a_fY;
-	m_scale.z *= a_fZ;
+	m_rotation.x += p;
+	m_rotation.y += y;
+	m_rotation.z += r;
+	m_isMatrixDirty = true;
 }
 
-void Transform::Scale(DirectX::XMFLOAT3 a_v3Scale)
+void Transform::Rotate(DirectX::XMFLOAT3 pitchYawRoll)
 {
-	m_scale.x *= a_v3Scale.x;
-	m_scale.y *= a_v3Scale.y;
-	m_scale.z *= a_v3Scale.z;
+	m_rotation.x += pitchYawRoll.x;
+	m_rotation.y += pitchYawRoll.y;
+	m_rotation.z += pitchYawRoll.z;
+	m_isMatrixDirty = true;
+}
+
+void Transform::Scale(float x, float y, float z)
+{
+	m_scale.x *= x;
+	m_scale.y *= y;
+	m_scale.z *= z;
+	m_isMatrixDirty = true;
+}
+
+void Transform::Scale(DirectX::XMFLOAT3 scale)
+{
+	m_scale.x *= scale.x;
+	m_scale.y *= scale.y;
+	m_scale.z *= scale.z;
+	m_isMatrixDirty = true;
 }
 
 void Transform::UpdateMatrices()
 {
+	if (m_isMatrixDirty == false) return;
+
 	XMMATRIX t = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 	XMMATRIX r = XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z);
 	XMMATRIX s = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
@@ -108,4 +173,10 @@ void Transform::UpdateMatrices()
 	XMMATRIX world = s * r * t;
 	XMStoreFloat4x4(&m_worldMatrix, world);
 	XMStoreFloat4x4(&m_worldInverseTransposeMatrix, XMMatrixInverse(0, XMMatrixTranspose(world)));
+
+	m_isMatrixDirty = false;
+}
+
+void Transform::UpdateVectors()
+{
 }

@@ -18,22 +18,22 @@ public:
 	DirectX::XMFLOAT3 GetForward();
 
 	// Setters
-	void SetPosition(float a_fX, float a_fY, float a_fZ);
-	void SetPosition(DirectX::XMFLOAT3 a_v3Position);
-	void SetRotation(float a_fPitch, float a_fYaw, float a_fRoll);
-	void SetRotation(DirectX::XMFLOAT3 v3PitchYawRoll);
-	void SetScale(float a_fX, float a_fY, float a_fZ);
-	void SetScale(DirectX::XMFLOAT3 a_v3Scale);
+	void SetPosition(float a_x, float a_y, float a_z);
+	void SetPosition(DirectX::XMFLOAT3 a_position);
+	void SetRotation(float a_pitch, float a_yaw, float a_roll);
+	void SetRotation(DirectX::XMFLOAT3 pitchYawRoll);
+	void SetScale(float a_x, float a_y, float a_z);
+	void SetScale(DirectX::XMFLOAT3 a_scale);
 
 	// Transformers
-	void MoveAbsolute(float a_fX, float a_fY, float a_fZ);
-	void MoveAbsolute(DirectX::XMFLOAT3 a_v3Offset);
-	void MoveRelative(float a_fX, float a_fY, float a_fZ);
-	void MoveRelative(DirectX::XMFLOAT3 a_v3Offset);
-	void Rotate(float a_fPitch, float a_fYaw, float a_fRoll);
-	void Rotate(DirectX::XMFLOAT3 v3PitchYawRoll);
-	void Scale(float a_fX, float a_fY, float a_fZ);
-	void Scale(DirectX::XMFLOAT3 a_v3Scale);
+	void MoveAbsolute(float a_x, float a_y, float a_z);
+	void MoveAbsolute(DirectX::XMFLOAT3 a_offset);
+	void MoveRelative(float a_x, float a_y, float a_z);
+	void MoveRelative(DirectX::XMFLOAT3 a_offset);
+	void Rotate(float a_pitch, float a_yaw, float a_roll);
+	void Rotate(DirectX::XMFLOAT3 a_pitchYawRoll);
+	void Scale(float a_x, float a_y, float a_z);
+	void Scale(DirectX::XMFLOAT3 a_scale);
 
 private:
 	DirectX::XMFLOAT3 m_position;
@@ -42,6 +42,9 @@ private:
 	DirectX::XMFLOAT4X4 m_worldMatrix;
 	DirectX::XMFLOAT4X4 m_worldInverseTransposeMatrix;
 
+	bool m_isMatrixDirty;
+
 	// Helpers
 	void UpdateMatrices();
+	void UpdateVectors();
 };
