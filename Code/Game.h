@@ -50,6 +50,7 @@ private:
 
 	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
+	std::vector<std::shared_ptr<Camera>> m_pCameras;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVsConstantBuffer;
 

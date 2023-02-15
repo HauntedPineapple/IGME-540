@@ -131,12 +131,13 @@ void Game::Init()
 	// Create our camera
 	XMFLOAT3 cameraStartPos = XMFLOAT3(0.0f, 0.0f, -5.0f);
 	float aspectRatio = (float)this->windowWidth / this->windowHeight;
-	float moveSpeed = 10.0f;
+	float moveSpeed = 5.0f;
 	float rotationSpeed = 0.005f;
 	float fieldOfView = DirectX::XM_PIDIV4;
 	float nearClipDistance = 0.01f;
 	float farClipDistance = 100;
 	m_pCamera = std::make_shared<Camera>(cameraStartPos, aspectRatio, moveSpeed, rotationSpeed, fieldOfView, nearClipDistance, farClipDistance);
+	m_pCameras.push_back(m_pCamera);
 }
 
 // --------------------------------------------------------
@@ -406,11 +407,22 @@ void Game::CameraGUI()
 	ImGui::SameLine();
 	ImGui::RadioButton("Camera 3", &currentCamIndex, 2);
 
-	ImGui::RadioButton("Camera 4", &currentCamIndex, 3);
-	ImGui::SameLine();
-	ImGui::RadioButton("Camera 5", &currentCamIndex, 4);
-	ImGui::SameLine();
-	ImGui::RadioButton("Camera 6", &currentCamIndex, 5);
+	std::shared_ptr<Camera> p_camera = m_pCameras[currentCamIndex];
+
+	/*XMFLOAT3 positionVec = p_entityTransform->GetPosition();
+	if (ImGui::DragFloat3("Position", &positionVec.x, 0.01f)) {
+		p_entityTransform->SetPosition(positionVec);
+	}
+
+	XMFLOAT3 scaleVec = p_entityTransform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scaleVec.x, 0.01f)) {
+		p_entityTransform->SetScale(scaleVec);
+	}
+
+	XMFLOAT3 rotationVec = p_entityTransform->GetRotation();
+	if (ImGui::DragFloat3("Rotation", &rotationVec.x, 0.01f)) {
+		p_entityTransform->SetRotation(rotationVec);
+	}*/
 }
 
 void Game::EntityGUI(std::shared_ptr<Entity> entity)

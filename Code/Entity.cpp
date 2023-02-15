@@ -20,7 +20,7 @@ void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Micros
 	vsData.worldMatrix = m_transform.GetWorldMatrix();
 	vsData.viewMatrix = a_pCamera->GetViewMatrix();
 	vsData.projectionMatrix = a_pCamera->GetProjectionMatrix();
-	
+
 	// Copy the data by mapping, copying, then unmapping
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
 	a_pContext->Map(a_pVsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);

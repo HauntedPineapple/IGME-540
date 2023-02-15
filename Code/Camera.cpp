@@ -17,9 +17,6 @@ Camera::Camera(DirectX::XMFLOAT3 a_initPos, float a_aspectRatio, float a_moveSpe
 	UpdateProjectionMatrix(a_aspectRatio);
 }
 
-DirectX::XMFLOAT4X4 Camera::GetViewMatrix() { return m_viewMatrix; }
-DirectX::XMFLOAT4X4 Camera::GetProjectionMatrix() { return m_projectionMatrix; }
-
 void Camera::Update(float a_deltaTime)
 {
 	Input& input = Input::GetInstance();
@@ -79,4 +76,61 @@ void Camera::UpdateProjectionMatrix(float a_aspectRatio)
 	else {
 		XMStoreFloat4x4(&m_projectionMatrix, XMMatrixPerspectiveFovLH(m_fieldOfView, a_aspectRatio, m_nearClipDistance, m_farClipDistance));
 	}
+}
+
+// ================ GETTERS ================
+Transform* Camera::GetTransform() { return &m_transform; }
+DirectX::XMFLOAT4X4 Camera::GetViewMatrix() { return m_viewMatrix; }
+DirectX::XMFLOAT4X4 Camera::GetProjectionMatrix() { return m_projectionMatrix; }
+float Camera::GetAspectRatio() { return m_aspectRatio; }
+float Camera::GetMoveSpeed() { return m_moveSpeed; }
+float Camera::GetRotationSpeed() { return m_rotationSpeed; }
+float Camera::GetFieldOfView() { return m_fieldOfView; }
+float Camera::GetNearClipDistance() { return m_nearClipDistance; }
+float Camera::GetFarClipDistance() { return m_farClipDistance; }
+bool Camera::GetProjectionType() { return m_isOrthographic; }
+
+// ================ SETTERS ================
+void Camera::SetAspectRatio(float a_aspectRatio)
+{
+	m_aspectRatio = a_aspectRatio;
+	UpdateProjectionMatrix(m_aspectRatio);
+}
+
+void Camera::SetMoveSpeed(float a_moveSpeed)
+{
+	m_moveSpeed = a_moveSpeed;
+	UpdateProjectionMatrix(m_aspectRatio);
+}
+
+void Camera::SetRotationSpeed(float a_rotationSpeed)
+{
+	m_rotationSpeed = a_rotationSpeed;
+	UpdateProjectionMatrix(m_aspectRatio);
+}
+
+void Camera::SetFieldOfView(float a_fieldOfView)
+{
+	m_fieldOfView = a_fieldOfView;
+	UpdateProjectionMatrix(m_aspectRatio);
+}
+
+void Camera::SetNearClipDistance(float a_nearClipDistance)
+{
+	if (a_nearClipDistance < 0) return;
+	m_nearClipDistance = a_nearClipDistance;
+	UpdateProjectionMatrix(m_aspectRatio);
+}
+
+void Camera::SetFarClipDistance(float a_farClipDistance)
+{
+	if (a_farClipDistance < 0) return;
+	m_farClipDistance = a_farClipDistance;
+	UpdateProjectionMatrix(m_aspectRatio);
+}
+
+void Camera::SetProjectionType(bool a_isOrthographic)
+{
+	m_isOrthographic = a_isOrthographic;
+	UpdateProjectionMatrix(m_aspectRatio);
 }

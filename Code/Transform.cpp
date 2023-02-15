@@ -11,13 +11,15 @@ Transform::Transform() :
 {
 	XMStoreFloat4x4(&m_worldMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_worldInverseTransposeMatrix, XMMatrixIdentity());
+
+	XMStoreFloat3(&m_right, XMVectorSet(1, 0, 0, 0));
+	XMStoreFloat3(&m_up, XMVectorSet(0, 1, 0, 0));
+	XMStoreFloat3(&m_forward, XMVectorSet(0, 0, 1, 0));
 }
 
 // ================ GETTERS ================
 DirectX::XMFLOAT3 Transform::GetPosition() { return m_position; }
-
 DirectX::XMFLOAT3 Transform::GetRotation() { return m_rotation; }
-
 DirectX::XMFLOAT3 Transform::GetScale() { return m_scale; }
 
 DirectX::XMFLOAT4X4 Transform::GetWorldMatrix()
@@ -52,58 +54,59 @@ DirectX::XMFLOAT3 Transform::GetForward()
 
 
 // ================ SETTERS ================
-void Transform::SetPosition(float x, float y, float z)
+void Transform::SetPosition(float a_x, float a_y, float a_z)
 {
-	m_position.x = x;
-	m_position.y = y;
-	m_position.z = z;
+	m_position.x = a_x;
+	m_position.y = a_y;
+	m_position.z = a_z;
 	m_isMatricesChanged = true;
 }
+
 void Transform::SetPosition(DirectX::XMFLOAT3 newPosition) {
 	m_position = newPosition;
 	m_isMatricesChanged = true;
 }
 
-void Transform::SetRotation(float pitch, float yaw, float roll)
+void Transform::SetRotation(float a_pitch, float a_yaw, float a_roll)
 {
-	m_rotation.x = pitch;
-	m_rotation.y = yaw;
-	m_rotation.z = roll;
+	m_rotation.x = a_pitch;
+	m_rotation.y = a_yaw;
+	m_rotation.z = a_roll;
 	m_isMatricesChanged = m_isVectorsChanged = true;
 }
-void Transform::SetRotation(DirectX::XMFLOAT3 pitchYawRoll) {
-	m_rotation = pitchYawRoll;
+void Transform::SetRotation(DirectX::XMFLOAT3 a_pitchYawRoll) {
+	m_rotation = a_pitchYawRoll;
 	m_isMatricesChanged = m_isVectorsChanged = true;
 }
 
-void Transform::SetScale(float x, float y, float z)
+void Transform::SetScale(float a_x, float a_y, float a_z)
 {
-	m_scale.x = x;
-	m_scale.y = y;
-	m_scale.z = z;
+	m_scale.x = a_x;
+	m_scale.y = a_y;
+	m_scale.z = a_z;
 	m_isMatricesChanged = true;
 }
 
-void Transform::SetScale(DirectX::XMFLOAT3 scale) {
-	m_scale = scale;
+void Transform::SetScale(DirectX::XMFLOAT3 a_scale) {
+	m_scale = a_scale;
 	m_isMatricesChanged = true;
 }
 
 
 // ================ TRANSFORMERS ================
-void Transform::MoveAbsolute(float x, float y, float z)
+void Transform::MoveAbsolute(float a_x, float a_y, float a_z)
 {
-	m_position.x += x;
-	m_position.y += y;
-	m_position.z += z;
+	m_position.x += a_x;
+	m_position.y += a_y;
+	m_position.z += a_z;
 	m_isMatricesChanged = true;
 }
 
-void Transform::MoveAbsolute(DirectX::XMFLOAT3 offset)
+void Transform::MoveAbsolute(DirectX::XMFLOAT3 a_offset)
 {
-	m_position.x += offset.x;
-	m_position.y += offset.y;
-	m_position.z += offset.z;
+	m_position.x += a_offset.x;
+	m_position.y += a_offset.y;
+	m_position.z += a_offset.z;
 	m_isMatricesChanged = true;
 }
 
@@ -137,35 +140,35 @@ void Transform::MoveRelative(DirectX::XMFLOAT3 a_offset)
 	m_isMatricesChanged = true;
 }
 
-void Transform::Rotate(float p, float y, float r)
+void Transform::Rotate(float a_p, float a_y, float a_r)
 {
-	m_rotation.x += p;
-	m_rotation.y += y;
-	m_rotation.z += r;
+	m_rotation.x += a_p;
+	m_rotation.y += a_y;
+	m_rotation.z += a_r;
 	m_isMatricesChanged = m_isVectorsChanged = true;
 }
 
-void Transform::Rotate(DirectX::XMFLOAT3 pitchYawRoll)
+void Transform::Rotate(DirectX::XMFLOAT3 a_pitchYawRoll)
 {
-	m_rotation.x += pitchYawRoll.x;
-	m_rotation.y += pitchYawRoll.y;
-	m_rotation.z += pitchYawRoll.z;
+	m_rotation.x += a_pitchYawRoll.x;
+	m_rotation.y += a_pitchYawRoll.y;
+	m_rotation.z += a_pitchYawRoll.z;
 	m_isMatricesChanged = m_isVectorsChanged = true;
 }
 
-void Transform::Scale(float x, float y, float z)
+void Transform::Scale(float a_x, float a_y, float a_z)
 {
-	m_scale.x *= x;
-	m_scale.y *= y;
-	m_scale.z *= z;
+	m_scale.x *= a_x;
+	m_scale.y *= a_y;
+	m_scale.z *= a_z;
 	m_isMatricesChanged = true;
 }
 
-void Transform::Scale(DirectX::XMFLOAT3 scale)
+void Transform::Scale(DirectX::XMFLOAT3 a_scale)
 {
-	m_scale.x *= scale.x;
-	m_scale.y *= scale.y;
-	m_scale.z *= scale.z;
+	m_scale.x *= a_scale.x;
+	m_scale.y *= a_scale.y;
+	m_scale.z *= a_scale.z;
 	m_isMatricesChanged = true;
 }
 
