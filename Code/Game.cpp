@@ -135,9 +135,9 @@ void Game::Init()
 	float rotationSpeed = 0.005f;
 	float nearClipDistance = 0.01f;
 	float farClipDistance = 100;
-	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.0f),aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
-	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed,DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
-	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(2.0f, 2.0f, -2.0f), XMFLOAT3(0.5f, -0.8f, 0.0f),aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(2.0f, 2.0f, -2.0f), XMFLOAT3(0.5f, -0.8f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 }
 
 // --------------------------------------------------------
@@ -305,7 +305,10 @@ void Game::OnResize()
 {
 	// Handle base-level DX resize stuff
 	DXCore::OnResize();
-	m_pCameras[m_currentCamIndex]->UpdateProjectionMatrix(this->windowWidth / this->windowHeight);
+	for (std::shared_ptr<Camera> cam : m_pCameras)
+	{  // update the projection of all cameras
+		cam->UpdateProjectionMatrix((float)this->windowWidth / this->windowHeight);
+	}
 }
 
 // --------------------------------------------------------
@@ -406,8 +409,8 @@ void Game::CameraGUI()
 	ImGui::SameLine();
 	ImGui::RadioButton("Camera 3", &m_currentCamIndex, 2);
 
-	std::shared_ptr<Camera> p_currentCamera = m_pCameras[m_currentCamIndex];
-	Transform* p_cameraTransform = p_currentCamera->GetTransform();
+	std::shared_ptr<Camera> p_camera = m_pCameras[m_currentCamIndex];
+	Transform* p_cameraTransform = p_camera->GetTransform();
 
 	ImGui::Text("Camera Info");
 
@@ -420,11 +423,36 @@ void Game::CameraGUI()
 		p_cameraTransform->SetRotation(rotationVec);
 	}
 
-	//p_currentCamera->GetProjectionType();
-	static bool show_another_window = false;
-	ImGui::Checkbox("Orthographic Projection", &show_another_window);
-	if(show_another_window)ImGui::Text("TRUE");
-	else ImGui::Text("FALSE");
+	//float moveSpeed = p_camera->GetMoveSpeed();
+	//if (ImGui::DragFloat("Move Speed", &moveSpeed, 1.0f, 1.0f, 100.0f)) {
+	//	p_camera->SetRotationSpeed(moveSpeed);
+	//}
+	//float rotationSpeed = p_camera->GetRotationSpeed();
+	//if (ImGui::DragFloat("Rotation Speed", &rotationSpeed, 0.001f, 0.001f, 0.01f)) {
+	//	p_camera->SetRotationSpeed(rotationSpeed);
+	//}
+
+	float fieldOfView = XMConvertToDegrees(p_camera->GetFieldOfView());
+	if (ImGui::DragFloat("FOV", &fieldOfView, 1.0f, 30.0f, 145.0f)) {
+		p_camera->SetFieldOfView(XMConvertToRadians(fieldOfView));
+	}
+	float nearClip = p_camera->GetNearClipDistance();
+	if (ImGui::DragFloat("Near Clip", &nearClip, 0.01f, 0.01f, 1.0f)) {
+		p_camera->SetNearClipDistance(nearClip);
+	}
+	float farClip = p_camera->GetFarClipDistance();
+	if (ImGui::DragFloat("Far Clip", &farClip, 1.0f, 5.0f, 1000.0f)) {
+		p_camera->SetFarClipDistance(farClip);
+	}
+
+	//static bool useOrthographic = false;
+	//ImGui::Checkbox("Orthographic Projection", &useOrthographic);
+	//if (useOrthographic) {
+	//	p_currentCamera->SetProjectionType(true);
+	//}
+	//else {
+	//	p_currentCamera->SetProjectionType(false);
+	//}
 }
 
 void Game::EntityGUI(std::shared_ptr<Entity> a_pEntity)

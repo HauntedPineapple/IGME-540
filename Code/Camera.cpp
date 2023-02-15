@@ -101,13 +101,11 @@ void Camera::SetAspectRatio(float a_aspectRatio)
 void Camera::SetMoveSpeed(float a_moveSpeed)
 {
 	m_moveSpeed = a_moveSpeed;
-	UpdateProjectionMatrix(m_aspectRatio);
 }
 
 void Camera::SetRotationSpeed(float a_rotationSpeed)
 {
 	m_rotationSpeed = a_rotationSpeed;
-	UpdateProjectionMatrix(m_aspectRatio);
 }
 
 void Camera::SetFieldOfView(float a_fieldOfView)
