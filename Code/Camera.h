@@ -6,9 +6,10 @@
 class Camera {
 public:
 	/* FOV must be in radians */
-	Camera(DirectX::XMFLOAT3 a_initPos, float a_aspectRatio, float a_moveSpeed = 5.0f,
+	Camera(DirectX::XMFLOAT3 a_initPosition = DirectX::XMFLOAT3(0.0f, 0.0f, -5.0f), DirectX::XMFLOAT3 a_initRotation = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f),
+		float a_aspectRatio = 1.78f, float a_moveSpeed = 5.0f,
 		float a_rotationSpeed = 0.003f, float a_fieldOfView = DirectX::XM_PIDIV4,
-		float a_nearClipDistance = 0.1f, float a_farClipDistance = 100,
+		float a_nearClipDistance = 0.1f, float a_farClipDistance = 100.0f,
 		bool a_isOrthographic = false);
 
 	void Update(float a_deltaTime);

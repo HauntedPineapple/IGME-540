@@ -128,16 +128,16 @@ void Game::Init()
 		1, // How many are we activating? Can do multiple at once
 		m_pVsConstantBuffer.GetAddressOf()); // Array of buffers (or the address of one)
 
-	// Create our camera
-	XMFLOAT3 cameraStartPos = XMFLOAT3(0.0f, 0.0f, -5.0f);
+	m_currentCamIndex = 0;
+	// Create our cameras
 	float aspectRatio = (float)this->windowWidth / this->windowHeight;
 	float moveSpeed = 5.0f;
 	float rotationSpeed = 0.005f;
-	float fieldOfView = DirectX::XM_PIDIV4;
 	float nearClipDistance = 0.01f;
 	float farClipDistance = 100;
-	m_pCamera = std::make_shared<Camera>(cameraStartPos, aspectRatio, moveSpeed, rotationSpeed, fieldOfView, nearClipDistance, farClipDistance);
-	m_pCameras.push_back(m_pCamera);
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.0f),aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed,DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(2.0f, 2.0f, -2.0f), XMFLOAT3(0.5f, -0.8f, 0.0f),aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 }
 
 // --------------------------------------------------------
@@ -305,7 +305,7 @@ void Game::OnResize()
 {
 	// Handle base-level DX resize stuff
 	DXCore::OnResize();
-	m_pCamera->UpdateProjectionMatrix(this->windowWidth / this->windowHeight);
+	m_pCameras[m_currentCamIndex]->UpdateProjectionMatrix(this->windowWidth / this->windowHeight);
 }
 
 // --------------------------------------------------------
@@ -328,7 +328,7 @@ void Game::Update(float deltaTime, float totalTime)
 	m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
 	m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale * 3);
 
-	m_pCamera->Update(deltaTime);
+	m_pCameras[m_currentCamIndex]->Update(deltaTime);
 }
 
 void Game::UpdateGUI(float deltaTime, float totalTime)
@@ -400,34 +400,32 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 
 void Game::CameraGUI()
 {
-	static int currentCamIndex = 0;
-	ImGui::RadioButton("Camera 1", &currentCamIndex, 0);
+	ImGui::RadioButton("Camera 1", &m_currentCamIndex, 0);
 	ImGui::SameLine();
-	ImGui::RadioButton("Camera 2", &currentCamIndex, 1);
+	ImGui::RadioButton("Camera 2", &m_currentCamIndex, 1);
 	ImGui::SameLine();
-	ImGui::RadioButton("Camera 3", &currentCamIndex, 2);
+	ImGui::RadioButton("Camera 3", &m_currentCamIndex, 2);
 
-	std::shared_ptr<Camera> p_camera = m_pCameras[currentCamIndex];
+	std::shared_ptr<Camera> p_currentCamera = m_pCameras[m_currentCamIndex];
+	Transform* p_cameraTransform = p_currentCamera->GetTransform();
 
-	/*XMFLOAT3 positionVec = p_entityTransform->GetPosition();
+	ImGui::Text("Camera Info");
+
+	XMFLOAT3 positionVec = p_cameraTransform->GetPosition();
 	if (ImGui::DragFloat3("Position", &positionVec.x, 0.01f)) {
-		p_entityTransform->SetPosition(positionVec);
+		p_cameraTransform->SetPosition(positionVec);
 	}
-
-	XMFLOAT3 scaleVec = p_entityTransform->GetScale();
-	if (ImGui::DragFloat3("Scale", &scaleVec.x, 0.01f)) {
-		p_entityTransform->SetScale(scaleVec);
-	}
-
-	XMFLOAT3 rotationVec = p_entityTransform->GetRotation();
+	XMFLOAT3 rotationVec = p_cameraTransform->GetRotation();
 	if (ImGui::DragFloat3("Rotation", &rotationVec.x, 0.01f)) {
-		p_entityTransform->SetRotation(rotationVec);
-	}*/
+		p_cameraTransform->SetRotation(rotationVec);
+	}
+
+
 }
 
-void Game::EntityGUI(std::shared_ptr<Entity> entity)
+void Game::EntityGUI(std::shared_ptr<Entity> a_pEntity)
 {
-	Transform* p_entityTransform = entity->GetTransform();
+	Transform* p_entityTransform = a_pEntity->GetTransform();
 
 	XMFLOAT3 positionVec = p_entityTransform->GetPosition();
 	if (ImGui::DragFloat3("Position", &positionVec.x, 0.01f)) {
@@ -464,7 +462,7 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
-		entity->Draw(context, m_pVsConstantBuffer, m_pCamera);
+		entity->Draw(context, m_pVsConstantBuffer, m_pCameras[m_currentCamIndex]);
 	}
 
 	// Frame END

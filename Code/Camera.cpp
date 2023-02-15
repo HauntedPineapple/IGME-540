@@ -3,7 +3,7 @@
 
 using namespace DirectX;
 
-Camera::Camera(DirectX::XMFLOAT3 a_initPos, float a_aspectRatio, float a_moveSpeed, float a_rotationSpeed, float a_fieldOfView, float a_nearClipDistance, float a_farClipDistance, bool a_isOrthographic) :
+Camera::Camera(DirectX::XMFLOAT3 a_initPosition, DirectX::XMFLOAT3 a_initRotation, float a_aspectRatio, float a_moveSpeed, float a_rotationSpeed, float a_fieldOfView, float a_nearClipDistance, float a_farClipDistance, bool a_isOrthographic) :
 	m_aspectRatio(a_aspectRatio),
 	m_moveSpeed(a_moveSpeed),
 	m_rotationSpeed(a_rotationSpeed),
@@ -12,7 +12,8 @@ Camera::Camera(DirectX::XMFLOAT3 a_initPos, float a_aspectRatio, float a_moveSpe
 	m_farClipDistance(a_farClipDistance),
 	m_isOrthographic(a_isOrthographic)
 {
-	m_transform.SetPosition(a_initPos);
+	m_transform.SetPosition(a_initPosition);
+	m_transform.SetRotation(a_initRotation);
 	UpdateViewMatrix();
 	UpdateProjectionMatrix(a_aspectRatio);
 }
@@ -117,14 +118,14 @@ void Camera::SetFieldOfView(float a_fieldOfView)
 
 void Camera::SetNearClipDistance(float a_nearClipDistance)
 {
-	if (a_nearClipDistance < 0) return;
+	if (a_nearClipDistance < 0 || a_nearClipDistance == m_farClipDistance) return;
 	m_nearClipDistance = a_nearClipDistance;
 	UpdateProjectionMatrix(m_aspectRatio);
 }
 
 void Camera::SetFarClipDistance(float a_farClipDistance)
 {
-	if (a_farClipDistance < 0) return;
+	if (a_farClipDistance < 0 || a_farClipDistance == m_nearClipDistance) return;
 	m_farClipDistance = a_farClipDistance;
 	UpdateProjectionMatrix(m_aspectRatio);
 }

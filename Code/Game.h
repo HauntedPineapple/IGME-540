@@ -22,9 +22,11 @@ public:
 	void Init();
 	void OnResize();
 	void Update(float deltaTime, float totalTime);
+
 	void UpdateGUI(float deltaTime, float totalTime);
 	void CameraGUI();
-	void EntityGUI(std::shared_ptr<Entity> entity);
+	void EntityGUI(std::shared_ptr<Entity> a_pEntity);
+
 	void Draw(float deltaTime, float totalTime);
 
 private:
@@ -47,12 +49,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
 	// ----------------------------------------------------------
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVsConstantBuffer;
 
 	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVsConstantBuffer;
-
-	std::shared_ptr<Camera> m_pCamera;
+	int m_currentCamIndex;
 };
