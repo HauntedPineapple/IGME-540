@@ -419,8 +419,6 @@ void Game::CameraGUI()
 	if (ImGui::DragFloat3("Rotation", &rotationVec.x, 0.01f)) {
 		p_cameraTransform->SetRotation(rotationVec);
 	}
-
-
 }
 
 void Game::EntityGUI(std::shared_ptr<Entity> a_pEntity)

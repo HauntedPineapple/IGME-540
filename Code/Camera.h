@@ -10,7 +10,7 @@ public:
 		float a_aspectRatio = 1.78f, float a_moveSpeed = 5.0f,
 		float a_rotationSpeed = 0.003f, float a_fieldOfView = DirectX::XM_PIDIV4,
 		float a_nearClipDistance = 0.1f, float a_farClipDistance = 100.0f,
-		bool a_isOrthographic = false);
+		bool a_isPerspective = true);
 
 	void Update(float a_deltaTime);
 	void UpdateViewMatrix();
@@ -25,7 +25,7 @@ public:
 	float GetFieldOfView();
 	float GetNearClipDistance();
 	float GetFarClipDistance();
-	// If true: orthographic, if false: perpsective
+	// If true: perpsective, if false: orthographic
 	bool GetProjectionType();
 
 	void SetAspectRatio(float a_aspectRatio);
@@ -34,7 +34,7 @@ public:
 	void SetFieldOfView(float a_fieldOfView);
 	void SetNearClipDistance(float a_nearClipDistance);
 	void SetFarClipDistance(float a_farClipDistance);
-	// If true: orthographic, if false: perpsective
+	// If true: perpsective, if false: orthographic
 	void SetProjectionType(bool a_isOrthographic);
 private:
 	Transform m_transform;
@@ -49,5 +49,5 @@ private:
 	float m_nearClipDistance;
 	float m_farClipDistance;
 
-	bool m_isOrthographic;
+	bool m_isPerspective;
 };

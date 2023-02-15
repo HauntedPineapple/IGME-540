@@ -3,14 +3,14 @@
 
 using namespace DirectX;
 
-Camera::Camera(DirectX::XMFLOAT3 a_initPosition, DirectX::XMFLOAT3 a_initRotation, float a_aspectRatio, float a_moveSpeed, float a_rotationSpeed, float a_fieldOfView, float a_nearClipDistance, float a_farClipDistance, bool a_isOrthographic) :
+Camera::Camera(DirectX::XMFLOAT3 a_initPosition, DirectX::XMFLOAT3 a_initRotation, float a_aspectRatio, float a_moveSpeed, float a_rotationSpeed, float a_fieldOfView, float a_nearClipDistance, float a_farClipDistance, bool a_isPerspective) :
 	m_aspectRatio(a_aspectRatio),
 	m_moveSpeed(a_moveSpeed),
 	m_rotationSpeed(a_rotationSpeed),
 	m_fieldOfView(a_fieldOfView),
 	m_nearClipDistance(a_nearClipDistance),
 	m_farClipDistance(a_farClipDistance),
-	m_isOrthographic(a_isOrthographic)
+	m_isPerspective(a_isPerspective)
 {
 	m_transform.SetPosition(a_initPosition);
 	m_transform.SetRotation(a_initRotation);
@@ -71,11 +71,11 @@ void Camera::UpdateViewMatrix()
 
 void Camera::UpdateProjectionMatrix(float a_aspectRatio)
 {
-	if (m_isOrthographic) {
-		// XMStoreFloat4x4(&m_projectionMatrix, XMMatrixOrthographicLH(ViewWidth, ViewHeight, m_nearClipDistance, m_farClipDistance));
+	if (m_isPerspective) {
+		XMStoreFloat4x4(&m_projectionMatrix, XMMatrixPerspectiveFovLH(m_fieldOfView, a_aspectRatio, m_nearClipDistance, m_farClipDistance));
 	}
 	else {
-		XMStoreFloat4x4(&m_projectionMatrix, XMMatrixPerspectiveFovLH(m_fieldOfView, a_aspectRatio, m_nearClipDistance, m_farClipDistance));
+		// XMStoreFloat4x4(&m_projectionMatrix, XMMatrixOrthographicLH(ViewWidth, ViewHeight, m_nearClipDistance, m_farClipDistance));
 	}
 }
 
@@ -89,7 +89,7 @@ float Camera::GetRotationSpeed() { return m_rotationSpeed; }
 float Camera::GetFieldOfView() { return m_fieldOfView; }
 float Camera::GetNearClipDistance() { return m_nearClipDistance; }
 float Camera::GetFarClipDistance() { return m_farClipDistance; }
-bool Camera::GetProjectionType() { return m_isOrthographic; }
+bool Camera::GetProjectionType() { return m_isPerspective; }
 
 // ================ SETTERS ================
 void Camera::SetAspectRatio(float a_aspectRatio)
@@ -130,8 +130,8 @@ void Camera::SetFarClipDistance(float a_farClipDistance)
 	UpdateProjectionMatrix(m_aspectRatio);
 }
 
-void Camera::SetProjectionType(bool a_isOrthographic)
+void Camera::SetProjectionType(bool a_isPerspective)
 {
-	m_isOrthographic = a_isOrthographic;
+	m_isPerspective = a_isPerspective;
 	UpdateProjectionMatrix(m_aspectRatio);
 }
