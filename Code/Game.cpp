@@ -419,6 +419,12 @@ void Game::CameraGUI()
 	if (ImGui::DragFloat3("Rotation", &rotationVec.x, 0.01f)) {
 		p_cameraTransform->SetRotation(rotationVec);
 	}
+
+	//p_currentCamera->GetProjectionType();
+	static bool show_another_window = false;
+	ImGui::Checkbox("Orthographic Projection", &show_another_window);
+	if(show_another_window)ImGui::Text("TRUE");
+	else ImGui::Text("FALSE");
 }
 
 void Game::EntityGUI(std::shared_ptr<Entity> a_pEntity)

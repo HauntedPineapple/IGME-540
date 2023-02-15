@@ -10,7 +10,7 @@ public:
 		float a_aspectRatio = 1.78f, float a_moveSpeed = 5.0f,
 		float a_rotationSpeed = 0.003f, float a_fieldOfView = DirectX::XM_PIDIV4,
 		float a_nearClipDistance = 0.1f, float a_farClipDistance = 100.0f,
-		bool a_isPerspective = true);
+		bool a_isOrthographic = false);
 
 	void Update(float a_deltaTime);
 	void UpdateViewMatrix();
@@ -49,5 +49,5 @@ private:
 	float m_nearClipDistance;
 	float m_farClipDistance;
 
-	bool m_isPerspective;
+	bool m_isOrthographic;
 };
