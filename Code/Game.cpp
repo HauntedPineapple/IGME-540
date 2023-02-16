@@ -138,7 +138,6 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateGeometry()
 {
-	// Create some temporary variables to represent colors=
 	const XMFLOAT4 C_BLACK = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	const XMFLOAT4 C_WHITE = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	const XMFLOAT4 C_RED = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -154,19 +153,54 @@ void Game::CreateGeometry()
 	const XMFLOAT4 C_PINK = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
 	const XMFLOAT4 C_MAGENTA = XMFLOAT4(1.0f, 0.0f, 0.5f, 1.0f);
 
-	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
-	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
-	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE);
+	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK);
+	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_RED);
+	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_GREEN);
+	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLUE);
 
 	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
+	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
+	std::shared_ptr<Mesh> helixMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
+	std::shared_ptr<Mesh> quadMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
+	std::shared_ptr<Mesh> sphereMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
+	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
+	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/pig.obj").c_str(), device);
 
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, redMaterial);
-
-	cubeEntity->GetTransform()->SetPosition(XMFLOAT3(0, 0, 20));
+	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial);
+	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, blueMaterial);
+	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, redMaterial);
+	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, greenMaterial);
+	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, blueMaterial);
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, whiteMaterial);
 
 	m_pMeshes.push_back(cubeMesh);
+	m_pMeshes.push_back(cylinderMesh);
+	m_pMeshes.push_back(helixMesh);
+	m_pMeshes.push_back(quadMesh);
+	m_pMeshes.push_back(sphereMesh);
+	m_pMeshes.push_back(torusMesh);
+	//m_pMeshes.push_back(mesh);
+
 	m_pEntities.push_back(cubeEntity);
+	m_pEntities.push_back(cylinderEntity);
+	m_pEntities.push_back(helixEntity);
+	m_pEntities.push_back(quadEntity);
+	m_pEntities.push_back(sphereEntity);
+	m_pEntities.push_back(torusEntity);
+	//m_pEntities.push_back(entity);
+
+	for (int i = 0; i < m_pEntities.size(); i++) {
+		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
+		p_entityTransform->SetPosition(XMFLOAT3(0, 0, 20));
+		if (i < m_pEntities.size() / 2) {
+			p_entityTransform->MoveRelative(XMFLOAT3(-3*i,0,0));
+		}
+		else {
+			p_entityTransform->MoveRelative(XMFLOAT3(3 * i, 0, 0));
+		}
+	}
 }
 
 // --------------------------------------------------------
