@@ -2,7 +2,6 @@
 #include "Vertex.h"
 #include "Input.h"
 #include "Helpers.h"
-#include "BufferStructs.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
@@ -159,6 +158,15 @@ void Game::CreateGeometry()
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
 	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+
+	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
+
+	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, redMaterial);
+
+	cubeEntity->GetTransform()->SetPosition(XMFLOAT3(0, 0, 20));
+
+	m_pMeshes.push_back(cubeMesh);
+	m_pEntities.push_back(cubeEntity);
 }
 
 // --------------------------------------------------------
@@ -187,14 +195,14 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
-	// Move stuff around
-	float sinTime = sin(totalTime);
-	m_pEntities[0]->GetTransform()->SetPosition(sinTime, 0, 0);
-	float cosTime = cos(totalTime);
-	m_pEntities[1]->GetTransform()->SetPosition(0, cosTime, 0);
-	float scale = abs(sinTime);
-	m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
-	m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale * 3);
+	//// Move stuff around
+	//float sinTime = sin(totalTime);
+	//m_pEntities[0]->GetTransform()->SetPosition(sinTime, 0, 0);
+	//float cosTime = cos(totalTime);
+	//m_pEntities[1]->GetTransform()->SetPosition(0, cosTime, 0);
+	//float scale = abs(sinTime);
+	//m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
+	//m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale * 3);
 
 	m_pCameras[m_currentCamIndex]->Update(deltaTime);
 }
@@ -226,43 +234,22 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 		ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
 	}
 
-	if (ImGui::CollapsingHeader("Camera Controls"))
-	{
-		CameraGUI();
-	}
+	if (ImGui::CollapsingHeader("Camera Controls")) { CameraGUI(); }
 
 	if (ImGui::CollapsingHeader("Entity Controls"))
-	{ // TODO: Make this more compact later
-		if (ImGui::TreeNode("Entity 1"))
+	{
+		for (int i = 0; i < m_pEntities.size(); i++)
 		{
-			EntityGUI(m_pEntities[0]);
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Entity 2"))
-		{
-			EntityGUI(m_pEntities[1]);
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Entity 3"))
-		{
-			EntityGUI(m_pEntities[2]);
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Entity 4"))
-		{
-			EntityGUI(m_pEntities[3]);
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Entity 5"))
-		{
-			EntityGUI(m_pEntities[4]);
-			ImGui::TreePop();
+			std::string label = "Entity " + std::to_string(i + 1);
+			ImGui::PushID(i);
+			if (ImGui::TreeNode(label.data())) {
+				EntityGUI(m_pEntities[i]);
+				ImGui::TreePop();
+			}
+			ImGui::PopID();
 		}
 	}
+
 	ImGui::End();
 }
 
@@ -338,6 +325,8 @@ void Game::EntityGUI(std::shared_ptr<Entity> a_pEntity)
 	if (ImGui::DragFloat3("Rotation", &rotationVec.x, 0.01f)) {
 		p_entityTransform->SetRotation(rotationVec);
 	}
+
+	ImGui::Text("Mesh Index Count: %d", a_pEntity->GetMesh()->GetIndexCount());
 }
 
 // --------------------------------------------------------
