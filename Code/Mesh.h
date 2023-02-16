@@ -1,13 +1,13 @@
 #pragma once
+
 #include <d3d11.h>
 #include <wrl/client.h>
+
 #include "Vertex.h"
 
 class Mesh {
 public:
-	// Constructor
 	Mesh(Vertex* a_vertexArray, int a_vertCount, unsigned int* a_indexArray, int a_indicesCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext);
-	// Destructor
 	~Mesh();
 
 	/* Returns the pointer to the vertex buffer object */
@@ -23,8 +23,8 @@ public:
 	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext);
 
 private:
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pContext;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pIndexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pContext;
 	int m_indexBufferCount;
 };

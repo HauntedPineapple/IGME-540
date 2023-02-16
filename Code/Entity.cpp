@@ -1,31 +1,34 @@
 #include "Entity.h"
-#include "BufferStructs.h"
-
 using namespace DirectX;
 
-Entity::Entity(std::shared_ptr<Mesh> a_pMesh)
-	:m_pMesh(a_pMesh)
+Entity::Entity(std::shared_ptr<Mesh> a_pMesh, std::shared_ptr<Material> a_pMaterial)
+	:m_pMesh(a_pMesh),
+	m_pMaterial(a_pMaterial)
 {
 	m_transform = Transform();
 }
 
 std::shared_ptr<Mesh> Entity::GetMesh() { return m_pMesh; }
+std::shared_ptr<Material> Entity::GetMaterial() { return m_pMaterial; }
 Transform* Entity::GetTransform() { return &m_transform; }
 
-void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, Microsoft::WRL::ComPtr<ID3D11Buffer> a_pVsConstantBuffer, std::shared_ptr<Camera> a_pCamera)
-{
-	// Create local data for the constant buffer struct
-	VertexShaderExternalData vsData;
-	vsData.colorTint = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	vsData.worldMatrix = m_transform.GetWorldMatrix();
-	vsData.viewMatrix = a_pCamera->GetViewMatrix();
-	vsData.projectionMatrix = a_pCamera->GetProjectionMatrix();
+void Entity::SetMaterial(std::shared_ptr<Material> a_pMaterial) { m_pMaterial = a_pMaterial; }
 
-	// Copy the data by mapping, copying, then unmapping
-	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
-	a_pContext->Map(a_pVsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);
-	memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
-	a_pContext->Unmap(a_pVsConstantBuffer.Get(), 0);
+void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, std::shared_ptr<Camera> a_pCamera)
+{
+	// Activate shaders
+	m_pMaterial->GetVertexShader()->SetShader();
+	m_pMaterial->GetPixelShader()->SetShader();
+
+
+	// Create local data for the constant buffer struct
+	std::shared_ptr<SimpleVertexShader> vsData = m_pMaterial->GetVertexShader();
+	vsData->SetFloat4("colorTint", m_pMaterial->GetColorTint());
+	vsData->SetMatrix4x4("worldMatrix", m_transform.GetWorldMatrix());
+	vsData->SetMatrix4x4("viewMatrix", a_pCamera->GetViewMatrix());
+	vsData->SetMatrix4x4("projectionMatrix", a_pCamera->GetProjectionMatrix());
+
+	vsData->CopyAllBufferData();
 
 	m_pMesh->Draw(a_pContext);
 }
