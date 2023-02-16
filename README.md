@@ -24,7 +24,7 @@ IGME-540: Foundations of Game Graphics Programming
 * [Assignment 3](./Assignment%20Instructions/Assignment%203%20-%20User%20Interface%20%26%20Constant%20Buffers.pdf)
 * [Assignment 4](./Assignment%20Instructions/Assignment%204%20-%20Making%20Things%20Move.pdf)
 * [Assignment 5](./Assignment%20Instructions/Assignment%205%20-%20Cameras.pdf)
-<!-- * [Assignment 6](./Assignment%20Instructions/) -->
+* [Assignment 6](./Assignment%20Instructions/Assignment%206%20-%203D%20Models%2C%20Materials%20%26%20Shaders.pdf)
 <!-- * [Assignment 7](./Assignment%20Instructions/) -->
 <!-- * [Assignment 8](./Assignment%20Instructions/) -->
 <!-- * [Assignment 9](./Assignment%20Instructions/) -->
