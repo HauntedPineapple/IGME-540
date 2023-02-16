@@ -215,23 +215,28 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateGeometry()
 {
-	// Create some temporary variables to represent colors
-	// - Not necessary, just makes things more readable
-	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	XMFLOAT4 orange = XMFLOAT4(0.9f, 0.6f, 0.0f, 1.0f);
-	XMFLOAT4 purple = XMFLOAT4(0.5f, 0.0f, 1.0f, 0.8f);
-	XMFLOAT4 yellow = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
-	XMFLOAT4 black = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 white = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	// Create some temporary variables to represent colors=
+	const XMFLOAT4 C_BLACK = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	const XMFLOAT4 C_WHITE = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);	
+	const XMFLOAT4 C_RED = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	const XMFLOAT4 C_ORANGE= XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f);
+	const XMFLOAT4 C_YELLOW = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+	const XMFLOAT4 C_CHARTREUSE = XMFLOAT4(0.5f, 1.0f, 0.0f, 1.0f);
+	const XMFLOAT4 C_GREEN = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	const XMFLOAT4 C_SPRING = XMFLOAT4(0.0f, 1.0f, 0.5f, 1.0f);
+	const XMFLOAT4 C_CYAN = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
+	const XMFLOAT4 C_AZURE = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
+	const XMFLOAT4 C_BLUE = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	const XMFLOAT4 C_VIOLET = XMFLOAT4(0.5f, 0.0f, 1.0f, 1.0f);
+	const XMFLOAT4 C_PINK = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
+	const XMFLOAT4 C_MAGENTA = XMFLOAT4(1.0f, 0.0f, 0.5f, 1.0f);
 
 	// Set up the vertices of the triangle we would like to draw
 	Vertex triangleVertices[] =
 	{
-		{ XMFLOAT3(+0.35f, +0.75f, +0.0f), red },
-		{ XMFLOAT3(+0.55f, +0.25f, +0.0f), blue },
-		{ XMFLOAT3(+0.25f, +0.25f, +0.0f), green },
+		{ XMFLOAT3(+0.35f, +0.75f, +0.0f), C_RED },
+		{ XMFLOAT3(+0.55f, +0.25f, +0.0f), C_GREEN },
+		{ XMFLOAT3(+0.25f, +0.25f, +0.0f), C_BLUE },
 	};
 	// Set up indices, which tell us which vertices to use and in which order
 	unsigned int triangleIndices[] = { 0, 1, 2 };
@@ -244,10 +249,10 @@ void Game::CreateGeometry()
 
 	Vertex quadVertices[] =
 	{
-		{ XMFLOAT3(-0.8f, +0.8f, +0.0f), white },
-		{ XMFLOAT3(-0.5f, +0.8f, +0.0f), black },
-		{ XMFLOAT3(-0.5f, +0.5f, +0.0f), black },
-		{ XMFLOAT3(-0.8f, +0.5f, +0.0f), white },
+		{ XMFLOAT3(-0.8f, +0.8f, +0.0f), C_SPRING },
+		{ XMFLOAT3(-0.5f, +0.8f, +0.0f), C_BLACK },
+		{ XMFLOAT3(-0.5f, +0.5f, +0.0f), C_PINK },
+		{ XMFLOAT3(-0.8f, +0.5f, +0.0f), C_WHITE },
 	};
 	unsigned int quadIndices[] = {
 									0, 1, 2,
@@ -261,12 +266,12 @@ void Game::CreateGeometry()
 
 	Vertex hexaVerts[] =
 	{
-		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), white},
-		{ XMFLOAT3(+0.15f, -0.15f, +0.0f), green},
-		{ XMFLOAT3(+0.15f, -0.45f, +0.0f), red},
-		{ XMFLOAT3(+0.0f, -0.6f, +0.0f), blue},
-		{ XMFLOAT3(-0.15f, -0.45f, +0.0f), black},
-		{ XMFLOAT3(-0.15f, -0.15f, +0.0f), purple},
+		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), C_CHARTREUSE},
+		{ XMFLOAT3(+0.15f, -0.15f, +0.0f), C_AZURE},
+		{ XMFLOAT3(+0.15f, -0.45f, +0.0f), C_ORANGE},
+		{ XMFLOAT3(+0.0f, -0.6f, +0.0f), C_CYAN},
+		{ XMFLOAT3(-0.15f, -0.45f, +0.0f), C_YELLOW},
+		{ XMFLOAT3(-0.15f, -0.15f, +0.0f), C_VIOLET},
 	};
 	unsigned int hexaIndices[] = {
 									0, 1, 5,

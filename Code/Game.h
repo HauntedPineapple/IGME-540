@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-
 class Game : public DXCore
 {
 public:
