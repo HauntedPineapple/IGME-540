@@ -181,26 +181,29 @@ void Game::CreateGeometry()
 	m_pMeshes.push_back(quadMesh);
 	m_pMeshes.push_back(sphereMesh);
 	m_pMeshes.push_back(torusMesh);
-	//m_pMeshes.push_back(mesh);
 
 	m_pEntities.push_back(cubeEntity);
 	m_pEntities.push_back(cylinderEntity);
-	m_pEntities.push_back(helixEntity);
-	m_pEntities.push_back(quadEntity);
+	m_pEntities.push_back(helixEntity); 
+	m_pEntities.push_back(quadEntity); // index 3
 	m_pEntities.push_back(sphereEntity);
 	m_pEntities.push_back(torusEntity);
-	//m_pEntities.push_back(entity);
+
+	m_pMeshes.push_back(mesh);
+	m_pEntities.push_back(entity);
 
 	for (int i = 0; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
 		p_entityTransform->SetPosition(XMFLOAT3(0, 0, 20));
 		if (i < m_pEntities.size() / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-3*i,0,0));
+			p_entityTransform->MoveRelative(XMFLOAT3(-3 * (i+1), 0, 0));
 		}
 		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(3 * i, 0, 0));
+			p_entityTransform->MoveRelative(XMFLOAT3(3 *(i-3), 0, 0));
 		}
 	}
+
+
 }
 
 // --------------------------------------------------------
@@ -237,6 +240,14 @@ void Game::Update(float deltaTime, float totalTime)
 	//float scale = abs(sinTime);
 	//m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
 	//m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale * 3);
+
+	// Continuously rotate the quad
+	Transform* quadTransform = m_pEntities[3]->GetTransform();
+	XMFLOAT3 quadRot = quadTransform->GetRotation();
+	quadTransform->SetRotation(quadRot.x+deltaTime, 0, 0);
+	if (quadRot.x + deltaTime >= DirectX::XMConvertToRadians(360)) {
+		quadTransform->SetRotation(0, 0, 0);
+	}
 
 	m_pCameras[m_currentCamIndex]->Update(deltaTime);
 }
