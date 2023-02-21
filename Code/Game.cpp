@@ -131,7 +131,7 @@ void Game::LoadShaders()
 	// the string literal must be preceded by an L.
 	m_pVertexShader = std::make_shared<SimpleVertexShader>(device, context, FixPath(L"VertexShader.cso").c_str());
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
-	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"CustomPS.cso").c_str());
+	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
 }
 
 // --------------------------------------------------------
@@ -169,13 +169,13 @@ void Game::CreateGeometry()
 	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/pig.obj").c_str(), device);
 
-	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, redMaterial);
-	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial);
-	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, blueMaterial);
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, redMaterial);
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, greenMaterial);
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, blueMaterial);
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, customMaterial);
+	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, redMaterial, "Cube");
+	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
+	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, blueMaterial, "Helix");
+	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, redMaterial, "Quad");
+	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, greenMaterial, "Sphere");
+	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, blueMaterial, "Torus");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, customMaterial, "Pig");
 
 	m_pMeshes.push_back(cubeMesh);
 	m_pMeshes.push_back(cylinderMesh);
@@ -187,21 +187,21 @@ void Game::CreateGeometry()
 
 	m_pEntities.push_back(cubeEntity);
 	m_pEntities.push_back(cylinderEntity);
-	m_pEntities.push_back(helixEntity); 
+	m_pEntities.push_back(helixEntity);
 	m_pEntities.push_back(entity);
 	m_pEntities.push_back(sphereEntity);
 	m_pEntities.push_back(torusEntity);
 	m_pEntities.push_back(quadEntity); // index 6
-	
+
 
 	for (int i = 0; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
 		p_entityTransform->SetPosition(XMFLOAT3(0, 0, 12));
 		if (i < m_pEntities.size() / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-3 * (i+1), 0, 0));
+			p_entityTransform->MoveRelative(XMFLOAT3(-3 * (i + 1), 0, 0));
 		}
 		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(3 *(i-3), 0, 0));
+			p_entityTransform->MoveRelative(XMFLOAT3(3 * (i - 3), 0, 0));
 		}
 	}
 
@@ -246,7 +246,7 @@ void Game::Update(float deltaTime, float totalTime)
 	// Continuously rotate the quad
 	Transform* quadTransform = m_pEntities[6]->GetTransform();
 	XMFLOAT3 quadRot = quadTransform->GetRotation();
-	quadTransform->SetRotation(quadRot.x+deltaTime, 0, 0);
+	quadTransform->SetRotation(quadRot.x + deltaTime, 0, 0);
 	if (quadRot.x + deltaTime >= DirectX::XMConvertToRadians(360)) {
 		quadTransform->SetRotation(0, 0, 0);
 	}
@@ -296,6 +296,8 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 		for (int i = 0; i < m_pEntities.size(); i++)
 		{
 			std::string label = "Entity " + std::to_string(i + 1);
+			if (m_pEntities[i]->GetEntityName() != "")
+				label = m_pEntities[i]->GetEntityName();
 			ImGui::PushID(i);
 			if (ImGui::TreeNode(label.data())) {
 				EntityGUI(m_pEntities[i]);

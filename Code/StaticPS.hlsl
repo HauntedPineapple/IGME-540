@@ -21,10 +21,12 @@ struct VertexToPixel
 	float3 normal			: NORMAL;
 	float2 uv				: TEXCOORD;
 };
+
 float random(float2 s)
 {
 	return frac(sin(dot(s, float2(12, 75))) * 43758);
 }
+
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
 // 
