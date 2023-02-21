@@ -18,21 +18,6 @@ void Entity::SetMaterial(std::shared_ptr<Material> a_pMaterial) { m_pMaterial = 
 
 void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, std::shared_ptr<Camera> a_pCamera)
 {
-	// Activate shaders
-	m_pMaterial->GetVertexShader()->SetShader();
-	m_pMaterial->GetPixelShader()->SetShader();
-
-
-	// Create local data for the constant buffer struct
-	std::shared_ptr<SimpleVertexShader> vsData = m_pMaterial->GetVertexShader();
-	vsData->SetMatrix4x4("worldMatrix", m_transform.GetWorldMatrix());
-	vsData->SetMatrix4x4("viewMatrix", a_pCamera->GetViewMatrix());
-	vsData->SetMatrix4x4("projectionMatrix", a_pCamera->GetProjectionMatrix());
-	vsData->CopyAllBufferData();
-
-	std::shared_ptr<SimplePixelShader> psData = m_pMaterial->GetPixelShader();
-	psData->SetFloat4("colorTint", m_pMaterial->GetColorTint());
-	psData->CopyAllBufferData();
-
+	m_pMaterial->SendDataToShader(&m_transform, a_pCamera);
 	m_pMesh->Draw(a_pContext);
 }
