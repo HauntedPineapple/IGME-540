@@ -406,6 +406,15 @@ void Game::Draw(float deltaTime, float totalTime)
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
 		entity->GetMaterial()->GetPixelShader()->SetFloat("time", totalTime);
+
+		XMFLOAT3 ambientColor = { 0.5f, 0.5f, 0.5f };
+		XMFLOAT3 lightColor = { 1,1,1 };
+		XMFLOAT3 lightDirection = { 1,0,0 };
+
+		entity->GetMaterial()->GetPixelShader()->SetFloat3("ambientColor", ambientColor);
+		entity->GetMaterial()->GetPixelShader()->SetFloat3("lightColor", lightColor);
+		entity->GetMaterial()->GetPixelShader()->SetFloat3("lightDirection", lightDirection);
+
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}
 
