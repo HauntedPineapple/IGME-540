@@ -23,12 +23,14 @@ void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, std::s
 
 	// Create local data for the constant buffer struct
 	std::shared_ptr<SimpleVertexShader> vsData = m_pMaterial->GetVertexShader();
-	vsData->SetFloat4("colorTint", m_pMaterial->GetColorTint());
 	vsData->SetMatrix4x4("worldMatrix", m_transform.GetWorldMatrix());
 	vsData->SetMatrix4x4("viewMatrix", a_pCamera->GetViewMatrix());
 	vsData->SetMatrix4x4("projectionMatrix", a_pCamera->GetProjectionMatrix());
-
 	vsData->CopyAllBufferData();
+
+	std::shared_ptr<SimplePixelShader> psData = m_pMaterial->GetPixelShader();
+	psData->SetFloat4("colorTint", m_pMaterial->GetColorTint());
+	psData->CopyAllBufferData();
 
 	m_pMesh->Draw(a_pContext);
 }
