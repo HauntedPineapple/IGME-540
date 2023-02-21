@@ -114,7 +114,7 @@ void Game::Init()
 	float farClipDistance = 100;
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
-	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(2.0f, 2.0f, -2.0f), XMFLOAT3(0.5f, -0.8f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(1.7f, 0.3f, 10.5f), XMFLOAT3(0.1f, -0.9f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 }
 
 // --------------------------------------------------------
@@ -131,6 +131,7 @@ void Game::LoadShaders()
 	// the string literal must be preceded by an L.
 	m_pVertexShader = std::make_shared<SimpleVertexShader>(device, context, FixPath(L"VertexShader.cso").c_str());
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
+	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"CustomPS.cso").c_str());
 }
 
 // --------------------------------------------------------
@@ -158,6 +159,7 @@ void Game::CreateGeometry()
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_RED);
 	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_GREEN);
 	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLUE);
+	std::shared_ptr<Material> customMaterial = std::make_shared<Material>(m_pVertexShader, m_pCustomPixelShader, C_WHITE);
 
 	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
 	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
@@ -173,7 +175,7 @@ void Game::CreateGeometry()
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, redMaterial);
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, greenMaterial);
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, blueMaterial);
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, whiteMaterial);
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, customMaterial);
 
 	m_pMeshes.push_back(cubeMesh);
 	m_pMeshes.push_back(cylinderMesh);
@@ -194,7 +196,7 @@ void Game::CreateGeometry()
 
 	for (int i = 0; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0, 0, 20));
+		p_entityTransform->SetPosition(XMFLOAT3(0, 0, 12));
 		if (i < m_pEntities.size() / 2) {
 			p_entityTransform->MoveRelative(XMFLOAT3(-3 * (i+1), 0, 0));
 		}
@@ -401,6 +403,7 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
+		entity->GetMaterial()->GetPixelShader()->SetFloat("time", totalTime);
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}
 

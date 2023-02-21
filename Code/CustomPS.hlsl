@@ -2,6 +2,7 @@
 cbuffer ExternalData:register(b0)
 {
 	float4 colorTint;
+	float time;
 }
 
 // Struct representing the data we expect to receive from earlier pipeline stages
@@ -20,7 +21,10 @@ struct VertexToPixel
 	float3 normal			: NORMAL;
 	float2 uv				: TEXCOORD;
 };
-
+float random(float2 s)
+{
+	return frac(sin(dot(s, float2(12, 75))) * 43758);
+}
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
 // 
@@ -32,9 +36,5 @@ struct VertexToPixel
 // --------------------------------------------------------
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	// Just return the input color
-	// - This color (like most values passing through the rasterizer) is 
-	//   interpolated for each pixel between the corresponding vertices 
-	//   of the triangle we're rendering
-	return colorTint;
+	return float4(colorTint.r, random(float2(time, input.uv.y)), colorTint.b, 0);
 }

@@ -20,7 +20,7 @@ struct VertexShaderInput
 	//  v    v                v
 	float3 localPosition	: POSITION;     // XYZ position
 	float3 normal			: NORMAL;
-	float2 uv				: TEXTCOORD;
+	float2 uv				: TEXCOORD;
 };
 
 // Struct representing the data we're sending down the pipeline
@@ -36,6 +36,8 @@ struct VertexToPixel
 	//  |    |                |
 	//  v    v                v
 	float4 screenPosition	: SV_POSITION;	// XYZW position (System Value Position)
+	float3 normal			: NORMAL;
+	float2 uv				: TEXCOORD;
 };
 
 // --------------------------------------------------------
@@ -55,6 +57,9 @@ VertexToPixel main(VertexShaderInput input)
 
 	//output.screenPosition = mul(worldMatrix, float4(input.localPosition, 1.0f));
 	output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
+
+	output.uv = input.uv;
+
 
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)

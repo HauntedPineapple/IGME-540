@@ -58,6 +58,7 @@ private:
 
 	std::shared_ptr<SimpleVertexShader> m_pVertexShader;
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
+	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
 
 
 };

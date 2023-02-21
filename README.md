@@ -16,6 +16,7 @@ IGME-540: Foundations of Game Graphics Programming
 * [HLSL Crash Course](http://www.catalinzima.com/xna/tutorials/crash-course-in-hlsl/)
 * [Programming guide for HLSL](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-pguide)
 <!-- * [NAME](URL) -->
+<!-- * [Shadertoy: line drawing algorithm](https://www.shadertoy.com/view/DtjSRd) -->
 
 ## Assignment Instructions
 * [Preparing a Visual Studio project for Upload](./Assignment%20Instructions/Preparing%20a%20Visual%20Studio%20project%20for%20Upload.pdf)
