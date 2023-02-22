@@ -73,14 +73,10 @@ void Game::Init()
 	ImGui::CreateContext();
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(device.Get(), context.Get());
-	// Pick a style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-	//ImGui::StyleColorsClassic();
 
 	// Helper methods for loading shaders, creating some basic
 	// geometry to draw and some simple camera matrices.
-	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
 	CreateGeometry();
 
@@ -132,6 +128,7 @@ void Game::LoadShaders()
 	m_pVertexShader = std::make_shared<SimpleVertexShader>(device, context, FixPath(L"VertexShader.cso").c_str());
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
 	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
+	m_pTestPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
 }
 
 // --------------------------------------------------------
@@ -191,7 +188,7 @@ void Game::CreateGeometry()
 	m_pEntities.push_back(entity);
 	m_pEntities.push_back(sphereEntity);
 	m_pEntities.push_back(torusEntity);
-	m_pEntities.push_back(quadEntity); // index 6
+	m_pEntities.push_back(quadEntity);
 
 
 	for (int i = 0; i < m_pEntities.size(); i++) {
@@ -289,6 +286,8 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 		ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
 	}
 
+	if (ImGui::CollapsingHeader("Light Controls")) { LightsGUI(); }
+
 	if (ImGui::CollapsingHeader("Camera Controls")) { CameraGUI(); }
 
 	if (ImGui::CollapsingHeader("Entity Controls"))
@@ -308,6 +307,11 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	}
 
 	ImGui::End();
+}
+
+void Game::LightsGUI()
+{
+	ImGui::Text("Light Info");
 }
 
 void Game::CameraGUI()

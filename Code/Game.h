@@ -18,13 +18,12 @@ public:
 	Game(HINSTANCE hInstance);
 	~Game();
 
-	// Overridden setup and game loop methods, which
-	// will be called automatically
 	void Init();
 	void OnResize();
 	void Update(float deltaTime, float totalTime);
 
 	void UpdateGUI(float deltaTime, float totalTime);
+	void LightsGUI();
 	void CameraGUI();
 	void EntityGUI(std::shared_ptr<Entity> a_pEntity);
 
@@ -44,21 +43,16 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 
-	// Shaders and shader-related constructs
-	//Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
-	//Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
-	// ----------------------------------------------------------
+	int m_currentCamIndex;
+
 	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
 
-	int m_currentCamIndex;
-
 	std::shared_ptr<SimpleVertexShader> m_pVertexShader;
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
-
-
+	std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
 };
