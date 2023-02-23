@@ -270,29 +270,45 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
-	//// Move stuff around
-	//float sinTime = sin(totalTime);
-	//m_pEntities[0]->GetTransform()->SetPosition(sinTime, 0, 0);
-	//float cosTime = cos(totalTime);
-	//m_pEntities[1]->GetTransform()->SetPosition(0, cosTime, 0);
-	//float scale = abs(sinTime);
-	//m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
-	//m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale * 3);
+	for (int i = 0; i < m_pEntities.size(); i++)
+	{
+		std::string entityName = m_pEntities[i]->GetEntityName();
+		Transform* entityTransform = m_pEntities[i]->GetTransform();
+		XMFLOAT3 entityRot = entityTransform->GetRotation();
+		XMFLOAT3 entityPos = entityTransform->GetPosition();
+		XMFLOAT3 entityScale = entityTransform->GetScale();
 
-	// Continuously rotate the quad
-	Transform* quadTransform = m_pEntities[6]->GetTransform();
-	XMFLOAT3 quadRot = quadTransform->GetRotation();
-	quadTransform->SetRotation(quadRot.x + deltaTime, 0, 0);
-	if (quadRot.x + deltaTime >= DirectX::XMConvertToRadians(360)) {
-		quadTransform->SetRotation(0, 0, 0);
-	}
+		if (entityName == "Pig") {
+			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+		}
+		if (entityName == "Helix") {
+			entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
+			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+		}
+		if (entityName == "Cylinder") {
 
-	// Continuously rotate the helix
-	Transform* helixTransform = m_pEntities[2]->GetTransform();
-	XMFLOAT3 helixRot = helixTransform->GetRotation();
-	helixTransform->SetRotation(0, helixRot.y + deltaTime, 0);
-	if (helixRot.y + deltaTime >= DirectX::XMConvertToRadians(360)) {
-		helixTransform->SetRotation(0, 0, 0);
+		}
+		if (entityName == "Cube") {
+			entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
+			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+		}
+		if (entityName == "Sphere") {
+
+		}
+		if (entityName == "Torus") {
+			entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
+			if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(0, entityRot.y, entityRot.z);
+		}
+		if (entityName == "Quad") {
+			entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
+			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+		}
 	}
 
 	m_pCameras[m_currentCamIndex]->Update(deltaTime);
