@@ -90,3 +90,72 @@ void Game::CreateGeometry()
 	m_pEntities.push_back(extraHex2);
 }
 
+// Old Update stuff (archived 2/23/2023)
+
+void Game::Update(float deltaTime, float totalTime)
+{
+	this->UpdateGUI(deltaTime, totalTime);
+
+	// Example input checking: Quit if the escape key is pressed
+	if (Input::GetInstance().KeyDown(VK_ESCAPE))
+		Quit();
+
+	//// Move stuff around
+	//float sinTime = sin(totalTime);
+	//m_pEntities[0]->GetTransform()->SetPosition(sinTime, 0, 0);
+	//float cosTime = cos(totalTime);
+	//m_pEntities[1]->GetTransform()->SetPosition(0, cosTime, 0);
+	//float scale = abs(sinTime);
+	//m_pEntities[2]->GetTransform()->SetScale(scale, scale, scale);
+	//m_pEntities[3]->GetTransform()->SetRotation(0, 0, scale * 3);
+	
+		// Helix
+	Transform* helixTransform = m_pEntities[2]->GetTransform();
+	XMFLOAT3 helixRot = helixTransform->GetRotation();
+	helixTransform->SetRotation(0, helixRot.y + deltaTime, 0);
+	if (helixRot.y + deltaTime >= DirectX::XMConvertToRadians(360)) {
+		helixTransform->SetRotation(helixRot.x, 0, helixRot.z);
+	}
+
+	// Cylinder
+	Transform* cylinderTransform = m_pEntities[1]->GetTransform();
+	XMFLOAT3 cylinderRot = cylinderTransform->GetRotation();
+
+	// Cube
+	Transform* cubeTransform = m_pEntities[0]->GetTransform();
+	XMFLOAT3 cubeRot = cubeTransform->GetRotation();
+	cubeTransform->SetRotation(0, cubeRot.y + deltaTime, cubeRot.z + deltaTime);
+	if (cubeRot.y + deltaTime >= DirectX::XMConvertToRadians(360)) {
+		cubeTransform->SetRotation(cubeRot.x, 0, cubeRot.z);
+	}
+	if (cubeRot.z + deltaTime >= DirectX::XMConvertToRadians(360)) {
+		cubeTransform->SetRotation(cubeRot.x, cubeRot.y, 0);
+	}
+
+	// Entity
+	Transform* modelTransform = m_pEntities[1]->GetTransform();
+	XMFLOAT3 modelRot = modelTransform->GetRotation();
+
+	// Sphere
+	Transform* sphereTransform = m_pEntities[4]->GetTransform();
+	XMFLOAT3 sphereRot = sphereTransform->GetRotation();
+
+
+	// Torus
+	Transform* torusTransform = m_pEntities[5]->GetTransform();
+	XMFLOAT3 torusRot = torusTransform->GetRotation();
+	torusTransform->SetRotation(torusRot.x + deltaTime, 0, 0);
+	if (torusRot.x + deltaTime >= DirectX::XMConvertToRadians(360)) {
+		torusTransform->SetRotation(0, torusRot.y, torusRot.z);
+	}
+
+	// Quad
+	Transform* quadTransform = m_pEntities[6]->GetTransform();
+	XMFLOAT3 quadRot = quadTransform->GetRotation();
+	quadTransform->SetRotation(0, 0, quadRot.z + deltaTime);
+	if (quadRot.z + deltaTime >= DirectX::XMConvertToRadians(360)) {
+		quadTransform->SetRotation(quadRot.x, quadRot.y, 0);
+	}
+
+	m_pCameras[m_currentCamIndex]->Update(deltaTime);
+}
