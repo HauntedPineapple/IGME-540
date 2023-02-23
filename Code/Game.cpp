@@ -205,15 +205,43 @@ void Game::CreateLights()
 
 	m_directionalLightA = {};
 	m_directionalLightA.type = 0;
-	m_directionalLightA.direction = { -1,-1,0 };
-	m_directionalLightA.color = { 0.3, 0.5, 1 };
+	m_directionalLightA.direction = { 1 ,-1, 1 };
+	m_directionalLightA.color = { 1, 1, 1 };
 	m_directionalLightA.intensity = 1.0f;
+
+	m_directionalLightB = {};
+	m_directionalLightB.type = 0;
+	m_directionalLightB.direction = { 1, 1, 1 };
+	m_directionalLightB.color = { 1, 1, 1 };
+	m_directionalLightB.intensity = 1.0f;
+
+	m_directionalLightC = {};
+	m_directionalLightC.type = 0;
+	m_directionalLightC.direction = { 1, 1, 1 };
+	m_directionalLightC.color = { 1, 1, 1 };
+	m_directionalLightC.intensity = 1.0f;
 
 	m_pointLightA = {};
 	m_pointLightA.type = 1;
+	m_pointLightA.color = { 1, 1, 1 };
+	m_pointLightA.intensity = 1.0f;
+
+	m_pointLightB = {};
+	m_pointLightB.type = 1;
+	m_pointLightB.color = { 1, 1, 1 };
+	m_pointLightB.intensity = 1.0f;
 
 	m_spotLightA = {};
 	m_spotLightA.type = 2;
+	m_spotLightA.color = { 1, 1, 1 };
+	m_spotLightA.intensity = 1.0f;
+
+	m_pLights.push_back(std::make_shared<Light>(m_directionalLightA));
+	//m_pLights.push_back(std::make_shared<Light>(m_directionalLightB));
+	//m_pLights.push_back(std::make_shared<Light>(m_directionalLightC));
+	//m_pLights.push_back(std::make_shared<Light>(m_pointLightA));
+	//m_pLights.push_back(std::make_shared<Light>(m_pointLightB));
+	//m_pLights.push_back(std::make_shared<Light>(m_spotLightA));
 }
 
 // --------------------------------------------------------
@@ -287,8 +315,7 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	input.SetKeyboardCapture(io.WantCaptureKeyboard);
 	input.SetMouseCapture(io.WantCaptureMouse);
 
-	// Create UI
-	ImGui::Begin("App Interface"); // create the window with given name
+	ImGui::Begin("App Interface");
 
 	if (ImGui::CollapsingHeader("App Info"))
 	{
@@ -297,9 +324,24 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 		ImGui::Text("Cursor Position: %f, %f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
 	}
 
-	if (ImGui::CollapsingHeader("Light Controls")) { LightsGUI(); }
+	if (ImGui::CollapsingHeader("Light Controls")) {
+		ImGui::ColorEdit3("Ambient Light Color", (float*)&m_ambientLightColor);
+		for (int i = 0; i < m_pLights.size(); i++)
+		{
+			std::string label = "Light " + std::to_string(i + 1);
+			ImGui::PushID(i);
+			if (ImGui::TreeNode(label.data())) {
+				LightsGUI(m_pLights[i]);
+				ImGui::TreePop();
+			}
+			ImGui::PopID();
+		}
+	}
 
-	if (ImGui::CollapsingHeader("Camera Controls")) { CameraGUI(); }
+	if (ImGui::CollapsingHeader("Camera Controls"))
+	{
+		CameraGUI();
+	}
 
 	if (ImGui::CollapsingHeader("Entity Controls"))
 	{
@@ -320,29 +362,36 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	ImGui::End();
 }
 
-void Game::LightsGUI()
+void Game::LightsGUI(std::shared_ptr<Light> a_pLight)
 {
-	ImGui::Text("Light Info");
-
-	Light placeholderLight = {};
-	switch (placeholderLight.type) {
+	switch (a_pLight->type) {
 	case 0: // Directional
-
+		ImGui::Text("Directional Light");
 		break;
 	case 1: // Point
-
+		ImGui::Text("Point Light");
 		break;
 	case 2: // Spot
-
+		ImGui::Text("Spot Light");
 		break;
 	}
 
-	DirectX::XMFLOAT3 direction; // Directional and Spot lights need a direction
-	float range;				 // Point and Spot lights have a max range for attenuation
-	DirectX::XMFLOAT3 position;  // Point and Spot lights have a position in space
-	float intensity;			 // All lights need an intensity
-	DirectX::XMFLOAT3 color;	 // All lights need a color
-	float spotFalloff;
+	if (a_pLight->type == 0 || a_pLight->type == 2)
+	{
+		ImGui::DragFloat3("Direction", &a_pLight->direction.x, 0.005f, -1, 1);
+	}
+	if (a_pLight->type == 1 || a_pLight->type == 2)
+	{
+		ImGui::DragFloat("Range", &a_pLight->range, 0.1f);
+		ImGui::DragFloat3("Position", &a_pLight->position.x, 0.01f);
+	}
+	if (a_pLight->type == 2)
+	{
+		ImGui::DragFloat("Falloff", &a_pLight->spotFalloff, 0.1f);
+	}
+
+	ImGui::DragFloat("Intensity", &a_pLight->intensity, 0.01f, 0.0f, 1000.0f);
+	ImGui::ColorEdit3("Color", (float*)&a_pLight->color);
 }
 
 void Game::CameraGUI()
@@ -442,14 +491,10 @@ void Game::Draw(float deltaTime, float totalTime)
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
 		entity->GetMaterial()->GetPixelShader()->SetFloat("time", totalTime);
 
-
-		/*XMFLOAT3 lightColor = { 1,1,1 };
-		XMFLOAT3 lightDirection = { -1,-1,0 };
 		entity->GetMaterial()->GetPixelShader()->SetFloat3("ambientColor", m_ambientLightColor);
-		entity->GetMaterial()->GetPixelShader()->SetFloat3("lightColor", lightColor);
-		entity->GetMaterial()->GetPixelShader()->SetFloat3("lightDirection", lightDirection);*/
 
-		entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &m_directionalLightA, sizeof(Light));
+		entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &*m_pLights[0], sizeof(Light));
+		//for (int i = 0; i < m_pLights.size(); i++) { entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &*m_pLights[i], sizeof(Light)); }
 
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}

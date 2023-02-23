@@ -24,7 +24,7 @@ public:
 	void Update(float deltaTime, float totalTime);
 
 	void UpdateGUI(float deltaTime, float totalTime);
-	void LightsGUI();
+	void LightsGUI(std::shared_ptr<Light> a_pLight);
 	void CameraGUI();
 	void EntityGUI(std::shared_ptr<Entity> a_pEntity);
 
@@ -52,15 +52,15 @@ private:
 	DirectX::XMFLOAT3 m_ambientLightColor;
 
 	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
-	std::vector<std::shared_ptr<Entity>> m_pEntities;
+	std::vector<std::shared_ptr<Light>> m_pLights;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
+	std::vector<std::shared_ptr<Entity>> m_pEntities;
 
 	std::shared_ptr<SimpleVertexShader> m_pVertexShader;
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
 
-	std::shared_ptr <Light> m_pLights;
 	Light m_directionalLightA;
 	Light m_directionalLightB;
 	Light m_directionalLightC;
