@@ -9,17 +9,27 @@ cbuffer ExternalData : register(b0)
     Light directionalLightA;
 }
 
-float Diffuse(float3 normal, float3 dirToLight)
+float SpecularBRDF(float3 normal, float3 lightDir, float3 viewVector)
 {
-    return saturate(dot(normal, dirToLight));
+    float3 refl = reflect(lightDir, normal);
+    
+    // Compare reflecion against view vector    
+    float specular = saturate(dot(refl, viewVector));
+    // Raising it to a very high power to ensure falloff to zero is quick
+    specular = pow(specular, MAX_SPECULAR_EXPONENT);
+    
+    return specular;
 }
 
 float4 main(VertexToPixel input) : SV_TARGET
-{
-    input.normal = normalize(input.normal);
+{    
+    input.normal = normalize(input.normal); // Must renormalize any interpolated vectors
+    float3 viewVector = normalize(cameraPosition - input.worldPosition); // vector from surface to camera
     float3 directionToLight = normalize(-directionalLightA.direction);
-    float diffuse = Diffuse(input.normal, directionToLight);
-    float3 finalPixelColor = (ambientColor * (float3) colorTint) + (diffuse * directionalLightA.color * (float3) colorTint);
     
-    return float4(finalPixelColor, 1);
+    float3 totalLightColor = ambientColor;
+    totalLightColor += DiffuseBRDF(input.normal, directionToLight) * directionalLightA.color;
+    //totalLightColor += SpecularBRDF(input.normal, directionalLightA.direction, viewVector) * directionalLightA.color;
+
+    return float4((float3) colorTint * totalLightColor, 1);
 }

@@ -58,4 +58,9 @@ struct Light
     float spotFalloff; // Spot lights need a value to define their “cone” size
     float3 padding; // Purposefully padding to hit the 16-byte boundary
 };
+
+float DiffuseBRDF(float3 normal, float3 dirToLight)
+{
+    return saturate(dot(normal, normalize(dirToLight)));
+}
 #endif

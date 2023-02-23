@@ -148,10 +148,14 @@ void Game::CreateGeometry()
 	std::shared_ptr<SimplePixelShader> pShader = m_pTestPixelShader;
 
 	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE);
-	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLACK);
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_RED, 0.0f);
 	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_GREEN, 0.5f);
 	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLUE, 1.0f);
+	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_CYAN, 1.0f);
+	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_MAGENTA, 1.0f);
+	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_YELLOW, 1.0f);
+	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLACK);
+
 	std::shared_ptr<Material> customMaterial = std::make_shared<Material>(m_pVertexShader, m_pCustomPixelShader, C_WHITE);
 
 	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
@@ -160,15 +164,15 @@ void Game::CreateGeometry()
 	std::shared_ptr<Mesh> quadMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
 	std::shared_ptr<Mesh> sphereMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
 	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
-	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/pig.obj").c_str(), device);
+	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
 
-	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, redMaterial, "Cube");
+	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
-	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, blueMaterial, "Helix");
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, redMaterial, "Sphere");
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, greenMaterial, "Torus");
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, blueMaterial, "Quad");
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, whiteMaterial, "Pig");
+	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_PINK, 1.0f), "Model");
+	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
+	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
+	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
 
 	m_pMeshes.push_back(cubeMesh);
 	m_pMeshes.push_back(cylinderMesh);
@@ -278,8 +282,8 @@ void Game::Update(float deltaTime, float totalTime)
 		XMFLOAT3 entityPos = entityTransform->GetPosition();
 		XMFLOAT3 entityScale = entityTransform->GetScale();
 
-		if (entityName == "Pig") {
-			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+		if (entityName == "Model") {
+			
 		}
 		if (entityName == "Helix") {
 			entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
@@ -297,7 +301,7 @@ void Game::Update(float deltaTime, float totalTime)
 				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
 		}
 		if (entityName == "Sphere") {
-
+			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
 		}
 		if (entityName == "Torus") {
 			entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
