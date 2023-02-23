@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Material.h"
 #include "SimpleShader.h"
+#include "Lights.h"
 
 class Game : public DXCore
 {
@@ -33,6 +34,7 @@ private:
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
 	void CreateGeometry();
+	void CreateLights();
 
 	// Note the usage of ComPtr below
 	//  - This is a smart pointer for objects that abide by the
@@ -47,6 +49,8 @@ private:
 
 	int m_currentCamIndex;
 
+	DirectX::XMFLOAT3 m_ambientLightColor;
+
 	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
@@ -55,4 +59,12 @@ private:
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
+
+	std::shared_ptr <Light> m_pLights;
+	Light m_directionalLightA;
+	Light m_directionalLightB;
+	Light m_directionalLightC;
+	Light m_pointLightA;
+	Light m_pointLightB;
+	Light m_spotLightA;
 };

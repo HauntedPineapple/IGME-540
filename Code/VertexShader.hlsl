@@ -4,6 +4,7 @@
 cbuffer ExternalData:register(b0)
 {
 	matrix worldMatrix;
+	matrix worldInvTransposeMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
 }
@@ -29,7 +30,10 @@ VertexToPixel main(VertexShaderInput input)
 	output.uv = input.uv;
 	
 	// Convert normals from local to world
-    output.normal = mul((float3x3)worldMatrix, input.normal);
+    output.normal = mul((float3x3)worldInvTransposeMatrix, input.normal);
+	
+	// get the pixel's world position
+    output.worldPosition = mul(worldMatrix, float4(input.localPosition, 1)).xyz;
 
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)

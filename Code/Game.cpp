@@ -39,8 +39,6 @@ Game::Game(HINSTANCE hInstance)
 	CreateConsoleWindow(500, 120, 32, 120);
 	printf("Console window created successfully.  Feel free to printf() here.\n");
 #endif
-
-	m_currentCamIndex = 0;
 }
 
 // --------------------------------------------------------
@@ -79,6 +77,7 @@ void Game::Init()
 	// geometry to draw and some simple camera matrices.
 	LoadShaders();
 	CreateGeometry();
+	CreateLights();
 
 	// Set initial graphics API state
 	//  - These settings persist until we change them
@@ -94,15 +93,10 @@ void Game::Init()
 		// the vertex buffer. For this course, all of your vertices will probably
 		// have the same layout, so we can just set this once at startup.
 		context->IASetInputLayout(inputLayout.Get());
-
-		// Set the active vertex and pixel shaders
-		//  - Once you start applying different shaders to different objects,
-		//    these calls will need to happen multiple times per frame
-		//context->VSSetShader(vertexShader.Get(), 0, 0);
-		//context->PSSetShader(pixelShader.Get(), 0, 0);
 	}
 
 	// Create our cameras
+	m_currentCamIndex = 0;
 	float aspectRatio = (float)this->windowWidth / this->windowHeight;
 	float moveSpeed = 8.0f;
 	float rotationSpeed = 0.005f;
@@ -111,8 +105,6 @@ void Game::Init()
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(1.7f, 0.3f, 10.5f), XMFLOAT3(0.1f, -0.9f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
-
-	
 }
 
 // --------------------------------------------------------
@@ -157,10 +149,10 @@ void Game::CreateGeometry()
 
 	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLACK);
-	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_RED);
-	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_GREEN);
-	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLUE);
-	std::shared_ptr<Material> customMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE);
+	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_RED, 0.0f);
+	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_GREEN, 0.5f);
+	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLUE, 1.0f);
+	std::shared_ptr<Material> customMaterial = std::make_shared<Material>(m_pVertexShader, m_pCustomPixelShader, C_WHITE);
 
 	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
 	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
@@ -173,10 +165,10 @@ void Game::CreateGeometry()
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, redMaterial, "Cube");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
 	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, blueMaterial, "Helix");
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, redMaterial, "Quad");
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, greenMaterial, "Sphere");
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, blueMaterial, "Torus");
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, customMaterial, "Pig");
+	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, redMaterial, "Sphere");
+	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, greenMaterial, "Torus");
+	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, blueMaterial, "Quad");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, whiteMaterial, "Pig");
 
 	m_pMeshes.push_back(cubeMesh);
 	m_pMeshes.push_back(cylinderMesh);
@@ -194,7 +186,7 @@ void Game::CreateGeometry()
 	m_pEntities.push_back(torusEntity);
 	m_pEntities.push_back(quadEntity);
 
-	int space = 5;
+	int space = 3;
 	for (int i = 0; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
 		p_entityTransform->SetPosition(XMFLOAT3(0, 0, 12));
@@ -205,8 +197,23 @@ void Game::CreateGeometry()
 			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3), 0, 0));
 		}
 	}
+}
 
+void Game::CreateLights()
+{
+	m_ambientLightColor = { 0.13f, 0.2f, 0.25f };
 
+	m_directionalLightA = {};
+	m_directionalLightA.type = 0;
+	m_directionalLightA.direction = { -1,-1,0 };
+	m_directionalLightA.color = { 0.3, 0.5, 1 };
+	m_directionalLightA.intensity = 1.0f;
+
+	m_pointLightA = {};
+	m_pointLightA.type = 1;
+
+	m_spotLightA = {};
+	m_spotLightA.type = 2;
 }
 
 // --------------------------------------------------------
@@ -316,6 +323,26 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 void Game::LightsGUI()
 {
 	ImGui::Text("Light Info");
+
+	Light placeholderLight = {};
+	switch (placeholderLight.type) {
+	case 0: // Directional
+
+		break;
+	case 1: // Point
+
+		break;
+	case 2: // Spot
+
+		break;
+	}
+
+	DirectX::XMFLOAT3 direction; // Directional and Spot lights need a direction
+	float range;				 // Point and Spot lights have a max range for attenuation
+	DirectX::XMFLOAT3 position;  // Point and Spot lights have a position in space
+	float intensity;			 // All lights need an intensity
+	DirectX::XMFLOAT3 color;	 // All lights need a color
+	float spotFalloff;
 }
 
 void Game::CameraGUI()
@@ -415,13 +442,14 @@ void Game::Draw(float deltaTime, float totalTime)
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
 		entity->GetMaterial()->GetPixelShader()->SetFloat("time", totalTime);
 
-		XMFLOAT3 ambientColor = { 0.5f, 0.5f, 0.5f };
-		XMFLOAT3 lightColor = { 1,1,1 };
-		XMFLOAT3 lightDirection = { 1,0,0 };
 
-		entity->GetMaterial()->GetPixelShader()->SetFloat3("ambientColor", ambientColor);
+		/*XMFLOAT3 lightColor = { 1,1,1 };
+		XMFLOAT3 lightDirection = { -1,-1,0 };
+		entity->GetMaterial()->GetPixelShader()->SetFloat3("ambientColor", m_ambientLightColor);
 		entity->GetMaterial()->GetPixelShader()->SetFloat3("lightColor", lightColor);
-		entity->GetMaterial()->GetPixelShader()->SetFloat3("lightDirection", lightDirection);
+		entity->GetMaterial()->GetPixelShader()->SetFloat3("lightDirection", lightDirection);*/
+
+		entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &m_directionalLightA, sizeof(Light));
 
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}

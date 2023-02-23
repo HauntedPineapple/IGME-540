@@ -2,17 +2,24 @@
 
 cbuffer ExternalData : register(b0)
 {
-    float4 colorTint;
+    float roughness;
+    float3 cameraPosition;
     float3 ambientColor;
-    float3 lightColor;
-    float3 lightDirection;
+    float4 colorTint;
+    Light directionalLightA;
+}
+
+float Diffuse(float3 normal, float3 dirToLight)
+{
+    return saturate(dot(normal, dirToLight));
 }
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
-    // Compare the light's direction and the surface normal
-    float shadingResult = dot(input.normal, -lightDirection);
-    float3 totalLightColor = ambientColor + (lightColor * shadingResult);
-	
-    return float4((float3) colorTint * totalLightColor, 1);
+    input.normal = normalize(input.normal);
+    float3 directionToLight = normalize(-directionalLightA.direction);
+    float diffuse = Diffuse(input.normal, directionToLight);
+    float3 finalPixelColor = (ambientColor * (float3) colorTint) + (diffuse * directionalLightA.color * (float3) colorTint);
+    
+    return float4(finalPixelColor, 1);
 }
