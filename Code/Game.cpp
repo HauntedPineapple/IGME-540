@@ -145,6 +145,8 @@ void Game::CreateGeometry()
 	const XMFLOAT4 C_PINK = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
 	const XMFLOAT4 C_MAGENTA = XMFLOAT4(1.0f, 0.0f, 0.5f, 1.0f);
 
+	const XMFLOAT4 COLOR = XMFLOAT4(0.44f, 0.34f, 0.48f, 1.0f);
+
 	std::shared_ptr<SimplePixelShader> pShader = m_pTestPixelShader;
 
 	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE);
@@ -169,7 +171,7 @@ void Game::CreateGeometry()
 	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_PINK, 1.0f), "Model");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, COLOR, 1.0f), "Model");
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
