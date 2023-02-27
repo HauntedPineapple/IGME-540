@@ -149,14 +149,14 @@ void Game::CreateGeometry()
 
 	std::shared_ptr<SimplePixelShader> pShader = m_pTestPixelShader;
 
-	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE);
+	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.35f);
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_RED, 0.0f);
-	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_GREEN, 0.5f);
-	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLUE, 1.0f);
-	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_CYAN, 1.0f);
-	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_MAGENTA, 1.0f);
+	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_GREEN, 0.25f);
+	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLUE, 0.5f);
+	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_CYAN, 0.75f);
+	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_MAGENTA, 0.5f);
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_YELLOW, 1.0f);
-	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLACK);
+	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLACK, 0.65f);
 
 	std::shared_ptr<Material> customMaterial = std::make_shared<Material>(m_pVertexShader, m_pCustomPixelShader, C_WHITE);
 
@@ -207,7 +207,7 @@ void Game::CreateGeometry()
 
 void Game::CreateLights()
 {
-	m_ambientLightColor = { 0.13f, 0.2f, 0.25f };
+	m_ambientLightColor = { 0.02f, 0.09f, 0.14f };
 
 	m_directionalLightA = {};
 	m_directionalLightA.type = 0;
