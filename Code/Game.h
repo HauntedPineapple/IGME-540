@@ -24,7 +24,7 @@ public:
 	void Update(float deltaTime, float totalTime);
 
 	void UpdateGUI(float deltaTime, float totalTime);
-	void LightsGUI(std::shared_ptr<Light> a_pLight);
+	void LightsGUI(Light a_light);
 	void CameraGUI();
 	void EntityGUI(std::shared_ptr<Entity> a_pEntity);
 
@@ -51,8 +51,8 @@ private:
 
 	DirectX::XMFLOAT3 m_ambientLightColor;
 
+	std::vector<Light> m_lights;
 	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
-	std::vector<std::shared_ptr<Light>> m_pLights;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
 
@@ -60,11 +60,4 @@ private:
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
-
-	Light m_directionalLightA;
-	Light m_directionalLightB;
-	Light m_directionalLightC;
-	Light m_pointLightA;
-	Light m_pointLightB;
-	Light m_spotLightA;
 };

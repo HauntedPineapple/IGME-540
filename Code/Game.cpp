@@ -42,12 +42,6 @@ Game::Game(HINSTANCE hInstance)
 
 	m_ambientLightColor = {};
 	m_currentCamIndex = 0;
-	m_directionalLightA = {};
-	m_directionalLightB = {};
-	m_directionalLightC = {};
-	m_pointLightA = {};
-	m_pointLightB = {};
-	m_spotLightA = {};
 }
 
 // --------------------------------------------------------
@@ -177,13 +171,13 @@ void Game::CreateGeometry()
 	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
 
-	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
-	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
-	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.1f), "Model");
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
+	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.0f), "Helix");
+	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.25f), "Cylinder");
+	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.4f), "Cube");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.5f), "Model");
+	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.75f), "Sphere");
+	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.9f), "Torus");
+	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 1.0f), "Quad");
 
 	m_pMeshes.push_back(cubeMesh);
 	m_pMeshes.push_back(cylinderMesh);
@@ -216,47 +210,48 @@ void Game::CreateGeometry()
 
 void Game::CreateLights()
 {
-	m_ambientLightColor = { 0.06f, 0.2f, 0.25f };
+	//m_ambientLightColor = { 0.06f, 0.2f, 0.25f };
+	m_ambientLightColor = { 0.1f, 0.1f, 0.25f };
 
-	m_directionalLightA = {};
-	m_directionalLightA.type = 0;
-	m_directionalLightA.direction = { 1 ,0, 0 };
-	m_directionalLightA.color = { 1, 0, 0 };
-	m_directionalLightA.intensity = 1.0f;
+	Light directionalLightA = {};
+	directionalLightA.type = 0;
+	directionalLightA.direction = { 1 ,0, 0 };
+	directionalLightA.color = { 1, 0, 0 };
+	directionalLightA.intensity = 1.0f;
 
-	m_directionalLightB = {};
-	m_directionalLightB.type = 0;
-	m_directionalLightB.direction = { 0, 0, 1 };
-	m_directionalLightB.color = { 0, 0, 1 };
-	m_directionalLightB.intensity = 1.0f;
+	Light directionalLightB = {};
+	directionalLightB.type = 0;
+	directionalLightB.direction = { 0, 0, 1 };
+	directionalLightB.color = { 0, 0, 1 };
+	directionalLightB.intensity = 1.0f;
 
-	m_directionalLightC = {};
-	m_directionalLightC.type = 0;
-	m_directionalLightC.direction = { 1, 1, 1 };
-	m_directionalLightC.color = { 1, 1, 1 };
-	m_directionalLightC.intensity = 1.0f;
+	Light	directionalLightC = {};
+	directionalLightC.type = 0;
+	directionalLightC.direction = { 0, 1, 0 };
+	directionalLightC.color = { 0, 1, 0 };
+	directionalLightC.intensity = 1.0f;
 
-	m_pointLightA = {};
-	m_pointLightA.type = 1;
-	m_pointLightA.color = { 1, 1, 1 };
-	m_pointLightA.intensity = 1.0f;
+	Light	pointLightA = {};
+	pointLightA.type = 1;
+	pointLightA.color = { 1, 1, 1 };
+	pointLightA.intensity = 1.0f;
 
-	m_pointLightB = {};
+	Light	m_pointLightB = {};
 	m_pointLightB.type = 1;
 	m_pointLightB.color = { 1, 1, 1 };
 	m_pointLightB.intensity = 1.0f;
 
-	m_spotLightA = {};
-	m_spotLightA.type = 2;
-	m_spotLightA.color = { 1, 1, 1 };
-	m_spotLightA.intensity = 1.0f;
+	Light spotLightA = {};
+	spotLightA.type = 2;
+	spotLightA.color = { 1, 1, 1 };
+	spotLightA.intensity = 1.0f;
 
-	m_pLights.push_back(std::make_shared<Light>(m_directionalLightA));
-	//m_pLights.push_back(std::make_shared<Light>(m_directionalLightB));
-	//m_pLights.push_back(std::make_shared<Light>(m_directionalLightC));
-	//m_pLights.push_back(std::make_shared<Light>(m_pointLightA));
-	//m_pLights.push_back(std::make_shared<Light>(m_pointLightB));
-	//m_pLights.push_back(std::make_shared<Light>(m_spotLightA));
+	m_lights.push_back(directionalLightA);
+	m_lights.push_back(directionalLightB);
+	m_lights.push_back(directionalLightC);
+	//m_pLights.push_back(pointLightA);
+	//m_pLights.push_back(std::make_shared<Light>(pointLightB);
+	//m_pLights.push_back(spotLightA);
 }
 
 // --------------------------------------------------------
@@ -302,7 +297,7 @@ void Game::Update(float deltaTime, float totalTime)
 				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
 		}
 		if (entityName == "Cylinder") {
-
+			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
 		}
 		if (entityName == "Cube") {
 			entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
@@ -357,12 +352,12 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 
 	if (ImGui::CollapsingHeader("Light Controls")) {
 		ImGui::ColorEdit3("Ambient Light Color", (float*)&m_ambientLightColor);
-		for (int i = 0; i < m_pLights.size(); i++)
+		for (int i = 0; i < m_lights.size(); i++)
 		{
 			std::string label = "Light " + std::to_string(i + 1);
 			ImGui::PushID(i);
 			if (ImGui::TreeNode(label.data())) {
-				LightsGUI(m_pLights[i]);
+				LightsGUI(m_lights[i]);
 				ImGui::TreePop();
 			}
 			ImGui::PopID();
@@ -393,9 +388,9 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	ImGui::End();
 }
 
-void Game::LightsGUI(std::shared_ptr<Light> a_pLight)
+void Game::LightsGUI(Light a_light)
 {
-	switch (a_pLight->type) {
+	switch (a_light.type) {
 	case 0: // Directional
 		ImGui::Text("Directional Light");
 		break;
@@ -407,22 +402,22 @@ void Game::LightsGUI(std::shared_ptr<Light> a_pLight)
 		break;
 	}
 
-	if (a_pLight->type == 0 || a_pLight->type == 2)
+	if (a_light.type == 0 || a_light.type == 2)
 	{
-		ImGui::DragFloat3("Direction", &a_pLight->direction.x, 0.005f, -1, 1);
+		ImGui::DragFloat3("Direction", &a_light.direction.x, 0.005f, -1, 1);
 	}
-	if (a_pLight->type == 1 || a_pLight->type == 2)
+	if (a_light.type == 1 || a_light.type == 2)
 	{
-		ImGui::DragFloat("Range", &a_pLight->range, 0.1f);
-		ImGui::DragFloat3("Position", &a_pLight->position.x, 0.01f);
+		ImGui::DragFloat("Range", &a_light.range, 0.1f);
+		ImGui::DragFloat3("Position", &a_light.position.x, 0.01f);
 	}
-	if (a_pLight->type == 2)
+	if (a_light.type == 2)
 	{
-		ImGui::DragFloat("Falloff", &a_pLight->spotFalloff, 0.1f);
+		ImGui::DragFloat("Falloff", &a_light.spotFalloff, 0.1f);
 	}
 
-	ImGui::DragFloat("Intensity", &a_pLight->intensity, 0.01f, 0.0f, 1000.0f);
-	ImGui::ColorEdit3("Color", (float*)&a_pLight->color);
+	ImGui::DragFloat("Intensity", &a_light.intensity, 0.01f, 0.0f, 1000.0f);
+	ImGui::ColorEdit3("Color", (float*)&a_light.color);
 }
 
 void Game::CameraGUI()
@@ -520,12 +515,15 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
-		entity->GetMaterial()->GetPixelShader()->SetFloat("time", totalTime);
+		std::shared_ptr<SimplePixelShader> pixelShader = entity->GetMaterial()->GetPixelShader();
+		pixelShader->SetFloat("time", totalTime);
 
-		entity->GetMaterial()->GetPixelShader()->SetFloat3("ambientColor", m_ambientLightColor);
+		pixelShader->SetFloat3("ambientColor", m_ambientLightColor);
 
-		entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &*m_pLights[0], sizeof(Light));
-		for (int i = 0; i < m_pLights.size(); i++) { entity->GetMaterial()->GetPixelShader()->SetData("lights", &*m_pLights[i], sizeof(Light)); }
+		//pixelShader->SetData("directionalLightA", &*m_pLights[0], sizeof(Light));
+		//pixelShader->SetData("directionalLightB", &*m_pLights[1], sizeof(Light));
+		//pixelShader->SetData("directionalLightC", &*m_pLights[2], sizeof(Light));
+		pixelShader->SetData("lights", &m_lights[0], sizeof(Light) * (int)m_lights.size());
 
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}
