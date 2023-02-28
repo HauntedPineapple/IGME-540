@@ -39,6 +39,15 @@ Game::Game(HINSTANCE hInstance)
 	CreateConsoleWindow(500, 120, 32, 120);
 	printf("Console window created successfully.  Feel free to printf() here.\n");
 #endif
+
+	m_ambientLightColor = {};
+	m_currentCamIndex = 0;
+	m_directionalLightA = {};
+	m_directionalLightB = {};
+	m_directionalLightC = {};
+	m_pointLightA = {};
+	m_pointLightB = {};
+	m_spotLightA = {};
 }
 
 // --------------------------------------------------------
@@ -171,7 +180,7 @@ void Game::CreateGeometry()
 	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, COLOR, 1.0f), "Model");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.45), "Model");
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
@@ -195,9 +204,9 @@ void Game::CreateGeometry()
 	int space = 3;
 	for (int i = 0; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0, 0, 12));
+		p_entityTransform->SetPosition(XMFLOAT3(0.0f, 0.0f, 12.0f));
 		if (i < m_pEntities.size() / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-space * (i + 1), 0, 0));
+			p_entityTransform->MoveRelative(XMFLOAT3(-space * (i + 1.0f), 0.0f, 0.0f));
 		}
 		else {
 			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3), 0, 0));
@@ -207,12 +216,12 @@ void Game::CreateGeometry()
 
 void Game::CreateLights()
 {
-	m_ambientLightColor = { 0.02f, 0.09f, 0.14f };
+	m_ambientLightColor = { 0.06f, 0.2f, 0.25f };
 
 	m_directionalLightA = {};
 	m_directionalLightA.type = 0;
-	m_directionalLightA.direction = { 1 ,-1, 1 };
-	m_directionalLightA.color = { 1, 1, 1 };
+	m_directionalLightA.direction = { 1 ,0, 0 };
+	m_directionalLightA.color = { 0, 0, 1.0f };
 	m_directionalLightA.intensity = 1.0f;
 
 	m_directionalLightB = {};
@@ -285,7 +294,7 @@ void Game::Update(float deltaTime, float totalTime)
 		XMFLOAT3 entityScale = entityTransform->GetScale();
 
 		if (entityName == "Model") {
-			
+
 		}
 		if (entityName == "Helix") {
 			entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);

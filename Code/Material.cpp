@@ -18,8 +18,8 @@ void Material::SetPixelShader(std::shared_ptr<SimplePixelShader> a_pPixelShader)
 void Material::SetColorTint(DirectX::XMFLOAT4 a_colorTint) { m_colorTint = a_colorTint; }
 
 void Material::SetRoughness(float a_roughness) {
-	if (a_roughness < 0) m_roughness = 0;
-	if (a_roughness > 1) m_roughness = 1;
+	if (a_roughness < 0.0f) m_roughness = 0.0f;
+	if (a_roughness > 1.0f) m_roughness = 1.0f;
 	else m_roughness = a_roughness;
 }
 
