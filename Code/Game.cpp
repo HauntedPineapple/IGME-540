@@ -226,8 +226,8 @@ void Game::CreateLights()
 
 	m_directionalLightB = {};
 	m_directionalLightB.type = 0;
-	m_directionalLightB.direction = { 1, 1, 1 };
-	m_directionalLightB.color = { 1, 1, 1 };
+	m_directionalLightB.direction = { 0, 0, 1 };
+	m_directionalLightB.color = { 0, 0, 1 };
 	m_directionalLightB.intensity = 1.0f;
 
 	m_directionalLightC = {};
@@ -252,7 +252,7 @@ void Game::CreateLights()
 	m_spotLightA.intensity = 1.0f;
 
 	m_pLights.push_back(std::make_shared<Light>(m_directionalLightA));
-	//m_pLights.push_back(std::make_shared<Light>(m_directionalLightB));
+	m_pLights.push_back(std::make_shared<Light>(m_directionalLightB));
 	//m_pLights.push_back(std::make_shared<Light>(m_directionalLightC));
 	//m_pLights.push_back(std::make_shared<Light>(m_pointLightA));
 	//m_pLights.push_back(std::make_shared<Light>(m_pointLightB));
@@ -524,8 +524,8 @@ void Game::Draw(float deltaTime, float totalTime)
 
 		entity->GetMaterial()->GetPixelShader()->SetFloat3("ambientColor", m_ambientLightColor);
 
-		entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &*m_pLights[0], sizeof(Light));
-		//for (int i = 0; i < m_pLights.size(); i++) { entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &*m_pLights[i], sizeof(Light)); }
+		//entity->GetMaterial()->GetPixelShader()->SetData("directionalLightA", &*m_pLights[0], sizeof(Light));
+		for (int i = 0; i < m_pLights.size(); i++) { entity->GetMaterial()->GetPixelShader()->SetData("lights", &*m_pLights[i], sizeof(Light)); }
 
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}

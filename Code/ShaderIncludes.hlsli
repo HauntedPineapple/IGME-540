@@ -58,4 +58,58 @@ struct Light
     float spotFalloff; // Spot lights need a value to define their “cone” size
     float3 padding; // Purposefully padding to hit the 16-byte boundary
 };
+
+float DiffuseBRDF(float3 normal, float3 dirToLight)
+{
+    return saturate(dot(normal, dirToLight));
+}
+
+float SpecularBRDF(float3 normal, float3 lightDir, float3 viewVector, float roughness)
+{
+    float3 refl = reflect(lightDir, normal);
+    
+    // Compare reflecion against view vector    
+    float specular = saturate(dot(refl, viewVector));
+    // Raising it to a very high power to ensure falloff to zero is quick
+    float specExponent = (1.0f - roughness) * MAX_SPECULAR_EXPONENT;
+    if (specExponent > 0.005)
+        specular = pow(specular, specExponent);
+    else
+        specular = 0.0f;
+
+    return specular;
+}
+
+float Attenuate(Light light, float3 worldPos)
+{
+    float dist = distance(light.position, worldPos);
+    float att = saturate(1.0f - (dist * dist / (light.range * light.range)));
+    return att * att;
+}
+
+float3 DirectionalLight(Light light, float3 colorTint, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness)
+{
+    float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
+    float3 directionToLight = normalize(-light.direction);
+    float3 finalPixelColor = DiffuseBRDF(normal, directionToLight) * light.color;
+    finalPixelColor += SpecularBRDF(normal, normalize(light.direction), viewVector, roughness);
+    
+    return finalPixelColor;
+}
+
+float3 PointLight(Light light, float3 colorTint, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness)
+{
+    float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
+    float3 directionToLight = normalize(-light.direction);
+    float3 finalPixelColor = DiffuseBRDF(normal, directionToLight) * light.color;
+    finalPixelColor += SpecularBRDF(normal, normalize(light.direction), viewVector, roughness);
+    finalPixelColor *= Attenuate(light, worldPosition);
+    
+    return finalPixelColor;
+}
+
+float3 SpotLight(Light light, float3 colorTint, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness)
+{
+    return 0;
+}
 #endif
