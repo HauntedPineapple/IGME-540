@@ -139,20 +139,20 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateGeometry()
 {
-	const XMFLOAT4 C_BLACK = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	const XMFLOAT4 C_WHITE = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	const XMFLOAT4 C_RED = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	const XMFLOAT4 C_ORANGE = XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f);
-	const XMFLOAT4 C_YELLOW = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
-	const XMFLOAT4 C_CHARTREUSE = XMFLOAT4(0.5f, 1.0f, 0.0f, 1.0f);
-	const XMFLOAT4 C_GREEN = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	const XMFLOAT4 C_SPRING = XMFLOAT4(0.0f, 1.0f, 0.5f, 1.0f);
-	const XMFLOAT4 C_CYAN = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
-	const XMFLOAT4 C_AZURE = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
-	const XMFLOAT4 C_BLUE = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	const XMFLOAT4 C_VIOLET = XMFLOAT4(0.5f, 0.0f, 1.0f, 1.0f);
-	const XMFLOAT4 C_PINK = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
-	const XMFLOAT4 C_MAGENTA = XMFLOAT4(1.0f, 0.0f, 0.5f, 1.0f);
+	const XMFLOAT3 C_BLACK = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	const XMFLOAT3 C_WHITE = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	const XMFLOAT3 C_RED = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	const XMFLOAT3 C_ORANGE = XMFLOAT3(1.0f, 0.5f, 0.0f);
+	const XMFLOAT3 C_YELLOW = XMFLOAT3(1.0f, 1.0f, 0.0f);
+	const XMFLOAT3 C_CHARTREUSE = XMFLOAT3(0.5f, 1.0f, 0.0f);
+	const XMFLOAT3 C_GREEN = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	const XMFLOAT3 C_SPRING = XMFLOAT3(0.0f, 1.0f, 0.5f);
+	const XMFLOAT3 C_CYAN = XMFLOAT3(0.0f, 1.0f, 1.0f);
+	const XMFLOAT3 C_AZURE = XMFLOAT3(0.0f, 0.5f, 1.0f);
+	const XMFLOAT3 C_BLUE = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	const XMFLOAT3 C_VIOLET = XMFLOAT3(0.5f, 0.0f, 1.0f);
+	const XMFLOAT3 C_PINK = XMFLOAT3(1.0f, 0.0f, 1.0f);
+	const XMFLOAT3 C_MAGENTA = XMFLOAT3(1.0f, 0.0f, 0.5f);
 
 	const XMFLOAT4 COLOR = XMFLOAT4(0.44f, 0.34f, 0.48f, 1.0f);
 
@@ -163,8 +163,8 @@ void Game::CreateGeometry()
 	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_GREEN, 0.25f);
 	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLUE, 0.5f);
 	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_CYAN, 0.75f);
-	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_MAGENTA, 0.5f);
-	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_YELLOW, 1.0f);
+	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_MAGENTA, 1.0f);
+	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_YELLOW, 0.5f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_BLACK, 0.65f);
 
 	std::shared_ptr<Material> customMaterial = std::make_shared<Material>(m_pVertexShader, m_pCustomPixelShader, C_WHITE);
@@ -180,7 +180,7 @@ void Game::CreateGeometry()
 	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.45), "Model");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.1f), "Model");
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
@@ -209,7 +209,7 @@ void Game::CreateGeometry()
 			p_entityTransform->MoveRelative(XMFLOAT3(-space * (i + 1.0f), 0.0f, 0.0f));
 		}
 		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3), 0, 0));
+			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3.0f), 0.0f, 0.0f));
 		}
 	}
 }
@@ -221,7 +221,7 @@ void Game::CreateLights()
 	m_directionalLightA = {};
 	m_directionalLightA.type = 0;
 	m_directionalLightA.direction = { 1 ,0, 0 };
-	m_directionalLightA.color = { 0, 0, 1.0f };
+	m_directionalLightA.color = { 1, 0, 0 };
 	m_directionalLightA.intensity = 1.0f;
 
 	m_directionalLightB = {};

@@ -33,7 +33,7 @@ VertexToPixel main(VertexShaderInput input)
     output.normal = mul((float3x3)worldInvTransposeMatrix, input.normal);
 	
 	// get the pixel's world position
-    output.worldPosition = mul(worldMatrix, float4(input.localPosition, 1)).xyz;
+    output.worldPosition = mul(worldMatrix, float4(input.localPosition, 1.0f)).xyz;
 
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)

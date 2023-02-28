@@ -1,6 +1,6 @@
 #include "Material.h"
 
-Material::Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT4 a_colorTint, float a_roughness)
+Material::Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT3 a_colorTint, float a_roughness)
 {
 	m_pVertexShader = a_pVertexShader;
 	m_pPixelShader = a_pPixelShader;
@@ -10,12 +10,12 @@ Material::Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::sha
 
 std::shared_ptr<SimpleVertexShader> Material::GetVertexShader() { return m_pVertexShader; }
 std::shared_ptr<SimplePixelShader> Material::GetPixelShader() { return m_pPixelShader; }
-DirectX::XMFLOAT4 Material::GetColorTint() { return m_colorTint; }
+DirectX::XMFLOAT3 Material::GetColorTint() { return m_colorTint; }
 float Material::GetRoughness() { return m_roughness; }
 
 void Material::SetVertexShader(std::shared_ptr<SimpleVertexShader> a_pVertexShader) { m_pVertexShader = a_pVertexShader; }
 void Material::SetPixelShader(std::shared_ptr<SimplePixelShader> a_pPixelShader) { m_pPixelShader = a_pPixelShader; }
-void Material::SetColorTint(DirectX::XMFLOAT4 a_colorTint) { m_colorTint = a_colorTint; }
+void Material::SetColorTint(DirectX::XMFLOAT3 a_colorTint) { m_colorTint = a_colorTint; }
 
 void Material::SetRoughness(float a_roughness) {
 	if (a_roughness < 0.0f) m_roughness = 0.0f;
@@ -37,6 +37,6 @@ void Material::SendDataToShader(Transform* a_transform, std::shared_ptr<Camera> 
 
 	m_pPixelShader->SetFloat("roughness", this->GetRoughness());
 	m_pPixelShader->SetFloat3("cameraPosition", a_pCamera->GetTransform()->GetPosition());
-	m_pPixelShader->SetFloat4("colorTint", this->GetColorTint());
+	m_pPixelShader->SetFloat3("colorTint", this->GetColorTint());
 	m_pPixelShader->CopyAllBufferData();
 }
