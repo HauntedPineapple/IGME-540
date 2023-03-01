@@ -24,7 +24,7 @@ public:
 	void Update(float deltaTime, float totalTime);
 
 	void UpdateGUI(float deltaTime, float totalTime);
-	void LightsGUI(Light a_light);
+	void LightsGUI(Light* a_pLight);
 	void CameraGUI();
 	void EntityGUI(std::shared_ptr<Entity> a_pEntity);
 

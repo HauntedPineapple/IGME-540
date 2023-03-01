@@ -1,6 +1,6 @@
 #include "ShaderIncludes.hlsli"
 
-#define NUM_LIGHTS 3
+#define NUM_LIGHTS 5
 
 cbuffer ExternalData : register(b0)
 {

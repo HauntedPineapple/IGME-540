@@ -225,33 +225,38 @@ void Game::CreateLights()
 	directionalLightB.color = { 0, 0, 1 };
 	directionalLightB.intensity = 1.0f;
 
-	Light	directionalLightC = {};
+	Light directionalLightC = {};
 	directionalLightC.type = 0;
 	directionalLightC.direction = { 0, 1, 0 };
 	directionalLightC.color = { 0, 1, 0 };
 	directionalLightC.intensity = 1.0f;
 
-	Light	pointLightA = {};
+	Light pointLightA = {};
 	pointLightA.type = 1;
-	pointLightA.color = { 1, 1, 1 };
+	pointLightA.position = { -5, 2, 10 };
+	pointLightA.color = { 0.85f, 0.38f, 0.21f};
 	pointLightA.intensity = 1.0f;
+	pointLightA.range = 10.0f;
 
-	Light	m_pointLightB = {};
-	m_pointLightB.type = 1;
-	m_pointLightB.color = { 1, 1, 1 };
-	m_pointLightB.intensity = 1.0f;
+	Light pointLightB = {};
+	pointLightB.type = 1;
+	pointLightB.position = { 0, 0, 12 };
+	pointLightB.color = { 0.45f, 0.16f, 0.53f };
+	pointLightB.intensity = 1.0f;
+	pointLightB.range = 25.0f;
 
 	Light spotLightA = {};
 	spotLightA.type = 2;
+	spotLightA.position = { 1, 1, 1 };
 	spotLightA.color = { 1, 1, 1 };
 	spotLightA.intensity = 1.0f;
 
 	m_lights.push_back(directionalLightA);
 	m_lights.push_back(directionalLightB);
 	m_lights.push_back(directionalLightC);
-	//m_pLights.push_back(pointLightA);
-	//m_pLights.push_back(std::make_shared<Light>(pointLightB);
-	//m_pLights.push_back(spotLightA);
+	m_lights.push_back(pointLightA);
+	m_lights.push_back(pointLightB);
+	//m_lights.push_back(spotLightA);
 }
 
 // --------------------------------------------------------
@@ -357,7 +362,7 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 			std::string label = "Light " + std::to_string(i + 1);
 			ImGui::PushID(i);
 			if (ImGui::TreeNode(label.data())) {
-				LightsGUI(m_lights[i]);
+				LightsGUI(&m_lights[i]);
 				ImGui::TreePop();
 			}
 			ImGui::PopID();
@@ -388,9 +393,9 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	ImGui::End();
 }
 
-void Game::LightsGUI(Light a_light)
+void Game::LightsGUI(Light* a_pLight)
 {
-	switch (a_light.type) {
+	switch (a_pLight->type) {
 	case 0: // Directional
 		ImGui::Text("Directional Light");
 		break;
@@ -402,22 +407,22 @@ void Game::LightsGUI(Light a_light)
 		break;
 	}
 
-	if (a_light.type == 0 || a_light.type == 2)
+	if (a_pLight->type == 0 || a_pLight->type == 2)
 	{
-		ImGui::DragFloat3("Direction", &a_light.direction.x, 0.005f, -1, 1);
+		ImGui::DragFloat3("Direction", &a_pLight->direction.x, 0.005f, -1, 1);
 	}
-	if (a_light.type == 1 || a_light.type == 2)
+	if (a_pLight->type == 1 || a_pLight->type == 2)
 	{
-		ImGui::DragFloat("Range", &a_light.range, 0.1f);
-		ImGui::DragFloat3("Position", &a_light.position.x, 0.01f);
+		ImGui::DragFloat("Range", &a_pLight->range, 0.1f, 0.0f, 5000.0f);
+		ImGui::DragFloat3("Position", &a_pLight->position.x, 0.01f);
 	}
-	if (a_light.type == 2)
+	if (a_pLight->type == 2)
 	{
-		ImGui::DragFloat("Falloff", &a_light.spotFalloff, 0.1f);
+		ImGui::DragFloat("Falloff", &a_pLight->spotFalloff, 0.1f, 0.0f, 5.0f);
 	}
 
-	ImGui::DragFloat("Intensity", &a_light.intensity, 0.01f, 0.0f, 1000.0f);
-	ImGui::ColorEdit3("Color", (float*)&a_light.color);
+	ImGui::DragFloat("Intensity", &a_pLight->intensity, 0.01f, 0.0f, 5000.0f);
+	ImGui::ColorEdit3("Color", (float*)&a_pLight->color);
 }
 
 void Game::CameraGUI()
