@@ -6,6 +6,7 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
+#include "WICTextureLoader.h"
 
 #include "string"
 #include "cmath"
@@ -79,6 +80,7 @@ void Game::Init()
 	// Helper methods for loading shaders, creating some basic
 	// geometry to draw and some simple camera matrices.
 	LoadShaders();
+	LoadTextures();
 	CreateGeometry();
 	CreateLights();
 
@@ -125,7 +127,35 @@ void Game::LoadShaders()
 	m_pVertexShader = std::make_shared<SimpleVertexShader>(device, context, FixPath(L"VertexShader.cso").c_str());
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
 	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
+	m_pTexturePixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TexturePixelShader.cso").c_str());
 	m_pTestPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TestPixelShader.cso").c_str());
+}
+
+void Game::LoadTextures()
+{
+	// Create a sampler state
+	D3D11_SAMPLER_DESC samplerStateDescription = {};
+	samplerStateDescription.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerStateDescription.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerStateDescription.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerStateDescription.Filter = D3D11_FILTER_ANISOTROPIC;
+	samplerStateDescription.MaxAnisotropy = 16;
+	samplerStateDescription.MaxLOD = D3D11_FLOAT32_MAX; // enable mipmapping at any range
+	device->CreateSamplerState(&samplerStateDescription, m_pTextureSampler.GetAddressOf());
+
+	//CreateWICTextureFromFile(
+	//  device.Get(),
+	//	context.Get(),
+	//	FixPath(L"../../Assets/Textures/file.png").c_str(),
+	//	0,
+	//	m_pSRV.GetAddressOf());
+
+	// Load textures
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_GrassCube.png").c_str(), 0, m_pTextureSRV.GetAddressOf());
+
+	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
+	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pORMSRV.GetAddressOf());
+	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pNormalSRV.GetAddressOf());
 }
 
 // --------------------------------------------------------
@@ -148,9 +178,9 @@ void Game::CreateGeometry()
 	const XMFLOAT3 C_PINK = XMFLOAT3(1.0f, 0.0f, 1.0f);
 	const XMFLOAT3 C_MAGENTA = XMFLOAT3(1.0f, 0.0f, 0.5f);
 
-	const XMFLOAT4 COLOR = XMFLOAT4(0.44f, 0.34f, 0.48f, 1.0f);
+	const XMFLOAT3 COLOR = XMFLOAT3(0.44f, 0.34f, 0.48f);
 
-	std::shared_ptr<SimplePixelShader> pShader = m_pTestPixelShader;
+	std::shared_ptr<SimplePixelShader> pShader = m_pPixelShader;
 
 	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.35f);
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, pShader, C_RED, 0.0f);
@@ -171,13 +201,13 @@ void Game::CreateGeometry()
 	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
 
-	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.0f), "Helix");
-	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.25f), "Cylinder");
-	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.4f), "Cube");
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.5f), "Model");
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.75f), "Sphere");
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 0.9f), "Torus");
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, std::make_shared<Material>(m_pVertexShader, pShader, C_WHITE, 1.0f), "Quad");
+	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
+	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh,greenMaterial, "Cylinder");
+	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh,blueMaterial, "Cube");
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, COLOR, 0.5f), "Model");
+	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
+	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
+	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
 
 	m_pMeshes.push_back(cubeMesh);
 	m_pMeshes.push_back(cylinderMesh);
@@ -211,7 +241,7 @@ void Game::CreateGeometry()
 void Game::CreateLights()
 {
 	//m_ambientLightColor = { 0.06f, 0.2f, 0.25f };
-	m_ambientLightColor = { 0.1f, 0.1f, 0.25f };
+	m_ambientLightColor = { 0.0f, 0.0f, 0.0f };
 
 	Light directionalLightA = {};
 	directionalLightA.type = 0;
@@ -234,7 +264,7 @@ void Game::CreateLights()
 	Light pointLightA = {};
 	pointLightA.type = 1;
 	pointLightA.position = { -5, 2, 10 };
-	pointLightA.color = { 0.85f, 0.38f, 0.21f};
+	pointLightA.color = { 0.85f, 0.38f, 0.21f };
 	pointLightA.intensity = 1.0f;
 	pointLightA.range = 10.0f;
 

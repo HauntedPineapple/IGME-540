@@ -33,6 +33,7 @@ public:
 private:
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
+	void LoadTextures();
 	void CreateGeometry();
 	void CreateLights();
 
@@ -59,5 +60,13 @@ private:
 	std::shared_ptr<SimpleVertexShader> m_pVertexShader;
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
+	std::shared_ptr<SimplePixelShader> m_pTexturePixelShader;
 	std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pTextureSampler;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pTextureSRV;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pORMSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pNormalSRV;
 };
