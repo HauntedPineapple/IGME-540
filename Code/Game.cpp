@@ -209,6 +209,14 @@ void Game::CreateGeometry()
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
 
+	//std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, whiteMaterial, "Helix");
+	//std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, whiteMaterial, "Cylinder");
+	//std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, whiteMaterial, "Cube");
+	//std::shared_ptr<Entity> entity = std::make_shared<Entity>(mesh, std::make_shared<Material>(m_pVertexShader, pShader, COLOR, 0.5f), "Model");
+	//std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, whiteMaterial, "Sphere");
+	//std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, whiteMaterial, "Torus");
+	//std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, whiteMaterial, "Quad");
+
 	m_pMeshes.push_back(cubeMesh);
 	m_pMeshes.push_back(cylinderMesh);
 	m_pMeshes.push_back(helixMesh);
