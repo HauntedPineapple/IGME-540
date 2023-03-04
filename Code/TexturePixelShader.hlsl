@@ -12,11 +12,17 @@ cbuffer ExternalData : register(b0)
 	Light lights[NUM_LIGHTS]; // Array of exactly NUM_LIGHTS lights
 }
 
+Texture2D DiffuseTexture : register(t0); // "t" registers for textures
+Texture2D SpecularTexture : register(t1); // "t" registers for textures
+SamplerState BasicSampler : register(s0); // "s" registers for samplers
+
 float4 main(VertexToPixel input) : SV_TARGET
 {
 	input.normal = normalize(input.normal); // Must renormalize any interpolated vectors
+    
+	float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb;
+	
 	float3 finalPixelColor = ambientColor * colorTint;
-
 	for (int i = 0; i < NUM_LIGHTS; i++)
 	{
 		switch (lights[i].type)
@@ -32,5 +38,5 @@ float4 main(VertexToPixel input) : SV_TARGET
 		}
 
 	}
-	return float4(finalPixelColor, 1);
+    return float4(finalPixelColor * surfaceColor, 1);
 }

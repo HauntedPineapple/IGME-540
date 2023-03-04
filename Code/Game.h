@@ -34,7 +34,7 @@ private:
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
 	void LoadTextures();
-	void CreateGeometry();
+	void LoadMeshesAndCreateEntities();
 	void CreateLights();
 
 	// Note the usage of ComPtr below

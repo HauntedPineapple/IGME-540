@@ -23,6 +23,16 @@ void Material::SetRoughness(float a_roughness) {
 	else m_roughness = a_roughness;
 }
 
+void Material::AddTextureSRV(std::string a_shaderName, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_srv)
+{
+	m_textureSRVs.insert({ a_shaderName, a_srv });
+}
+
+void Material::AddSampler(std::string a_shaderName, Microsoft::WRL::ComPtr<ID3D11SamplerState> a_sampler)
+{
+	m_samplers.insert({ a_shaderName, a_sampler });
+}
+
 void Material::SendDataToShader(Transform* a_transform, std::shared_ptr<Camera> a_pCamera)
 {
 	// Activate shaders
@@ -39,4 +49,7 @@ void Material::SendDataToShader(Transform* a_transform, std::shared_ptr<Camera> 
 	m_pPixelShader->SetFloat3("cameraPosition", a_pCamera->GetTransform()->GetPosition());
 	m_pPixelShader->SetFloat3("colorTint", this->GetColorTint());
 	m_pPixelShader->CopyAllBufferData();
+
+	for (auto& t : m_textureSRVs) { m_pPixelShader->SetShaderResourceView(t.first.c_str(), t.second); }
+	for (auto& s : m_samplers) { m_pPixelShader->SetSamplerState(s.first.c_str(), s.second); }
 }
