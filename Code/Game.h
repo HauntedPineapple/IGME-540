@@ -67,6 +67,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pTextureSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pORMSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pNormalSRV;
 };

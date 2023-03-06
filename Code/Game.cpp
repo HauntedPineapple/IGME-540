@@ -151,9 +151,10 @@ void Game::LoadTextures()
 	//	m_pSRV.GetAddressOf());
 
 	// Load textures
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_BC.png").c_str(), 0, m_pTextureSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal.png").c_str(), 0, m_pTextureSRV.GetAddressOf());
 
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
+	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pORMSRV.GetAddressOf());
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pNormalSRV.GetAddressOf());
 }
@@ -175,17 +176,13 @@ void Game::LoadMeshesAndCreateEntities()
 	const XMFLOAT3 C_PINK = XMFLOAT3(1.0f, 0.0f, 1.0f);
 	const XMFLOAT3 C_MAGENTA = XMFLOAT3(1.0f, 0.0f, 0.5f);
 
-	const XMFLOAT3 COLOR = XMFLOAT3(0.44f, 0.34f, 0.48f);
-
-	std::shared_ptr<SimplePixelShader> pShader = m_pPixelShader;
-
 	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 1);
-	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_RED, 1);
-	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_GREEN, 1);
-	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLUE, 1);
-	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_CYAN, 1);
-	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_MAGENTA, 1);
-	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 1);
+	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_RED, 0.43f);
+	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_GREEN, 0.14f);
+	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLUE, 0.56f);
+	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_CYAN, 1.0f);
+	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_MAGENTA, 0.74f);
+	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1);
 
 	std::shared_ptr<Material> texturedMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
@@ -208,15 +205,6 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
 
-	//std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 0.0f), "Helix");
-	//std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 0.25f), "Cylinder");
-	//std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 0.4f), "Cube");
-	//std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 0.75f), "Sphere");
-	//std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 0.9f), "Torus");
-	//std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 1.0f), "Quad");
-
-
-
 	m_pEntities.push_back(cubeEntity);
 	m_pEntities.push_back(cylinderEntity);
 	m_pEntities.push_back(helixEntity);
@@ -226,10 +214,10 @@ void Game::LoadMeshesAndCreateEntities()
 	m_pEntities.push_back(quadEntity);
 
 	int space = 3;
-	int moveBack = 20;
+	int moveBack = 15;
 	for (int i = 0; i < 7; i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0.0f, -3.0f, moveBack));
+		p_entityTransform->SetPosition(XMFLOAT3(0.0f, 0.0f, moveBack));
 		if (i < m_pEntities.size() / 2) {
 			p_entityTransform->MoveRelative(XMFLOAT3(-space * (i + 1.0f), 0.0f, 0.0f));
 		}
@@ -244,7 +232,7 @@ void Game::LoadMeshesAndCreateEntities()
 
 void Game::CreateLights()
 {
-	m_ambientLightColor = { 0.06f, 0.2f, 0.25f };
+	m_ambientLightColor = { 0.15f, 0.15f, 0.15f };
 	//m_ambientLightColor = { 0.0f, 0.0f, 0.0f };
 
 	Light directionalLight = {};
@@ -255,20 +243,20 @@ void Game::CreateLights()
 
 	Light directionalLightA = {};
 	directionalLightA.type = 0;
-	directionalLightA.direction = { 1 ,0, 0 };
-	directionalLightA.color = { 1, 0, 0 };
+	directionalLightA.direction = { 0.5f, -1, 1 };
+	directionalLightA.color = { 1, 1, 1 };
 	directionalLightA.intensity = 1.0f;
 
 	Light directionalLightB = {};
 	directionalLightB.type = 0;
-	directionalLightB.direction = { 0, 0, 1 };
-	directionalLightB.color = { 0, 0, 1 };
+	directionalLightB.direction = { 1, 0, 1 };
+	directionalLightB.color = { 1, 1, 1 };
 	directionalLightB.intensity = 1.0f;
 
 	Light directionalLightC = {};
 	directionalLightC.type = 0;
-	directionalLightC.direction = { 0, 1, 0 };
-	directionalLightC.color = { 0, 1, 0 };
+	directionalLightC.direction = { -1, 1, 0.5f };
+	directionalLightC.color = { 1, 1, 1 };
 	directionalLightC.intensity = 1.0f;
 
 	Light pointLightA = {};
@@ -291,10 +279,10 @@ void Game::CreateLights()
 	spotLightA.color = { 1, 1, 1 };
 	spotLightA.intensity = 1.0f;
 
-	m_lights.push_back(directionalLight);
-	//m_lights.push_back(directionalLightA);
-	//m_lights.push_back(directionalLightB);
-	//m_lights.push_back(directionalLightC);
+	//m_lights.push_back(directionalLight);
+	m_lights.push_back(directionalLightA);
+	m_lights.push_back(directionalLightB);
+	m_lights.push_back(directionalLightC);
 	//m_lights.push_back(pointLightA);
 	//m_lights.push_back(pointLightB);
 	//m_lights.push_back(spotLightA);
