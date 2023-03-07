@@ -203,16 +203,11 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1);
 
-	std::shared_ptr<Material> texturedMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	texturedMaterial->AddTextureSRV("DiffuseTexture", m_pTextureSRV);
-	texturedMaterial->AddTextureSRV("SpecularTexture", m_pSpecularSRV);
-	texturedMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-
-	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
-	hylianShieldMaterial->AddTextureSRV("SpecularTexture", m_pShieldSpecularSRV);
-	hylianShieldMaterial->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
-	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
+	hylianShieldMat->AddTextureSRV("SpecularTexture", m_pShieldSpecularSRV);
+	hylianShieldMat->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
+	hylianShieldMat->AddSampler("BasicSampler", m_pTextureSampler);
 
 #pragma endregion
 
@@ -220,10 +215,10 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
 	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
 	std::shared_ptr<Mesh> helixMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
-	std::shared_ptr<Mesh> hylianShieldMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
 	std::shared_ptr<Mesh> sphereMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
 	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
 	std::shared_ptr<Mesh> quadMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
+	std::shared_ptr<Mesh> hylianShieldMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
 
 #pragma endregion
 
@@ -231,10 +226,11 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
 	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
-	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMaterial, "Hylian Shield");
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
+
+	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMat, "Hylian Shield");
 
 	m_pEntities.push_back(cubeEntity);
 	m_pEntities.push_back(cylinderEntity);
@@ -259,16 +255,48 @@ void Game::LoadMeshesAndCreateEntities()
 #pragma endregion
 
 #pragma region Test Content
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_1;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_2;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_3;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_4;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_5;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_6;
 
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, testTexture_1.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, testTexture_2.GetAddressOf());
+
+	std::shared_ptr<Material> testMaterial_1 = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	testMaterial_1->AddTextureSRV("DiffuseTexture", testTexture_1);
+	testMaterial_1->AddTextureSRV("SpecularTexture", testTexture_2);
+	testMaterial_1->AddSampler("BasicSampler", m_pTextureSampler);
+
+	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, testMaterial_1, "Test Mesh 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, testMaterial_1, "Test Mesh 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, testMaterial_1, "Test Mesh 1"));
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> minecraftPlayerSRV;
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_Player.png").c_str(), 0, minecraftPlayerSRV.GetAddressOf());
+	std::shared_ptr<Material> minecraftPlayerMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	minecraftPlayerMat->AddTextureSRV("DiffuseTexture", minecraftPlayerSRV);
+	minecraftPlayerMat->AddSampler("BasicSampler", m_pTextureSampler);
+	std::shared_ptr<Mesh> minecraftPlayerMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
+	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMat, "Minecraft Player"));
+
+	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, testMaterial_1, "Test Mesh 4"));
+	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, testMaterial_1, "Test Mesh 5"));
+	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, testMaterial_1, "Test Mesh 6"));
+
+	for (int i = 7; i < m_pEntities.size(); i++) {
+		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
+		p_entityTransform->SetPosition(XMFLOAT3(0.0f, -2.0f, 10.0f));
+		if (i < m_pEntities.size() / 2) {
+			p_entityTransform->MoveRelative(XMFLOAT3(-space * ((i - 7) + 1.0f), 0.0f, 0.0f));
+		}
+		else {
+			p_entityTransform->MoveRelative(XMFLOAT3(space * ((i - 7) - 3.0f), 0.0f, 0.0f));
+		}
+	}
 #pragma endregion
-
-
-
-
-
-
-	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, texturedMaterial, "Test Cube"));
-	m_pEntities[7]->GetTransform()->SetPosition(XMFLOAT3(0.0f, -3.0f, 10.0f));
 }
 
 void Game::CreateLights()
@@ -356,11 +384,11 @@ void Game::Update(float deltaTime, float totalTime)
 		XMFLOAT3 entityPos = entityTransform->GetPosition();
 		XMFLOAT3 entityScale = entityTransform->GetScale();
 
-		if (entityName == "Helix") {
-			entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
-			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
-		}
+		//if (entityName == "Helix") {
+		//	entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
+		//	if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+		//		entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+		//}
 		//if (entityName == "Cylinder") {
 		//	entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
 		//}
@@ -379,11 +407,11 @@ void Game::Update(float deltaTime, float totalTime)
 		//	if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
 		//		entityTransform->SetRotation(0, entityRot.y, entityRot.z);
 		//}
-		if (entityName == "Quad") {
-			entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
-			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
-		}
+		//if (entityName == "Quad") {
+		//	entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
+		//	if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+		//		entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+		//}
 	}
 
 	m_pCameras[m_currentCamIndex]->Update(deltaTime);
