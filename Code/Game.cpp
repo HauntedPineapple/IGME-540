@@ -151,16 +151,30 @@ void Game::LoadTextures()
 	//	m_pSRV.GetAddressOf());
 
 	// Load textures
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal.png").c_str(), 0, m_pTextureSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, m_pTextureSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
 
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_BC.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_ORM.png").c_str(), 0, m_pORMSRV.GetAddressOf());
+
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuseSRV;
+	//m_diffuseSRVs.insert({ "HylianShield", diffuseSRV });
+	//m_specularSRVs.insert({ "HylianShield", diffuseSRV });
+	//m_ormSRVs.insert({ "HylianShield", diffuseSRV });
+	//m_normalSRVs.insert({ "HylianShield", diffuseSRV });
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
+
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
+
+
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pORMSRV.GetAddressOf());
+
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pNormalSRV.GetAddressOf());
 }
 
 void Game::LoadMeshesAndCreateEntities()
 {
+#pragma region Color defining
 	const XMFLOAT3 C_BLACK = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	const XMFLOAT3 C_WHITE = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	const XMFLOAT3 C_RED = XMFLOAT3(1.0f, 0.0f, 0.0f);
@@ -175,7 +189,9 @@ void Game::LoadMeshesAndCreateEntities()
 	const XMFLOAT3 C_VIOLET = XMFLOAT3(0.5f, 0.0f, 1.0f);
 	const XMFLOAT3 C_PINK = XMFLOAT3(1.0f, 0.0f, 1.0f);
 	const XMFLOAT3 C_MAGENTA = XMFLOAT3(1.0f, 0.0f, 0.5f);
+#pragma endregion
 
+#pragma region Materials
 	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 1);
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_RED, 0.43f);
 	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_GREEN, 0.14f);
@@ -187,8 +203,17 @@ void Game::LoadMeshesAndCreateEntities()
 
 	std::shared_ptr<Material> texturedMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
 	texturedMaterial->AddTextureSRV("DiffuseTexture", m_pTextureSRV);
+	texturedMaterial->AddTextureSRV("SpecularTexture", m_pSpecularSRV);
 	texturedMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
+	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_pDiffuseSRV);	
+	hylianShieldMaterial->AddTextureSRV("ORMTexture", m_pORMSRV);
+	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+#pragma endregion
+
+#pragma region Meshes
 	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
 	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
 	std::shared_ptr<Mesh> helixMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
@@ -197,10 +222,13 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
 	std::shared_ptr<Mesh> quadMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
 
+#pragma endregion
+
+#pragma region Entities
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
 	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
-	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, texturedMaterial, "Hylian Shield");
+	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMaterial, "Hylian Shield");
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
@@ -225,9 +253,19 @@ void Game::LoadMeshesAndCreateEntities()
 			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3.0f), 0.0f, 0.0f));
 		}
 	}
+#pragma endregion
+
+#pragma region Test Content
+
+#pragma endregion
+
+
+
+
+
 
 	m_pEntities.push_back(std::make_shared<Entity>(cubeMesh, texturedMaterial, "Test Cube"));
-	m_pEntities[7]->GetTransform()->SetPosition(XMFLOAT3(0.0f, 0.0f, 10.0f));
+	m_pEntities[7]->GetTransform()->SetPosition(XMFLOAT3(0.0f, -3.0f, 10.0f));
 }
 
 void Game::CreateLights()
@@ -235,28 +273,22 @@ void Game::CreateLights()
 	m_ambientLightColor = { 0.15f, 0.15f, 0.15f };
 	//m_ambientLightColor = { 0.0f, 0.0f, 0.0f };
 
-	Light directionalLight = {};
-	directionalLight.type = 0;
-	directionalLight.direction = { -.5f ,-1, 1 };
-	directionalLight.color = { 1, 1, 1 };
-	directionalLight.intensity = 1.0f;
-
 	Light directionalLightA = {};
 	directionalLightA.type = 0;
-	directionalLightA.direction = { 0.5f, -1, 1 };
-	directionalLightA.color = { 1, 1, 1 };
+	directionalLightA.direction = { 1, 0.5f, 0.5f };
+	directionalLightA.color = XMFLOAT3(1, 1, 1);
 	directionalLightA.intensity = 1.0f;
 
 	Light directionalLightB = {};
 	directionalLightB.type = 0;
-	directionalLightB.direction = { 1, 0, 1 };
-	directionalLightB.color = { 1, 1, 1 };
+	directionalLightB.direction = { -0.25f, -1, 0.75f };
+	directionalLightB.color = XMFLOAT3(1, 1, 1);
 	directionalLightB.intensity = 1.0f;
 
 	Light directionalLightC = {};
 	directionalLightC.type = 0;
-	directionalLightC.direction = { -1, 1, 0.5f };
-	directionalLightC.color = { 1, 1, 1 };
+	directionalLightC.direction = { -1, 1, -0.5f };
+	directionalLightC.color = XMFLOAT3(1, 1, 1);
 	directionalLightC.intensity = 1.0f;
 
 	Light pointLightA = {};
@@ -279,7 +311,6 @@ void Game::CreateLights()
 	spotLightA.color = { 1, 1, 1 };
 	spotLightA.intensity = 1.0f;
 
-	//m_lights.push_back(directionalLight);
 	m_lights.push_back(directionalLightA);
 	m_lights.push_back(directionalLightB);
 	m_lights.push_back(directionalLightC);

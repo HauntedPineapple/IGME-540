@@ -4,6 +4,7 @@
 #include <wrl/client.h> // Used for ComPtr - a smart pointer for COM objects
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include "DXCore.h"
 #include "Mesh.h"
