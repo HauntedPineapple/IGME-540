@@ -40,11 +40,11 @@ float4 main(VertexToPixel input) : SV_TARGET
         switch (lights[i].type)
         {
             case 0: //directional
-                finalPixelColor += DirectionalLight(lights[i], colorTint, input.normal, cameraPosition, input.worldPosition, roughness);
+                finalPixelColor += DirectionalLight(lights[i], colorTint, input.normal, cameraPosition, input.worldPosition, roughness,1);
                 break;
                 
             case 1: //point
-                finalPixelColor += PointLight(lights[i], colorTint, input.normal, cameraPosition, input.worldPosition, roughness);
+                finalPixelColor += PointLight(lights[i], colorTint, input.normal, cameraPosition, input.worldPosition, roughness,1);
                 break;
                 
             case 2: //spot

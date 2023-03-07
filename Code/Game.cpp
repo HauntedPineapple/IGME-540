@@ -154,8 +154,10 @@ void Game::LoadTextures()
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, m_pTextureSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
 
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_BC.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_ORM.png").c_str(), 0, m_pORMSRV.GetAddressOf());
+
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_BC.png").c_str(), 0, m_pShieldDiffuseSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_Specular.png").c_str(), 0, m_pShieldSpecularSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_ORM.png").c_str(), 0, m_pShieldORMSRV.GetAddressOf());
 
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuseSRV;
 	//m_diffuseSRVs.insert({ "HylianShield", diffuseSRV });
@@ -207,8 +209,9 @@ void Game::LoadMeshesAndCreateEntities()
 	texturedMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_pDiffuseSRV);	
-	hylianShieldMaterial->AddTextureSRV("ORMTexture", m_pORMSRV);
+	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
+	hylianShieldMaterial->AddTextureSRV("SpecularTexture", m_pShieldSpecularSRV);
+	hylianShieldMaterial->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
 	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 #pragma endregion

@@ -87,7 +87,7 @@ float Attenuate(Light light, float3 worldPos)
     return att * att;
 }
 
-float3 DirectionalLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale=1)
+float3 DirectionalLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale)
 {
     float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
     float3 directionToLight = normalize(-light.direction);
@@ -99,7 +99,7 @@ float3 DirectionalLight(Light light, float3 surfaceColor, float3 normal, float3 
     return (diffuse * surfaceColor + specular) * light.color;
 }
 
-float3 PointLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale=1)
+float3 PointLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale)
 {
     float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
     float3 directionToLight = normalize(light.position - worldPosition);
