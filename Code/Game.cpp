@@ -370,16 +370,16 @@ void Game::CreateLights()
 
 	Light pointLightA = {};
 	pointLightA.type = 1;
-	pointLightA.position = { -1.5f, 0, 0 };
+	pointLightA.position = { -5.0f, 0, 3 };
 	pointLightA.color = { 1, 1, 1 };
-	pointLightA.intensity = 1.0f;
+	pointLightA.intensity = 0.5f;
 	pointLightA.range = 10.0f;
 
 	Light pointLightB = {};
 	pointLightB.type = 1;
-	pointLightB.position = { 1.5f, 0, 0 };
+	pointLightB.position = { 5.0f, 0, 3 };
 	pointLightB.color = { 1, 1, 1 };
-	pointLightB.intensity = 1.0f;
+	pointLightB.intensity = 0.5f;
 	pointLightB.range = 25.0f;
 
 	m_lights.push_back(directionalLightA);
