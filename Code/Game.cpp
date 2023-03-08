@@ -128,7 +128,6 @@ void Game::LoadShaders()
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
 	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
 	m_pTexturePixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TexturePixelShader.cso").c_str());
-	m_pTestPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TestPixelShader.cso").c_str());
 }
 
 void Game::LoadTextures()
@@ -151,26 +150,16 @@ void Game::LoadTextures()
 	//	m_pSRV.GetAddressOf());
 
 	// Load textures
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, m_pTextureSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
-
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_BC.png").c_str(), 0, m_pShieldDiffuseSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_Specular.png").c_str(), 0, m_pShieldSpecularSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/T_HylianShield_ORM.png").c_str(), 0, m_pShieldORMSRV.GetAddressOf());
 
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuseSRV;
-	//m_diffuseSRVs.insert({ "HylianShield", diffuseSRV });
-	//m_specularSRVs.insert({ "HylianShield", diffuseSRV });
-	//m_ormSRVs.insert({ "HylianShield", diffuseSRV });
-	//m_normalSRVs.insert({ "HylianShield", diffuseSRV });
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
-
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
-
-
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pORMSRV.GetAddressOf());
-
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pNormalSRV.GetAddressOf());
 }
 
@@ -194,14 +183,14 @@ void Game::LoadMeshesAndCreateEntities()
 #pragma endregion
 
 #pragma region Materials
-	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 1.0f);
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_RED, 0.43f);
 	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_GREEN, 0.14f);
 	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLUE, 0.56f);
 	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_CYAN, 1.0f);
 	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_MAGENTA, 0.74f);
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
-	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1);
+	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 
 	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
 	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
@@ -302,7 +291,6 @@ void Game::LoadMeshesAndCreateEntities()
 void Game::CreateLights()
 {
 	m_ambientLightColor = { 0.15f, 0.15f, 0.15f };
-	//m_ambientLightColor = { 0.0f, 0.0f, 0.0f };
 
 	Light directionalLightA = {};
 	directionalLightA.type = 0;
@@ -322,6 +310,24 @@ void Game::CreateLights()
 	directionalLightC.color = XMFLOAT3(1, 1, 1);
 	directionalLightC.intensity = 1.0f;
 
+	/*Light directionalLightA = {};
+	directionalLightA.type = 0;
+	directionalLightA.direction = { 1 ,0, 0 };
+	directionalLightA.color = { 1, 0, 0 };
+	directionalLightA.intensity = 1.0f;
+
+	Light directionalLightB = {};
+	directionalLightB.type = 0;
+	directionalLightB.direction = { 0, -1, 0};
+	directionalLightB.color = { 0, 1, 0 };
+	directionalLightB.intensity = 1.0f;
+
+	Light directionalLightC = {};
+	directionalLightC.type = 0;
+	directionalLightC.direction = { 0, 0, 1 };
+	directionalLightC.color = { 0, 0, 1 };
+	directionalLightC.intensity = 1.0f;*/
+
 	Light pointLightA = {};
 	pointLightA.type = 1;
 	pointLightA.position = { -5, 2, 10 };
@@ -336,18 +342,11 @@ void Game::CreateLights()
 	pointLightB.intensity = 1.0f;
 	pointLightB.range = 25.0f;
 
-	Light spotLightA = {};
-	spotLightA.type = 2;
-	spotLightA.position = { 1, 1, 1 };
-	spotLightA.color = { 1, 1, 1 };
-	spotLightA.intensity = 1.0f;
-
 	m_lights.push_back(directionalLightA);
 	m_lights.push_back(directionalLightB);
 	m_lights.push_back(directionalLightC);
 	//m_lights.push_back(pointLightA);
 	//m_lights.push_back(pointLightB);
-	//m_lights.push_back(spotLightA);
 }
 
 // --------------------------------------------------------
@@ -384,34 +383,34 @@ void Game::Update(float deltaTime, float totalTime)
 		XMFLOAT3 entityPos = entityTransform->GetPosition();
 		XMFLOAT3 entityScale = entityTransform->GetScale();
 
-		//if (entityName == "Helix") {
-		//	entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
-		//	if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
-		//		entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
-		//}
-		//if (entityName == "Cylinder") {
-		//	entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
-		//}
-		//if (entityName == "Cube") {
-		//	entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
-		//	if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
-		//		entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
-		//	if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
-		//		entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
-		//}
-		//if (entityName == "Sphere") {
-		//	entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
-		//}
-		//if (entityName == "Torus") {
-		//	entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
-		//	if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
-		//		entityTransform->SetRotation(0, entityRot.y, entityRot.z);
-		//}
-		//if (entityName == "Quad") {
-		//	entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
-		//	if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
-		//		entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
-		//}
+		if (entityName == "Helix") {
+			entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
+			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+		}
+		if (entityName == "Cylinder") {
+			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+		}
+		if (entityName == "Cube") {
+			entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
+			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+		}
+		if (entityName == "Sphere") {
+			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+		}
+		if (entityName == "Torus") {
+			entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
+			if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(0, entityRot.y, entityRot.z);
+		}
+		if (entityName == "Quad") {
+			entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
+			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+		}
 	}
 
 	m_pCameras[m_currentCamIndex]->Update(deltaTime);

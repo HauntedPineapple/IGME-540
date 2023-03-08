@@ -55,7 +55,7 @@ struct Light
     float3 position; // Point and Spot lights have a position in space
     float intensity; // All lights need an intensity
     float3 color; // All lights need a color
-    float spotFalloff; // Spot lights need a value to define their “cone” size
+    float spotFalloff; // Spot lights need a value to define their ï¿½coneï¿½ size
     float3 padding; // Purposefully padding to hit the 16-byte boundary
 };
 
@@ -87,34 +87,30 @@ float Attenuate(Light light, float3 worldPos)
     return att * att;
 }
 
-float3 DirectionalLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale)
+float3 DirectionalLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale = 1)
 {
     float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
     float3 directionToLight = normalize(-light.direction);
+    
+    float3 lightColor = DiffuseBRDF(normal, directionToLight) * surfaceColor;
+    lightColor += SpecularBRDF(normal, -directionToLight, viewVector, roughness) * specularScale;
 
-    float diffuse = DiffuseBRDF(normal, directionToLight);
-    float specular = SpecularBRDF(normal, -directionToLight, viewVector, roughness) * specularScale;
-
-    //return lightColor * light.color;
-    return (diffuse * surfaceColor + specular) * light.color;
+    return lightColor * light.color;
 }
 
-float3 PointLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale)
+float3 PointLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale = 1)
 {
     float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
     float3 directionToLight = normalize(light.position - worldPosition);
-    
-    //float lightColor = DiffuseBRDF(normal, directionToLight) * surfaceColor;
-    //lightColor += SpecularBRDF(normal, -directionToLight, viewVector, roughness);
+
     float attenuate = Attenuate(light, worldPosition);
-    float diffuse = DiffuseBRDF(normal, directionToLight);
-    float specular = SpecularBRDF(normal, -directionToLight, viewVector, roughness) * specularScale;
+    float3 lightColor = DiffuseBRDF(normal, directionToLight) * surfaceColor;
+    lightColor += SpecularBRDF(normal, -directionToLight, viewVector, roughness) * specularScale;
     
-    //return (lightColor * light.color) * attenuate;
-    return (diffuse * surfaceColor + specular) * attenuate * light.color;
+    return (lightColor * light.color) * attenuate;
 }
 
-float3 SpotLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale=1)
+float3 SpotLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale = 1)
 {
     return 0;
 }

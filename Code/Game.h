@@ -65,7 +65,6 @@ private:
 	std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pTextureSampler;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pTextureSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldDiffuseSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldSpecularSRV;
