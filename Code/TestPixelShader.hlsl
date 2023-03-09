@@ -16,6 +16,7 @@ cbuffer ExternalData : register(b0)
 
 Texture2D DiffuseTexture : register(t0); // "t" registers for textures
 Texture2D SpecularTexture : register(t1); // "t" registers for textures
+Texture2D ORMTexture : register(t2); // "t" registers for textures
 SamplerState BasicSampler : register(s0); // "s" registers for samplers
 
 float4 main(VertexToPixel input) : SV_TARGET
@@ -24,6 +25,9 @@ float4 main(VertexToPixel input) : SV_TARGET
     input.uv = input.uv * uvScale + uvOffset;
     
     float specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
+    float occlusionLevel = ORMTexture.Sample(BasicSampler, input.uv).r;
+    float roughnessLevel = ORMTexture.Sample(BasicSampler, input.uv).g;
+    float metallicLevel = ORMTexture.Sample(BasicSampler, input.uv).b;
     
     float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb * colorTint;
     float3 finalPixelColor = ambientColor * surfaceColor;
@@ -32,7 +36,7 @@ float4 main(VertexToPixel input) : SV_TARGET
         switch (lights[i].type)
         {
             case 0: //directional
-                finalPixelColor += DirectionalLight(lights[i], surfaceColor, input.normal, cameraPosition, input.worldPosition, roughness, specularScale);
+                finalPixelColor += DirectionalLight(lights[i], surfaceColor, input.normal, cameraPosition, input.worldPosition, roughnessLevel, specularScale);
                 break;
             case 1: //point
                 finalPixelColor += PointLight(lights[i], surfaceColor, input.normal, cameraPosition, input.worldPosition, roughness, specularScale);

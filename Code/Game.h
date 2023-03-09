@@ -85,6 +85,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksSpec;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesORM;
 
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;

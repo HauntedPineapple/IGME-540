@@ -166,6 +166,8 @@ void Game::LoadTextures()
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_spec.png").c_str(), 0, m_bluePlanksSpec.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_diff.png").c_str(), 0, m_metalPlateDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_specular.png").c_str(), 0, m_metalPlateSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/stone_tiles_diff.png").c_str(), 0, m_stoneTilesDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/stone_tiles_orm.png").c_str(), 0, m_stoneTilesORM.GetAddressOf());
 }
 
 void Game::LoadMeshesAndCreateEntities()
@@ -197,10 +199,10 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 
-	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
 	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
 	hylianShieldMat->AddTextureSRV("SpecularTexture", m_pShieldSpecularSRV);
-	//hylianShieldMat->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
+	hylianShieldMat->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
 	hylianShieldMat->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> minecraftPlayerMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
@@ -231,6 +233,11 @@ void Game::LoadMeshesAndCreateEntities()
 	metalPlateMaterial->AddTextureSRV("DiffuseTexture", m_metalPlateDiff);
 	metalPlateMaterial->AddTextureSRV("SpecularTexture", m_metalPlateSpec);
 	metalPlateMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> stoneTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
+	stoneTilesMaterial->AddTextureSRV("DiffuseTexture", m_stoneTilesDiff);
+	stoneTilesMaterial->AddTextureSRV("ORMTexture", m_stoneTilesORM);
+	stoneTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> uvMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
 	uvMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
@@ -282,7 +289,7 @@ void Game::LoadMeshesAndCreateEntities()
 	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMat, "Minecraft Player"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Test Mesh 4"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Test Mesh 5"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, uvMaterial, "Test Mesh 6"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, stoneTilesMaterial, "Test Mesh 6"));
 
 	for (int i = 7; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
