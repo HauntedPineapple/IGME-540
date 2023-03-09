@@ -25,6 +25,7 @@ public:
 	void Update(float deltaTime, float totalTime);
 
 	void UpdateGUI(float deltaTime, float totalTime);
+	void ScaleMaterialGUI(std::shared_ptr<Material> a_pScalableMaterial);
 	void LightsGUI(Light* a_pLight);
 	void CameraGUI();
 	void EntityGUI(std::shared_ptr<Entity> a_pEntity);
@@ -66,12 +67,27 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pTextureSampler;
 
+	std::shared_ptr<Material> m_pEditableMaterial;
+
+	// SRVS
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldDiffuseSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldSpecularSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldORMSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_minecraftSkinSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_brokenTilesDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_brokenTilesSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_tilesDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_tilesSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateSpec;
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pORMSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pNormalSRV;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pORMSRV;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pNormalSRV;
 };

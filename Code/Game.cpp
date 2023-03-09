@@ -128,6 +128,7 @@ void Game::LoadShaders()
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
 	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
 	m_pTexturePixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TexturePixelShader.cso").c_str());
+	m_pTestPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TestPixelShader.cso").c_str());
 }
 
 void Game::LoadTextures()
@@ -145,22 +146,26 @@ void Game::LoadTextures()
 	//CreateWICTextureFromFile(
 	//  device.Get(),
 	//	context.Get(),
-	//	FixPath(L"../../Assets/Textures/UV.jpg").c_str(),
+	//	FixPath(L"../../Assets/Textures/filename.png").c_str(),
 	//	0,
 	//	m_pSRV.GetAddressOf());
 
 	// Load textures
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
-
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_BC.png").c_str(), 0, m_pShieldDiffuseSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Specular.png").c_str(), 0, m_pShieldSpecularSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_ORM.png").c_str(), 0, m_pShieldORMSRV.GetAddressOf());
-
-	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pDiffuseSRV.GetAddressOf());
-	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pSpecularSRV.GetAddressOf());
-	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pORMSRV.GetAddressOf());
-	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/file.png").c_str(), 0, m_pNormalSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/minecraft/T_Player.png").c_str(), 0, m_minecraftSkinSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/UV.jpg").c_str(), 0, m_uvTexture.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal.png").c_str(), 0, m_rustyMetalDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal_specular.png").c_str(), 0, m_rustyMetalSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, m_brokenTilesDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, m_brokenTilesSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/tiles.png").c_str(), 0, m_tilesDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/tiles_specular.png").c_str(), 0, m_tilesSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_diff.png").c_str(), 0, m_bluePlanksDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_spec.png").c_str(), 0, m_bluePlanksSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_diff.png").c_str(), 0, m_metalPlateDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_specular.png").c_str(), 0, m_metalPlateSpec.GetAddressOf());
 }
 
 void Game::LoadMeshesAndCreateEntities()
@@ -195,12 +200,43 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
 	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
 	hylianShieldMat->AddTextureSRV("SpecularTexture", m_pShieldSpecularSRV);
-	hylianShieldMat->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
+	//hylianShieldMat->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
 	hylianShieldMat->AddSampler("BasicSampler", m_pTextureSampler);
 
+	std::shared_ptr<Material> minecraftPlayerMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	minecraftPlayerMat->AddTextureSRV("DiffuseTexture", m_minecraftSkinSRV);
+	minecraftPlayerMat->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	rustyMetalMaterial->AddTextureSRV("DiffuseTexture", m_rustyMetalDiff);
+	rustyMetalMaterial->AddTextureSRV("SpecularTexture", m_rustyMetalSpec);
+	rustyMetalMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> brokenTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	brokenTilesMaterial->AddTextureSRV("DiffuseTexture", m_brokenTilesDiff);
+	brokenTilesMaterial->AddTextureSRV("SpecularTexture", m_brokenTilesSpec);
+	brokenTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> tilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	tilesMaterial->AddTextureSRV("DiffuseTexture", m_tilesDiff);
+	tilesMaterial->AddTextureSRV("SpecularTexture", m_tilesSpec);
+	tilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	bluePlanksMaterial->AddTextureSRV("DiffuseTexture", m_bluePlanksDiff);
+	bluePlanksMaterial->AddTextureSRV("SpecularTexture", m_bluePlanksSpec);
+	bluePlanksMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	metalPlateMaterial->AddTextureSRV("DiffuseTexture", m_metalPlateDiff);
+	metalPlateMaterial->AddTextureSRV("SpecularTexture", m_metalPlateSpec);
+	metalPlateMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> uvMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
+	uvMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
+	uvMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 #pragma endregion
 
-#pragma region Meshes
 	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
 	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
 	std::shared_ptr<Mesh> helixMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
@@ -208,17 +244,14 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
 	std::shared_ptr<Mesh> quadMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
 	std::shared_ptr<Mesh> hylianShieldMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
+	std::shared_ptr<Mesh> minecraftPlayerMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
 
-#pragma endregion
-
-#pragma region Entities
 	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
 	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
 	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
-
 	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMat, "Hylian Shield");
 
 	m_pEntities.push_back(cubeEntity);
@@ -241,91 +274,32 @@ void Game::LoadMeshesAndCreateEntities()
 			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3.0f), 0.0f, 0.0f));
 		}
 	}
-#pragma endregion
-
-#pragma region Test Content
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rustyMetalDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rustyMetalSpec;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brokenTilesDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brokenTilesSpec;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tilesDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tilesSpec;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bluePlanksDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bluePlanksSpec;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> metalPlateDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> metalPlateSpec;
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_11;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_12;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testTexture_13;
-
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal.png").c_str(), 0, rustyMetalDiff.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal_specular.png").c_str(), 0, rustyMetalSpec.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, brokenTilesDiff.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, brokenTilesSpec.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/tiles.png").c_str(), 0, tilesDiff.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/tiles_specular.png").c_str(), 0, tilesSpec.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_diff.png").c_str(), 0, bluePlanksDiff.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_spec.png").c_str(), 0, bluePlanksSpec.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_diff.png").c_str(), 0, metalPlateDiff.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_specular.png").c_str(), 0, metalPlateSpec.GetAddressOf());
-
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/UV.jpg").c_str(), 0, testTexture_11.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/UV.jpg").c_str(), 0, testTexture_12.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/UV.jpg").c_str(), 0, testTexture_13.GetAddressOf());
-
-	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	rustyMetalMaterial->AddTextureSRV("DiffuseTexture", rustyMetalDiff);
-	rustyMetalMaterial->AddTextureSRV("SpecularTexture", rustyMetalSpec);
-	rustyMetalMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	std::shared_ptr<Material> brokenTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	brokenTilesMaterial->AddTextureSRV("DiffuseTexture", brokenTilesDiff);
-	brokenTilesMaterial->AddTextureSRV("SpecularTexture", brokenTilesSpec);
-	brokenTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	std::shared_ptr<Material> tilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	tilesMaterial->AddTextureSRV("DiffuseTexture", tilesDiff);
-	tilesMaterial->AddTextureSRV("SpecularTexture", tilesSpec);
-	tilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	bluePlanksMaterial->AddTextureSRV("DiffuseTexture", bluePlanksDiff);
-	bluePlanksMaterial->AddTextureSRV("SpecularTexture", bluePlanksSpec);
-	bluePlanksMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	metalPlateMaterial->AddTextureSRV("DiffuseTexture", metalPlateDiff);
-	metalPlateMaterial->AddTextureSRV("SpecularTexture", metalPlateSpec);
-	metalPlateMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	std::shared_ptr<Material> testMaterial_6 = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	testMaterial_6->AddTextureSRV("DiffuseTexture", testTexture_11);
-	testMaterial_6->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Mesh> testMesh = cubeMesh;
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rustyMetalMaterial, "Test Mesh 1"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, brokenTilesMaterial, "Test Mesh 2"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, tilesMaterial, "Test Mesh 3"));
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> minecraftPlayerSRV;
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/minecraft/T_Player.png").c_str(), 0, minecraftPlayerSRV.GetAddressOf());
-	std::shared_ptr<Material> minecraftPlayerMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
-	minecraftPlayerMat->AddTextureSRV("DiffuseTexture", minecraftPlayerSRV);
-	minecraftPlayerMat->AddSampler("BasicSampler", m_pTextureSampler);
-	std::shared_ptr<Mesh> minecraftPlayerMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
 	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMat, "Minecraft Player"));
-
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Test Mesh 4"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Test Mesh 5"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, testMaterial_6, "Test Mesh 6"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, uvMaterial, "Test Mesh 6"));
 
 	for (int i = 7; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
 		p_entityTransform->SetPosition(XMFLOAT3(0.0f, -2.0f, 0.0f));
-		if (i < (m_pEntities.size()-7) / 2) {
+		if (i < (m_pEntities.size() - 7) / 2) {
 			p_entityTransform->MoveRelative(XMFLOAT3(-space * ((i - 7) + 1.0f), 0.0f, 0.0f));
 		}
 		else {
 			p_entityTransform->MoveRelative(XMFLOAT3(space * ((i - 7) - 3.0f), 0.0f, 0.0f));
 		}
 	}
-#pragma endregion
+
+	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
+	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
+	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, m_pEditableMaterial, "Test Mesh"));
+	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(0.0f, -3.0f, -3.0f));
 }
 
 void Game::CreateLights()
@@ -496,10 +470,11 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 		}
 	}
 
+	if (ImGui::CollapsingHeader("Material Controls"))
+		ScaleMaterialGUI(m_pEditableMaterial);
+
 	if (ImGui::CollapsingHeader("Camera Controls"))
-	{
 		CameraGUI();
-	}
 
 	if (ImGui::CollapsingHeader("Entity Controls"))
 	{
@@ -518,6 +493,25 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	}
 
 	ImGui::End();
+}
+
+void Game::ScaleMaterialGUI(std::shared_ptr<Material> a_pScalableMaterial)
+{
+	float roughness = a_pScalableMaterial->GetRoughness();
+	DirectX::XMFLOAT2 uvScale = a_pScalableMaterial->GetUVScale();
+	DirectX::XMFLOAT2 uvOffset = a_pScalableMaterial->GetUVOffset();
+	DirectX::XMFLOAT3 colorTint = a_pScalableMaterial->GetColorTint();
+
+	if (ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f))
+		a_pScalableMaterial->SetRoughness(roughness);
+	if (ImGui::DragFloat("U Scale", &uvScale.x, 0.1f))
+		a_pScalableMaterial->SetUVScale(uvScale);
+	if (ImGui::DragFloat("V Scale", &uvScale.y, 0.1f))
+		a_pScalableMaterial->SetUVScale(uvScale);
+	if (ImGui::DragFloat2("UV offset", &uvOffset.x, 0.1f))
+		a_pScalableMaterial->SetUVOffset(uvOffset);
+	if (ImGui::ColorEdit3("Color Tint", (float*)&colorTint))
+		a_pScalableMaterial->SetColorTint(colorTint);
 }
 
 void Game::LightsGUI(Light* a_pLight)

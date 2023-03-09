@@ -10,17 +10,21 @@
 class Material
 {
 public:
-	Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT3 a_colorTint, float a_roughness = 0.0f);
+	Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT3 a_colorTint, float a_roughness = 0.0f, DirectX::XMFLOAT2 a_uvScale = DirectX::XMFLOAT2(1, 1), DirectX::XMFLOAT2 a_uvOffset = DirectX::XMFLOAT2(0, 0));
 
 	std::shared_ptr<SimpleVertexShader> GetVertexShader();
 	std::shared_ptr<SimplePixelShader> GetPixelShader();
 	DirectX::XMFLOAT3 GetColorTint();
 	float GetRoughness();
+	DirectX::XMFLOAT2 GetUVScale();
+	DirectX::XMFLOAT2 GetUVOffset();
 
 	void SetVertexShader(std::shared_ptr<SimpleVertexShader> a_pVertexShader);
 	void SetPixelShader(std::shared_ptr<SimplePixelShader> a_pPixelShader);
 	void SetColorTint(DirectX::XMFLOAT3 a_colorTint);
 	void SetRoughness(float a_roughness);
+	void SetUVScale(DirectX::XMFLOAT2 a_uvScale);
+	void SetUVOffset(DirectX::XMFLOAT2 a_uvOffset);
 
 	void AddTextureSRV(std::string a_shaderName, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_srv);
 	void AddSampler(std::string a_shaderName, Microsoft::WRL::ComPtr<ID3D11SamplerState> a_sampler);
@@ -33,7 +37,9 @@ private:
 
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_textureSRVs;
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11SamplerState>> m_samplers;
-	
+
 	DirectX::XMFLOAT3 m_colorTint;
+	DirectX::XMFLOAT2 m_uvScale;
+	DirectX::XMFLOAT2 m_uvOffset;
 	float m_roughness;
 };

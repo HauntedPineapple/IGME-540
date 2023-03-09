@@ -112,6 +112,7 @@ float3 PointLight(Light light, float3 surfaceColor, float3 normal, float3 camera
 
 float3 SpotLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale = 1)
 {
+    float3 directionToLight = normalize(-light.direction);
     return 0;
 }
 #endif
