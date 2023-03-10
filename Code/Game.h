@@ -73,20 +73,34 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldDiffuseSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldSpecularSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldORMSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldNormalSRV;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_minecraftSkinSRV;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalSpec;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_brokenTilesDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_brokenTilesSpec;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_tilesDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_tilesSpec;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksORM;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksNormal;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateORM;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateNormal;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesORM;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesNormal;
 
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;

@@ -154,20 +154,34 @@ void Game::LoadTextures()
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_BC.png").c_str(), 0, m_pShieldDiffuseSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Specular.png").c_str(), 0, m_pShieldSpecularSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_ORM.png").c_str(), 0, m_pShieldORMSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_N.png").c_str(), 0, m_pShieldNormalSRV.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/minecraft/T_Player.png").c_str(), 0, m_minecraftSkinSRV.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/UV.jpg").c_str(), 0, m_uvTexture.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal.png").c_str(), 0, m_rustyMetalDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal_specular.png").c_str(), 0, m_rustyMetalSpec.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles.png").c_str(), 0, m_brokenTilesDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/brokentiles_specular.png").c_str(), 0, m_brokenTilesSpec.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/tiles.png").c_str(), 0, m_tilesDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/tiles_specular.png").c_str(), 0, m_tilesSpec.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_diff.png").c_str(), 0, m_bluePlanksDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_spec.png").c_str(), 0, m_bluePlanksSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_orm.png").c_str(), 0, m_bluePlanksORM.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/blue_painted_planks_n.png").c_str(), 0, m_bluePlanksNormal.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_diff.png").c_str(), 0, m_metalPlateDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_specular.png").c_str(), 0, m_metalPlateSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_orm.png").c_str(), 0, m_metalPlateORM.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/metal_plate_n.png").c_str(), 0, m_metalPlateNormal.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/stone_tiles_diff.png").c_str(), 0, m_stoneTilesDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/stone_tiles_orm.png").c_str(), 0, m_stoneTilesORM.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/stone_tiles_n.png").c_str(), 0, m_stoneTilesNormal.GetAddressOf());
 }
 
 void Game::LoadMeshesAndCreateEntities()
@@ -224,19 +238,24 @@ void Game::LoadMeshesAndCreateEntities()
 	tilesMaterial->AddTextureSRV("SpecularTexture", m_tilesSpec);
 	tilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
 	bluePlanksMaterial->AddTextureSRV("DiffuseTexture", m_bluePlanksDiff);
 	bluePlanksMaterial->AddTextureSRV("SpecularTexture", m_bluePlanksSpec);
+	bluePlanksMaterial->AddTextureSRV("ORMTexture", m_bluePlanksORM);
+	bluePlanksMaterial->AddTextureSRV("NormalMap", m_bluePlanksNormal);
 	bluePlanksMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
 	metalPlateMaterial->AddTextureSRV("DiffuseTexture", m_metalPlateDiff);
 	metalPlateMaterial->AddTextureSRV("SpecularTexture", m_metalPlateSpec);
+	metalPlateMaterial->AddTextureSRV("ORMTexture", m_metalPlateORM);
+	metalPlateMaterial->AddTextureSRV("NormalMap", m_metalPlateNormal);
 	metalPlateMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> stoneTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
 	stoneTilesMaterial->AddTextureSRV("DiffuseTexture", m_stoneTilesDiff);
 	stoneTilesMaterial->AddTextureSRV("ORMTexture", m_stoneTilesORM);
+	stoneTilesMaterial->AddTextureSRV("NormalMap", m_stoneTilesNormal);
 	stoneTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> uvMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
