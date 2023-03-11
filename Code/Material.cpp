@@ -1,11 +1,12 @@
 #include "Material.h"
 
-Material::Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT3 a_colorTint, float a_roughness, DirectX::XMFLOAT2 a_uvScale, DirectX::XMFLOAT2 a_uvOffset)
+Material::Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT3 a_colorTint, float a_roughness, bool a_useSpecularMap, DirectX::XMFLOAT2 a_uvScale, DirectX::XMFLOAT2 a_uvOffset)
 {
 	m_pVertexShader = a_pVertexShader;
 	m_pPixelShader = a_pPixelShader;
 	m_colorTint = a_colorTint;
 	SetRoughness(a_roughness);
+	m_useSpecularMap = a_useSpecularMap;
 	m_uvScale = a_uvScale;
 	m_uvOffset = a_uvOffset;
 }
@@ -14,6 +15,7 @@ std::shared_ptr<SimpleVertexShader> Material::GetVertexShader() { return m_pVert
 std::shared_ptr<SimplePixelShader> Material::GetPixelShader() { return m_pPixelShader; }
 DirectX::XMFLOAT3 Material::GetColorTint() { return m_colorTint; }
 float Material::GetRoughness() { return m_roughness; }
+bool Material::GetUseSpecularMap(bool a_useSpecularMap) { return m_useSpecularMap; }
 DirectX::XMFLOAT2 Material::GetUVScale() { return m_uvScale; }
 DirectX::XMFLOAT2 Material::GetUVOffset() { return m_uvOffset; }
 
@@ -51,6 +53,7 @@ void Material::SendDataToShader(Transform* a_transform, std::shared_ptr<Camera> 
 
 	m_pPixelShader->SetFloat2("uvScale", m_uvScale);
 	m_pPixelShader->SetFloat2("uvOffset", m_uvOffset);
+	m_pPixelShader->SetInt("useSpecularMap", (int)m_useSpecularMap);
 
 	m_pPixelShader->CopyAllBufferData();
 }

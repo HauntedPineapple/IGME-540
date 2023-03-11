@@ -10,6 +10,7 @@ cbuffer ExternalData : register(b0)
     float3 cameraPosition;
     float2 uvScale;
     float2 uvOffset;
+    int useSpecularMap;
 
     Light lights[NUM_LIGHTS]; // Array of exactly NUM_LIGHTS lights
 }
@@ -24,7 +25,9 @@ float4 main(VertexToPixel input) : SV_TARGET
     input.normal = normalize(input.normal); // Must renormalize any interpolated vectors
     input.uv = input.uv * uvScale + uvOffset;
     
-    float specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
+    float specularScale = 1;
+    if (useSpecularMap)
+        specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
     
     float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb * colorTint;
     float3 finalPixelColor = ambientColor * surfaceColor;

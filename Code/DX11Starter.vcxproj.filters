@@ -147,7 +147,7 @@
     <FxCompile Include="TexturePixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="TestPixelShader.hlsl">
+    <FxCompile Include="TestShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

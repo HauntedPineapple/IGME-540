@@ -128,7 +128,7 @@ void Game::LoadShaders()
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
 	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
 	m_pTexturePixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TexturePixelShader.cso").c_str());
-	m_pTestPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TestPixelShader.cso").c_str());
+	m_pTestPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TestShader.cso").c_str());
 }
 
 void Game::LoadTextures()
@@ -213,7 +213,7 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 
-	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1, true);
 	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
 	hylianShieldMat->AddTextureSRV("SpecularTexture", m_pShieldSpecularSRV);
 	hylianShieldMat->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
@@ -223,29 +223,29 @@ void Game::LoadMeshesAndCreateEntities()
 	minecraftPlayerMat->AddTextureSRV("DiffuseTexture", m_minecraftSkinSRV);
 	minecraftPlayerMat->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
 	rustyMetalMaterial->AddTextureSRV("DiffuseTexture", m_rustyMetalDiff);
 	rustyMetalMaterial->AddTextureSRV("SpecularTexture", m_rustyMetalSpec);
 	rustyMetalMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> brokenTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> brokenTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
 	brokenTilesMaterial->AddTextureSRV("DiffuseTexture", m_brokenTilesDiff);
 	brokenTilesMaterial->AddTextureSRV("SpecularTexture", m_brokenTilesSpec);
 	brokenTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> tilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> tilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
 	tilesMaterial->AddTextureSRV("DiffuseTexture", m_tilesDiff);
 	tilesMaterial->AddTextureSRV("SpecularTexture", m_tilesSpec);
 	tilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1, true);
 	bluePlanksMaterial->AddTextureSRV("DiffuseTexture", m_bluePlanksDiff);
 	bluePlanksMaterial->AddTextureSRV("SpecularTexture", m_bluePlanksSpec);
 	bluePlanksMaterial->AddTextureSRV("ORMTexture", m_bluePlanksORM);
 	bluePlanksMaterial->AddTextureSRV("NormalMap", m_bluePlanksNormal);
 	bluePlanksMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1, true);
 	metalPlateMaterial->AddTextureSRV("DiffuseTexture", m_metalPlateDiff);
 	metalPlateMaterial->AddTextureSRV("SpecularTexture", m_metalPlateSpec);
 	metalPlateMaterial->AddTextureSRV("ORMTexture", m_metalPlateORM);
