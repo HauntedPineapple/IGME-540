@@ -16,8 +16,8 @@ cbuffer ExternalData : register(b0)
 }
 
 Texture2D DiffuseTexture : register(t0); // "t" registers for textures
-Texture2D SpecularTexture : register(t1); // "t" registers for textures
-Texture2D ORMTexture : register(t2); // "t" registers for textures
+Texture2D SpecularMap : register(t1); // "t" registers for textures
+Texture2D NormalMap : register(t2); // "t" registers for textures
 SamplerState BasicSampler : register(s0); // "s" registers for samplers
 
 float4 main(VertexToPixel input) : SV_TARGET
@@ -27,7 +27,7 @@ float4 main(VertexToPixel input) : SV_TARGET
     
     float specularScale = 1;
     if (useSpecularMap)
-        specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
+        specularScale = SpecularMap.Sample(BasicSampler, input.uv).r;
     
     float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb * colorTint;
     float3 finalPixelColor = ambientColor * surfaceColor;
