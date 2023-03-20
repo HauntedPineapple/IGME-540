@@ -213,52 +213,52 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 
-	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1, true);
+	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 0.0f, true);
 	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_pShieldDiffuseSRV);
-	hylianShieldMat->AddTextureSRV("SpecularTexture", m_pShieldSpecularSRV);
+	hylianShieldMat->AddTextureSRV("SpecularMap", m_pShieldSpecularSRV);
 	hylianShieldMat->AddTextureSRV("ORMTexture", m_pShieldORMSRV);
 	hylianShieldMat->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> minecraftPlayerMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> minecraftPlayerMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	minecraftPlayerMat->AddTextureSRV("DiffuseTexture", m_minecraftSkinSRV);
 	minecraftPlayerMat->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
+	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	rustyMetalMaterial->AddTextureSRV("DiffuseTexture", m_rustyMetalDiff);
-	rustyMetalMaterial->AddTextureSRV("SpecularTexture", m_rustyMetalSpec);
+	rustyMetalMaterial->AddTextureSRV("SpecularMap", m_rustyMetalSpec);
 	rustyMetalMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> brokenTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
+	std::shared_ptr<Material> brokenTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	brokenTilesMaterial->AddTextureSRV("DiffuseTexture", m_brokenTilesDiff);
-	brokenTilesMaterial->AddTextureSRV("SpecularTexture", m_brokenTilesSpec);
+	brokenTilesMaterial->AddTextureSRV("SpecularMap", m_brokenTilesSpec);
 	brokenTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> tilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
+	std::shared_ptr<Material> tilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	tilesMaterial->AddTextureSRV("DiffuseTexture", m_tilesDiff);
-	tilesMaterial->AddTextureSRV("SpecularTexture", m_tilesSpec);
+	tilesMaterial->AddTextureSRV("SpecularMap", m_tilesSpec);
 	tilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
+	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	bluePlanksMaterial->AddTextureSRV("DiffuseTexture", m_bluePlanksDiff);
-	bluePlanksMaterial->AddTextureSRV("SpecularTexture", m_bluePlanksSpec);
+	bluePlanksMaterial->AddTextureSRV("SpecularMap", m_bluePlanksSpec);
 	bluePlanksMaterial->AddTextureSRV("ORMTexture", m_bluePlanksORM);
 	bluePlanksMaterial->AddTextureSRV("NormalMap", m_bluePlanksNormal);
 	bluePlanksMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1, true);
+	std::shared_ptr<Material> metalPlateMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	metalPlateMaterial->AddTextureSRV("DiffuseTexture", m_metalPlateDiff);
-	metalPlateMaterial->AddTextureSRV("SpecularTexture", m_metalPlateSpec);
+	metalPlateMaterial->AddTextureSRV("SpecularMap", m_metalPlateSpec);
 	metalPlateMaterial->AddTextureSRV("ORMTexture", m_metalPlateORM);
 	metalPlateMaterial->AddTextureSRV("NormalMap", m_metalPlateNormal);
 	metalPlateMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> stoneTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> stoneTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	stoneTilesMaterial->AddTextureSRV("DiffuseTexture", m_stoneTilesDiff);
 	stoneTilesMaterial->AddTextureSRV("ORMTexture", m_stoneTilesORM);
 	stoneTilesMaterial->AddTextureSRV("NormalMap", m_stoneTilesNormal);
 	stoneTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> uvMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1);
+	std::shared_ptr<Material> uvMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f, false);
 	uvMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
 	uvMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 #pragma endregion
@@ -321,7 +321,7 @@ void Game::LoadMeshesAndCreateEntities()
 		}
 	}
 
-	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 1);
+	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
 	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, m_pEditableMaterial, "Test Mesh"));

@@ -25,9 +25,11 @@ float4 main(VertexToPixel input) : SV_TARGET
     input.normal = normalize(input.normal); // Must renormalize any interpolated vectors
     input.uv = input.uv * uvScale + uvOffset;
     
-    float specularScale = 1;
-    if (useSpecularMap)
+    float specularScale = 1.0f;
+    if (useSpecularMap != 0)
+    {
         specularScale = SpecularMap.Sample(BasicSampler, input.uv).r;
+    }
     
     float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb * colorTint;
     float3 finalPixelColor = ambientColor * surfaceColor;
