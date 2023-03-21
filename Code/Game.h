@@ -102,6 +102,15 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesNormal;
 
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cushionDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cushionNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rockDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rockNormal;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
+
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pORMSRV;
