@@ -31,4 +31,5 @@ private:
 	int m_indexBufferCount;
 
 	void CreateBuffers(Vertex* a_vertexArray, int a_vertexCount, unsigned int* a_indexArray, int a_indexCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice);
+	void CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices, int numIndices);
 };

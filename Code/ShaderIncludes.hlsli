@@ -16,7 +16,7 @@ struct VertexShaderInput
     float3 localPosition : POSITION; // XYZ position
     float3 normal : NORMAL;
     float2 uv : TEXCOORD;
-    //float3 tangent : TANGENT;
+    float3 tangent : TANGENT;
 };
 
 // Struct representing the data we expect to receive from earlier pipeline stages
@@ -35,7 +35,7 @@ struct VertexToPixel
     float2 uv : TEXCOORD;
     float3 worldPosition : POSITION;
     float3 normal : NORMAL;
-    //float3 tangent : TANGENT;
+    float3 tangent : TANGENT;
 };
 
 float Random(float2 s)

@@ -70,10 +70,10 @@ private:
 	std::shared_ptr<Material> m_pEditableMaterial;
 
 	// SRVS
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldDiffuseSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldSpecularSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldORMSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShieldNormalSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldDiffuseSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldSpecularSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldORMSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldNormalSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
 
@@ -104,10 +104,16 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneNormal;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cushionDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cushionNormal;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rockDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rockNormal;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundORM;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundNormal;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
 

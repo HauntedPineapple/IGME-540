@@ -22,15 +22,28 @@ SamplerState BasicSampler : register(s0); // "s" registers for samplers
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
-    input.normal = normalize(input.normal); // Must renormalize any interpolated vectors
+	// Must renormalize any interpolated vectors
+    input.normal = normalize(input.normal);
+    input.tangent = normalize(input.tangent);
+
     input.uv = input.uv * uvScale + uvOffset;
-    
+
+	// Normal mapping
+    float3 normalFromMap = normalize(NormalMap.Sample(BasicSampler, input.uv).rgb);
+	// rotate the normal map to convert from tangent to world space
+    float3 N = input.normal;
+    float3 T = normalize(input.tangent - N * dot(N, input.tangent)); // ensure we ortho-normalize the tangent again
+    float3 B = cross(T, N);
+    float3x3 TBN = float3x3(T, B, N);
+	// multiply normal map vector by TBN
+    input.normal = mul(normalFromMap, TBN);
+
     float specularScale = 1.0f;
     if (useSpecularMap != 0)
     {
         specularScale = SpecularMap.Sample(BasicSampler, input.uv).r;
     }
-    
+
     float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb * colorTint;
     float3 finalPixelColor = ambientColor * surfaceColor;
     for (int i = 0; i < NUM_LIGHTS; i++)

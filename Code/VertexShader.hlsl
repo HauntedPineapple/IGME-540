@@ -35,7 +35,7 @@ VertexToPixel main(VertexShaderInput input)
 	// get the pixel's world position
     output.worldPosition = mul(worldMatrix, float4(input.localPosition, 1.0f)).xyz;
 	
-    //output.tangent = normalize(mul((float3x3) worldInvTransposeMatrix, input.tangent));
+    output.tangent = normalize(mul((float3x3) worldMatrix, input.tangent));
 
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)

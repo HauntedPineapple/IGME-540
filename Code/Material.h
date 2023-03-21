@@ -10,7 +10,14 @@
 class Material
 {
 public:
-	Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT3 a_colorTint, float a_roughness = 0.0f, bool a_useSpecularMap = false, DirectX::XMFLOAT2 a_uvScale = DirectX::XMFLOAT2(1, 1), DirectX::XMFLOAT2 a_uvOffset = DirectX::XMFLOAT2(0, 0));
+	Material(
+		std::shared_ptr<SimpleVertexShader> a_pVertexShader, 
+		std::shared_ptr<SimplePixelShader> a_pPixelShader, 
+		DirectX::XMFLOAT3 a_colorTint, 
+		float a_roughness = 0.0f, 
+		bool a_useSpecularMap = false, 
+		DirectX::XMFLOAT2 a_uvScale = DirectX::XMFLOAT2(1, 1), 
+		DirectX::XMFLOAT2 a_uvOffset = DirectX::XMFLOAT2(0, 0));
 
 	std::shared_ptr<SimpleVertexShader> GetVertexShader();
 	std::shared_ptr<SimplePixelShader> GetPixelShader();
