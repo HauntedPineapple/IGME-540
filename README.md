@@ -26,9 +26,12 @@ IGME-540: Foundations of Game Graphics Programming
 * [Assignment 4](./Assignment%20Instructions/Assignment%204%20-%20Making%20Things%20Move.pdf)
 * [Assignment 5](./Assignment%20Instructions/Assignment%205%20-%20Cameras.pdf)
 * [Assignment 6](./Assignment%20Instructions/Assignment%206%20-%203D%20Models%2C%20Materials%20%26%20Shaders.pdf)
-<!-- * [Assignment 7](./Assignment%20Instructions/) -->
-<!-- * [Assignment 8](./Assignment%20Instructions/) -->
-<!-- * [Assignment 9](./Assignment%20Instructions/) -->
+* [Assignment 7](./Assignment%20Instructions/Assignment%207%20-%20Lights.pdf)
+* [Assignment 8](./Assignment%20Instructions/Assignment%208%20-%20Textures.pdf)
+* [Assignment 9](./Assignment%20Instructions/Assignment%209%20-%20Normal%20Maps%20%26%20Cube%20Maps.pdf)
+<!-- * [Assignment 10](./Assignment%20Instructions/) -->
+<!-- * [Assignment 10](./Assignment%20Instructions/) -->
+<!-- * [Assignment 10](./Assignment%20Instructions/) -->
 <!-- * [Assignment 10](./Assignment%20Instructions/) -->
 
 ## Readings
@@ -42,3 +45,21 @@ IGME-540: Foundations of Game Graphics Programming
 * [3D Models & Materials](./Readings/8%20-%203D%20Models%20%26%20Materials.pdf)
 * [Lighting & Shading](./Readings/9%20-%20Lighting%20%26%20Shading.pdf)
 * [Textures](./Readings/10%20-%20Textures.pdf)
+* [Normal Mapping](./Readings/11%20-%20Normal%20Mapping.pdf)
+* [Skyboxes & Cube Maps](./Readings/12%20-%20Skyboxes%20%26%20Cube%20Maps.pdf)
+<!-- * [NAME](./Readings) -->
+
+<!-- ## Lecture Slides -->
+<!-- * [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures)
+* [NAME](./Lectures) -->
