@@ -30,4 +30,5 @@ private:
 	std::shared_ptr<SimplePixelShader> m_skyPS;
 	std::shared_ptr<SimpleVertexShader> m_skyVS;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
 };

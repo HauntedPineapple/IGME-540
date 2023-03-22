@@ -63,7 +63,6 @@ private:
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pTexturePixelShader;
-	std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pTextureSampler;
 

@@ -36,7 +36,7 @@ float4 main(VertexToPixel input) : SV_TARGET
     float3 B = cross(T, N);
     float3x3 TBN = float3x3(T, B, N);
 	// multiply normal map vector by TBN
-    input.normal = mul(normalFromMap, TBN);
+    //input.normal = mul(normalFromMap, TBN);
 
     float specularScale = 1.0f;
     if (useSpecularMap != 0)

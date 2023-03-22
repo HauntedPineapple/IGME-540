@@ -40,9 +40,6 @@ Game::Game(HINSTANCE hInstance)
 	CreateConsoleWindow(500, 120, 32, 120);
 	printf("Console window created successfully.  Feel free to printf() here.\n");
 #endif
-
-	m_ambientLightColor = {};
-	m_currentCamIndex = 0;
 }
 
 // --------------------------------------------------------
@@ -128,7 +125,6 @@ void Game::LoadShaders()
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
 	m_pCustomPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
 	m_pTexturePixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TexturePixelShader.cso").c_str());
-	m_pTestPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TestShader.cso").c_str());
 }
 
 void Game::LoadTextures()
@@ -150,7 +146,6 @@ void Game::LoadTextures()
 	//	0,
 	//	m_pSRV.GetAddressOf());
 
-	// Load textures
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_BC.png").c_str(), 0, m_shieldDiffuseSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Specular.png").c_str(), 0, m_shieldSpecularSRV.GetAddressOf());
 	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_ORM.png").c_str(), 0, m_shieldORMSRV.GetAddressOf());
@@ -227,7 +222,7 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 
-	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTestPixelShader, C_WHITE, 0.0f, true);
+	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_shieldDiffuseSRV);
 	hylianShieldMat->AddTextureSRV("SpecularMap", m_shieldSpecularSRV);
 	hylianShieldMat->AddTextureSRV("NormalMap", m_shieldNormalSRV);
@@ -725,7 +720,6 @@ void Game::Draw(float deltaTime, float totalTime)
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
 		std::shared_ptr<SimplePixelShader> pixelShader = entity->GetMaterial()->GetPixelShader();
-		pixelShader->SetFloat("time", totalTime);
 
 		pixelShader->SetFloat3("ambientColor", m_ambientLightColor);
 

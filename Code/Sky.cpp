@@ -1,6 +1,8 @@
 #include "Sky.h"
 #include "WICTextureLoader.h"
 
+using namespace DirectX;
+
 // --------------------------------------------------------
 // Author: Chris Cascioli
 // Purpose: Loads six individual textures (the six faces of a cube map), then
@@ -15,6 +17,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Sky::CreateCubemap(const wchar_
 		// - Explicitly NOT generating mipmaps, as we don't need them for the sky!
 		// - Order matters here!  +X, -X, +Y, -Y, +Z, -Z
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> textures[6] = {};
+
 	CreateWICTextureFromFile(m_device.Get(), a_right, (ID3D11Resource**)textures[0].GetAddressOf(), 0);
 	CreateWICTextureFromFile(m_device.Get(), a_left, (ID3D11Resource**)textures[1].GetAddressOf(), 0);
 	CreateWICTextureFromFile(m_device.Get(), a_up, (ID3D11Resource**)textures[2].GetAddressOf(), 0);
@@ -59,7 +62,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Sky::CreateCubemap(const wchar_
 			1); // How many mip levels are in the texture?
 
 		// Copy from one resource (texture) to another
-		context->CopySubresourceRegion(
+		m_context->CopySubresourceRegion(
 			cubeMapTexture.Get(),  // Destination resource
 			subresource,           // Dest subresource index (one of the array elements)
 			0, 0, 0,               // XYZ location of copy
