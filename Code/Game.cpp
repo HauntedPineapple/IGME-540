@@ -336,9 +336,9 @@ void Game::LoadMeshesAndCreateEntities()
 	}
 
 	std::shared_ptr<Mesh> testMesh = cubeMesh;
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rustyMetalMaterial, "Test Mesh 1"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, brokenTilesMaterial, "Test Mesh 2"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, tilesMaterial, "Test Mesh 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cushionMaterial, "Test Mesh 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rockMaterial, "Test Mesh 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cobblestoneMaterial, "Test Mesh 3"));
 	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMaterial, "Minecraft Player"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Test Mesh 4"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Test Mesh 5"));
@@ -385,23 +385,14 @@ void Game::CreateLights()
 	directionalLightC.color = XMFLOAT3(1, 1, 1);
 	directionalLightC.intensity = 1.0f;
 
-	/*Light directionalLightA = {};
-	directionalLightA.type = 0;
-	directionalLightA.direction = { 1 ,0, 0 };
-	directionalLightA.color = { 1, 0, 0 };
-	directionalLightA.intensity = 1.0f;
 
-	Light directionalLightB = {};
-	directionalLightB.type = 0;
-	directionalLightB.direction = { 0, -1, 0};
-	directionalLightB.color = { 0, 1, 0 };
-	directionalLightB.intensity = 1.0f;
-
-	Light directionalLightC = {};
-	directionalLightC.type = 0;
-	directionalLightC.direction = { 0, 0, 1 };
-	directionalLightC.color = { 0, 0, 1 };
-	directionalLightC.intensity = 1.0f;*/
+	//directionalLightA.direction = { 1 ,0, 0 };
+	//directionalLightA.color = { 1, 0, 0 };
+	//directionalLightB.direction = { 0, -1, 0};
+	//directionalLightB.color = { 0, 1, 0 };
+	//directionalLightB.intensity = 1.0f;
+	//directionalLightC.direction = { 0, 0, 1 };
+	//directionalLightC.color = { 0, 0, 1 };
 
 	Light pointLightA = {};
 	pointLightA.type = 1;
