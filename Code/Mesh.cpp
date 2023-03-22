@@ -13,7 +13,7 @@ Mesh::Mesh(Vertex* a_vertexArray, int a_vertexCount, unsigned int* a_indexArray,
 Mesh::Mesh(const std::wstring a_filename, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice)
 {
 	// The following code was written by Chris Cascioli:
-	
+
 	// File input object
 	std::ifstream obj(a_filename);
 
@@ -361,8 +361,7 @@ void Mesh::CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices,
 
 		// Use Gram-Schmidt orthonormalize to ensure
 		// the normal and tangent are exactly 90 degrees apart
-		tangent = XMVector3Normalize(
-			tangent - normal * XMVector3Dot(normal, tangent));
+		tangent = XMVector3Normalize(tangent - normal * XMVector3Dot(normal, tangent));
 
 		// Store the tangent
 		XMStoreFloat3(&verts[i].Tangent, tangent);
