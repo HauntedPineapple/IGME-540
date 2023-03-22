@@ -74,6 +74,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldORMSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldNormalSRV;
 
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_minecraftSkinSRV;
@@ -113,8 +115,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundNormal;
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
 
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;

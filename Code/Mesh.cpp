@@ -13,7 +13,6 @@ Mesh::Mesh(Vertex* a_vertexArray, int a_vertexCount, unsigned int* a_indexArray,
 Mesh::Mesh(const std::wstring a_filename, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice)
 {
 	// The following code was written by Chris Cascioli:
-
 	// File input object
 	std::ifstream obj(a_filename);
 
@@ -218,26 +217,9 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer() { return m_pVertexB
 Microsoft::WRL::ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer() { return m_pIndexBuffer; }
 int Mesh::GetIndexCount() { return m_indexBufferCount; }
 
-void Mesh::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext)
-{
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-
-	// Set buffers in the input assembler (IA) stage
-	a_pContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-	a_pContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-	// Tell Direct3D to draw
-	a_pContext->DrawIndexed(
-		this->m_indexBufferCount,     // The number of indices to use (we could draw a subset if we wanted)
-		0,     // Offset to the first index we want to use
-		0);    // Offset to add to each index when looking up vertices
-}
-
 void Mesh::CreateBuffers(Vertex* a_vertexArray, int a_vertexCount, unsigned int* a_indexArray, int a_indexCount, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice)
 {
 	this->CalculateTangents(a_vertexArray, a_vertexCount, a_indexArray, a_indexCount);
-
 	this->m_indexBufferCount = a_indexCount;
 
 	// Create a VERTEX BUFFER
@@ -286,34 +268,23 @@ void Mesh::CreateBuffers(Vertex* a_vertexArray, int a_vertexCount, unsigned int*
 	a_pDevice->CreateBuffer(&ibd, &initialIndexData, m_pIndexBuffer.GetAddressOf());
 }
 
-// --------------------------------------------------------
-// Author: Chris Cascioli
-// Purpose: Calculates the tangents of the vertices in a mesh
-//
-// - Code originally adapted from: http://www.terathon.com/code/tangent.html
-//   - Updated version now found here: http://foundationsofgameenginedev.com/FGED2-sample.pdf
-//   - See listing 7.4 in section 7.5 (page 9 of the PDF)
-//
-// - Be sure to call this BEFORE creating your D3D vertex/index buffers
-// --------------------------------------------------------
-void Mesh::CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices, int numIndices)
-{
-	// Reset tangents
-	for (int i = 0; i < numVerts; i++)
+void Mesh::CalculateTangents(Vertex* a_verts, int a_numVerts, unsigned int* a_indices, int a_numIndices)
+{// Reset tangents
+	for (int i = 0; i < a_numVerts; i++)
 	{
-		verts[i].Tangent = XMFLOAT3(0, 0, 0);
+		a_verts[i].Tangent = XMFLOAT3(0, 0, 0);
 	}
 
 	// Calculate tangents one whole triangle at a time
-	for (int i = 0; i < numIndices;)
+	for (int i = 0; i < a_numIndices;)
 	{
 		// Grab indices and vertices of first triangle
-		unsigned int i1 = indices[i++];
-		unsigned int i2 = indices[i++];
-		unsigned int i3 = indices[i++];
-		Vertex* v1 = &verts[i1];
-		Vertex* v2 = &verts[i2];
-		Vertex* v3 = &verts[i3];
+		unsigned int i1 = a_indices[i++];
+		unsigned int i2 = a_indices[i++];
+		unsigned int i3 = a_indices[i++];
+		Vertex* v1 = &a_verts[i1];
+		Vertex* v2 = &a_verts[i2];
+		Vertex* v3 = &a_verts[i3];
 
 		// Calculate vectors relative to triangle positions
 		float x1 = v2->Position.x - v1->Position.x;
@@ -353,17 +324,33 @@ void Mesh::CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices,
 	}
 
 	// Ensure all of the tangents are orthogonal to the normals
-	for (int i = 0; i < numVerts; i++)
+	for (int i = 0; i < a_numVerts; i++)
 	{
 		// Grab the two vectors
-		XMVECTOR normal = XMLoadFloat3(&verts[i].Normal);
-		XMVECTOR tangent = XMLoadFloat3(&verts[i].Tangent);
+		XMVECTOR normal = XMLoadFloat3(&a_verts[i].Normal);
+		XMVECTOR tangent = XMLoadFloat3(&a_verts[i].Tangent);
 
 		// Use Gram-Schmidt orthonormalize to ensure
 		// the normal and tangent are exactly 90 degrees apart
 		tangent = XMVector3Normalize(tangent - normal * XMVector3Dot(normal, tangent));
 
 		// Store the tangent
-		XMStoreFloat3(&verts[i].Tangent, tangent);
+		XMStoreFloat3(&a_verts[i].Tangent, tangent);
 	}
+}
+
+void Mesh::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext)
+{
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+
+	// Set buffers in the input assembler (IA) stage
+	a_pContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+	a_pContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	// Tell Direct3D to draw
+	a_pContext->DrawIndexed(
+		this->m_indexBufferCount,     // The number of indices to use (we could draw a subset if we wanted)
+		0,     // Offset to the first index we want to use
+		0);    // Offset to add to each index when looking up vertices
 }

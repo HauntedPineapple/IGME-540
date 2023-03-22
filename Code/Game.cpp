@@ -40,6 +40,9 @@ Game::Game(HINSTANCE hInstance)
 	CreateConsoleWindow(500, 120, 32, 120);
 	printf("Console window created successfully.  Feel free to printf() here.\n");
 #endif
+
+	m_ambientLightColor = {};
+	m_currentCamIndex = 0;
 }
 
 // --------------------------------------------------------
@@ -222,33 +225,33 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 
-	std::shared_ptr<Material> hylianShieldMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
-	hylianShieldMat->AddTextureSRV("DiffuseTexture", m_shieldDiffuseSRV);
-	hylianShieldMat->AddTextureSRV("SpecularMap", m_shieldSpecularSRV);
-	hylianShieldMat->AddTextureSRV("NormalMap", m_shieldNormalSRV);
-	hylianShieldMat->AddSampler("BasicSampler", m_pTextureSampler);
+	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
+	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiffuseSRV);
+	hylianShieldMaterial->AddTextureSRV("SpecularMap", m_shieldSpecularSRV);
+	hylianShieldMaterial->AddTextureSRV("NormalMap", m_shieldNormalSRV);
+	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> minecraftPlayerMat = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
-	minecraftPlayerMat->AddTextureSRV("DiffuseTexture", m_minecraftSkinSRV);
-	minecraftPlayerMat->AddTextureSRV("NormalMap", m_flatNormal);
-	minecraftPlayerMat->AddSampler("BasicSampler", m_pTextureSampler);
+	std::shared_ptr<Material> minecraftPlayerMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
+	minecraftPlayerMaterial->AddTextureSRV("DiffuseTexture", m_minecraftSkinSRV);
+	minecraftPlayerMaterial->AddTextureSRV("NormalMap", m_flatNormal);
+	minecraftPlayerMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	rustyMetalMaterial->AddTextureSRV("DiffuseTexture", m_rustyMetalDiff);
 	rustyMetalMaterial->AddTextureSRV("SpecularMap", m_rustyMetalSpec);
-	minecraftPlayerMat->AddTextureSRV("NormalMap", m_flatNormal);
+	rustyMetalMaterial->AddTextureSRV("NormalMap", m_flatNormal);
 	rustyMetalMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> brokenTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	brokenTilesMaterial->AddTextureSRV("DiffuseTexture", m_brokenTilesDiff);
 	brokenTilesMaterial->AddTextureSRV("SpecularMap", m_brokenTilesSpec);
-	minecraftPlayerMat->AddTextureSRV("NormalMap", m_flatNormal);
+	brokenTilesMaterial->AddTextureSRV("NormalMap", m_flatNormal);
 	brokenTilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> tilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	tilesMaterial->AddTextureSRV("DiffuseTexture", m_tilesDiff);
 	tilesMaterial->AddTextureSRV("SpecularMap", m_tilesSpec);
-	minecraftPlayerMat->AddTextureSRV("NormalMap", m_flatNormal);
+	tilesMaterial->AddTextureSRV("NormalMap", m_flatNormal);
 	tilesMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> bluePlanksMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
@@ -270,7 +273,7 @@ void Game::LoadMeshesAndCreateEntities()
 
 	std::shared_ptr<Material> uvMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f, false);
 	uvMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
-	minecraftPlayerMat->AddTextureSRV("NormalMap", m_flatNormal);
+	uvMaterial->AddTextureSRV("NormalMap", m_flatNormal);
 	uvMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> cobblestoneMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f, false);
@@ -309,7 +312,7 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
 	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
 	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
-	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMat, "Hylian Shield");
+	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMaterial, "Hylian Shield");
 
 	m_pEntities.push_back(cubeEntity);
 	m_pEntities.push_back(cylinderEntity);
@@ -320,7 +323,7 @@ void Game::LoadMeshesAndCreateEntities()
 	m_pEntities.push_back(quadEntity);
 
 	int space = 3;
-	int moveBack = 5;
+	float moveBack = 5;
 	for (int i = 0; i < 7; i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
 		p_entityTransform->SetPosition(XMFLOAT3(0.0f, 0.0f, moveBack));
@@ -332,17 +335,14 @@ void Game::LoadMeshesAndCreateEntities()
 		}
 	}
 
-#pragma region Texture Testing
-	std::shared_ptr<Mesh> textureTestMesh = cubeMesh;
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, rustyMetalMaterial, "Test Mesh 1"));
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, brokenTilesMaterial, "Test Mesh 2"));
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, tilesMaterial, "Test Mesh 3"));
-
-	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMat, "Minecraft Player"));
-
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, bluePlanksMaterial, "Test Mesh 4"));
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, metalPlateMaterial, "Test Mesh 5"));
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, stoneTilesMaterial, "Test Mesh 6"));
+	std::shared_ptr<Mesh> testMesh = cubeMesh;
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rustyMetalMaterial, "Test Mesh 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, brokenTilesMaterial, "Test Mesh 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, tilesMaterial, "Test Mesh 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMaterial, "Minecraft Player"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Test Mesh 4"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Test Mesh 5"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, stoneTilesMaterial, "Test Mesh 6"));
 
 	for (int i = 7; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
@@ -357,28 +357,10 @@ void Game::LoadMeshesAndCreateEntities()
 
 	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
+	m_pEditableMaterial->AddTextureSRV("NormalMap", m_flatNormal);
 	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, m_pEditableMaterial, "Test Mesh"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, m_pEditableMaterial, "Test Mesh"));
 	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(0.0f, -3.0f, -3.0f));
-#pragma endregion
-
-#pragma region Normal Map Testing
-	std::shared_ptr<Mesh> normalMapTestMesh = cubeMesh;
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, cobblestoneMaterial, "Test Mesh 7"));
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, cushionMaterial, "Test Mesh 8"));
-	m_pEntities.push_back(std::make_shared<Entity>(textureTestMesh, rockMaterial, "Test Mesh 9"));
-
-	for (int i = 14; i < m_pEntities.size(); i++) {
-		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0.0f, -2.0f, 0.0f));
-		if (i < (m_pEntities.size() - 7) / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-space * ((i - 7) + 1.0f), 0.0f, 0.0f));
-		}
-		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(space * ((i - 7) - 3.0f), 0.0f, 0.0f));
-		}
-	}
-#pragma endregion
 }
 
 void Game::CreateLights()
@@ -721,6 +703,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	// DRAW geometry
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
 		std::shared_ptr<SimplePixelShader> pixelShader = entity->GetMaterial()->GetPixelShader();
+		pixelShader->SetFloat("time", totalTime);
 
 		pixelShader->SetFloat3("ambientColor", m_ambientLightColor);
 

@@ -16,36 +16,34 @@ cbuffer ExternalData : register(b0)
 }
 
 Texture2D DiffuseTexture : register(t0); // "t" registers for textures
-Texture2D SpecularMap : register(t1); // "t" registers for textures
-Texture2D NormalMap : register(t2); // "t" registers for textures
+Texture2D SpecularMap : register(t1);
+Texture2D NormalMap : register(t2);
 SamplerState BasicSampler : register(s0); // "s" registers for samplers
 
-float4 main(VertexToPixel input) : SV_TARGET5
+float4 main(VertexToPixel input) : SV_TARGET
 {
-    input.uv = input.uv * uvScale + uvOffset;
-    
-	// Must renormalize any interpolated vectors
+    // Must renormalize any interpolated vectors
     input.normal = normalize(input.normal);
     input.tangent = normalize(input.tangent);
-
-	// Normal mapping
-    float3 unpackedNormal = NormalMap.Sample(BasicSampler, input.uv).rgb * 2.0f - 1.0f;
-    unpackedNormal = normalize(unpackedNormal);
+    input.uv = input.uv * uvScale + uvOffset;
+    
+    float specularScale = 1.0f;
+    if (useSpecularMap != 0)
+    {
+        specularScale = SpecularMap.Sample(BasicSampler, input.uv).r;
+    }
+    
+    // Normal mapping
+    float3 unpackedNormal = normalize(NormalMap.Sample(BasicSampler, input.uv).rgb * 2.0f - 1.0f);
 	// rotate the normal map to convert from tangent to world space
     float3 N = input.normal;
     float3 T = input.tangent;
     T = normalize(T - N * dot(input.tangent, N)); // ensure we ortho-normalize the tangent again
     float3 B = cross(T, N);
     float3x3 TBN = float3x3(T, B, N);
-	// multiply normal map vector by TBN
+    // multiply normal map vector by TBN
     input.normal = mul(unpackedNormal, TBN);
-
-    float specularScale = 1.0f;
-    if (useSpecularMap != 0)
-    {
-        specularScale = SpecularMap.Sample(BasicSampler, input.uv).r;
-    }
-
+    
     float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb * colorTint;
     float3 finalPixelColor = ambientColor * surfaceColor;
     for (int i = 0; i < NUM_LIGHTS; i++)

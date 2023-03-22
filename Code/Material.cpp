@@ -1,10 +1,6 @@
 #include "Material.h"
 
-Material::Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader,
-	std::shared_ptr<SimplePixelShader> a_pPixelShader,
-	DirectX::XMFLOAT3 a_colorTint,
-	float a_roughness, bool a_useSpecularMap,
-	DirectX::XMFLOAT2 a_uvScale, DirectX::XMFLOAT2 a_uvOffset)
+Material::Material(std::shared_ptr<SimpleVertexShader> a_pVertexShader, std::shared_ptr<SimplePixelShader> a_pPixelShader, DirectX::XMFLOAT3 a_colorTint, float a_roughness, bool a_useSpecularMap, DirectX::XMFLOAT2 a_uvScale, DirectX::XMFLOAT2 a_uvOffset)
 {
 	m_pVertexShader = a_pVertexShader;
 	m_pPixelShader = a_pPixelShader;

@@ -100,8 +100,12 @@ float3 DirectionalLight(Light light, float3 surfaceColor, float3 normal, float3 
     float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
     float3 directionToLight = normalize(-light.direction);
     
+    float diffuse = DiffuseBRDF(normal, directionToLight) * surfaceColor;
+    float specular = SpecularBRDF(normal, -directionToLight, viewVector, roughness) * specularScale;
+    specular *= any(diffuse);
+        
     float3 lightColor = DiffuseBRDF(normal, directionToLight) * surfaceColor;
-    lightColor += SpecularBRDF(normal, -directionToLight, viewVector, roughness) * specularScale;
+    lightColor += specular;
 
     return lightColor * light.color * light.intensity;
 }
