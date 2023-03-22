@@ -38,6 +38,12 @@ struct VertexToPixel
     float3 tangent : TANGENT;
 };
 
+struct VertexToSkyPixel
+{
+    float4 screenPosition : SV_POSITION;
+    float3 sampleDir : DIRECTION;
+};
+
 float Random(float2 s)
 {
     return frac(sin(dot(s, float2(12, 75))) * 43758);
