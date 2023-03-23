@@ -13,6 +13,7 @@
 #include "Material.h"
 #include "SimpleShader.h"
 #include "Lights.h"
+#include "Sky.h"
 
 class Game : public DXCore
 {
@@ -29,6 +30,8 @@ public:
 	void LightsGUI(Light* a_pLight);
 	void CameraGUI();
 	void EntityGUI(std::shared_ptr<Entity> a_pEntity);
+	//void SkyGUI();
+	//void TextureGUI(std::shared_ptr<Material> a_pMaterial);
 
 	void Draw(float deltaTime, float totalTime);
 
@@ -37,6 +40,7 @@ private:
 	void LoadShaders();
 	void LoadTextures();
 	void LoadMeshesAndCreateEntities();
+	void CreateSky(std::shared_ptr<Mesh> a_pSkyMesh);
 	void CreateLights();
 
 	// Note the usage of ComPtr below
@@ -55,30 +59,33 @@ private:
 	DirectX::XMFLOAT3 m_ambientLightColor;
 
 	std::vector<Light> m_lights;
-	std::vector<std::shared_ptr<Mesh>> m_pMeshes;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
 
 	std::shared_ptr<SimpleVertexShader> m_pVertexShader;
+	std::shared_ptr<SimpleVertexShader> m_pSkyVS;
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
-	std::shared_ptr<SimplePixelShader> m_pCustomPixelShader;
+	std::shared_ptr<SimplePixelShader> m_pSkyPS;
 	std::shared_ptr<SimplePixelShader> m_pTexturePixelShader;
+	//std::shared_ptr<SimplePixelShader> m_pStaticEffectPixelShader;
+	//std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pTextureSampler;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_pSkyRasterState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pSkyDepthState;
 
 	std::shared_ptr<Material> m_pEditableMaterial;
 
-	// SRVS
+#pragma region SRVs
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_minecraftSkinSRV;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldDiffuseSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldSpecularSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldORMSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldNormalSRV;
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_minecraftSkinSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalSpec;
@@ -115,9 +122,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundNormal;
-
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDiffuseSRV;
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSpecularSRV;
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pORMSRV;
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pNormalSRV;
+#pragma endregion
 };
