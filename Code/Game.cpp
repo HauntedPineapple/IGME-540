@@ -110,6 +110,8 @@ void Game::Init()
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -15.0f), XMFLOAT3(0, 0.0f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(1.7f, 0.3f, 10.5f), XMFLOAT3(0.1f, -0.9f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
+
+	m_stopEntityMovement = false;
 }
 
 // --------------------------------------------------------
@@ -194,6 +196,8 @@ void Game::LoadTextures()
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/forest_ground_diff.png").c_str(), 0, m_forestGroundDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/forest_ground_n.png").c_str(), 0, m_forestGroundNormal.GetAddressOf());
+
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/normalTestN.png").c_str(), 0, m_normalTestSRV.GetAddressOf());
 }
 
 void Game::LoadMeshesAndCreateEntities()
@@ -336,13 +340,13 @@ void Game::LoadMeshesAndCreateEntities()
 	}
 
 	std::shared_ptr<Mesh> testMesh = cubeMesh;
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cushionMaterial, "Test Mesh 1"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rockMaterial, "Test Mesh 2"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cobblestoneMaterial, "Test Mesh 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rustyMetalMaterial, "Texture Test 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, tilesMaterial, "Texture Test 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, brokenTilesMaterial, "Texture Test 3"));
 	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMaterial, "Minecraft Player"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Test Mesh 4"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Test Mesh 5"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, stoneTilesMaterial, "Test Mesh 6"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Texture Test 4"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Texture Test 5"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, stoneTilesMaterial, "Texture Test 6"));
 
 	for (int i = 7; i < m_pEntities.size(); i++) {
 		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
@@ -358,9 +362,26 @@ void Game::LoadMeshesAndCreateEntities()
 	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
 	m_pEditableMaterial->AddTextureSRV("NormalMap", m_flatNormal);
+	//m_pEditableMaterial->AddTextureSRV("NormalMap", m_normalTestSRV);
 	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, m_pEditableMaterial, "Test Mesh"));
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, m_pEditableMaterial, "UV Test Mesh"));
 	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(0.0f, -3.0f, -3.0f));
+
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cobblestoneMaterial, "Normal Test 1"));
+	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(-6.0f, -3.0f, -3.0f));
+
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cushionMaterial, "Normal Test 2"));
+	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(-3.0f, -3.0f, -3.0f));
+
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rockMaterial, "Normal Test 3"));
+	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(3.0f, -3.0f, -3.0f));
+
+	m_pEntities.push_back(std::make_shared<Entity>(testMesh, forestGroundMaterial, "Normal Test 4"));
+	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(6.0f, -3.0f, -3.0f));
+}
+
+void Game::CreateSky(std::shared_ptr<Mesh> a_pSkyMesh)
+{
 }
 
 void Game::CreateLights()
@@ -441,41 +462,44 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
-	for (int i = 0; i < m_pEntities.size(); i++)
-	{
-		std::string entityName = m_pEntities[i]->GetEntityName();
-		Transform* entityTransform = m_pEntities[i]->GetTransform();
-		XMFLOAT3 entityRot = entityTransform->GetRotation();
-		XMFLOAT3 entityPos = entityTransform->GetPosition();
-		XMFLOAT3 entityScale = entityTransform->GetScale();
+	
+	if (m_stopEntityMovement == false) {
+		for (int i = 0; i < m_pEntities.size(); i++)
+		{
+			std::string entityName = m_pEntities[i]->GetEntityName();
+			Transform* entityTransform = m_pEntities[i]->GetTransform();
+			XMFLOAT3 entityRot = entityTransform->GetRotation();
+			XMFLOAT3 entityPos = entityTransform->GetPosition();
+			XMFLOAT3 entityScale = entityTransform->GetScale();
 
-		if (entityName == "Helix") {
-			entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
-			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
-		}
-		if (entityName == "Cylinder") {
-			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
-		}
-		if (entityName == "Cube") {
-			entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
-			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
-			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
-		}
-		if (entityName == "Sphere") {
-			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
-		}
-		if (entityName == "Torus") {
-			entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
-			if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(0, entityRot.y, entityRot.z);
-		}
-		if (entityName == "Quad") {
-			entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
-			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+			if (entityName == "Helix") {
+				entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
+				if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+			}
+			if (entityName == "Cylinder") {
+				entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+			}
+			if (entityName == "Cube") {
+				entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
+				if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+				if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+			}
+			if (entityName == "Sphere") {
+				entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+			}
+			if (entityName == "Torus") {
+				entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
+				if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(0, entityRot.y, entityRot.z);
+			}
+			if (entityName == "Quad") {
+				entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
+				if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+			}
 		}
 	}
 
@@ -500,6 +524,8 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	input.SetMouseCapture(io.WantCaptureMouse);
 
 	ImGui::Begin("App Interface");
+
+	ImGui::Checkbox("Stop Entity Movement", &m_stopEntityMovement);
 
 	if (ImGui::CollapsingHeader("App Info"))
 	{

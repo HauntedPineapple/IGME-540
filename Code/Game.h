@@ -57,7 +57,6 @@ private:
 	int m_currentCamIndex;
 
 	DirectX::XMFLOAT3 m_ambientLightColor;
-
 	std::vector<Light> m_lights;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
@@ -76,6 +75,7 @@ private:
 
 	std::shared_ptr<Material> m_pEditableMaterial;
 
+	bool m_stopEntityMovement;
 #pragma region SRVs
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
@@ -120,7 +120,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rockNormal;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundNormal;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_normalTestSRV;
 #pragma endregion
 };
