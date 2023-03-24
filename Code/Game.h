@@ -39,7 +39,8 @@ private:
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
 	void LoadTextures();
-	void LoadMeshesAndCreateEntities();
+	void LoadMeshes();
+	void CreateEntities();
 	void CreateSky(std::shared_ptr<Mesh> a_pSkyMesh);
 	void CreateLights();
 
@@ -74,6 +75,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pSkyDepthState;
 
 	std::shared_ptr<Material> m_pEditableMaterial;
+
+	std::unordered_map<std::string, std::shared_ptr<Mesh>> m_pMeshes;
+	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_pTextureSRVs;
 
 	bool m_stopEntityMovement;
 #pragma region SRVs

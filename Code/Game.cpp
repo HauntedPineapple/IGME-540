@@ -77,11 +77,11 @@ void Game::Init()
 	ImGui_ImplDX11_Init(device.Get(), context.Get());
 	ImGui::StyleColorsDark();
 
-	// Helper methods for loading shaders, creating some basic
-	// geometry to draw and some simple camera matrices.
+	// Helper methods for loading and creating stuff
 	LoadShaders();
 	LoadTextures();
-	LoadMeshesAndCreateEntities();
+	LoadMeshes();
+	CreateEntities();
 	CreateLights();
 
 	// Set initial graphics API state
@@ -200,7 +200,23 @@ void Game::LoadTextures()
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/normalTestN.png").c_str(), 0, m_normalTestSRV.GetAddressOf());
 }
 
-void Game::LoadMeshesAndCreateEntities()
+void Game::LoadMeshes()
+{
+	// https://www.geeksforgeeks.org/unordered_map-in-cpp-stl/
+	// https://en.cppreference.com/w/cpp/container/unordered_map
+	m_pMeshes["cube"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
+	m_pMeshes["cylinder"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
+	m_pMeshes["helix"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
+	m_pMeshes["sphere"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
+	m_pMeshes["torus"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
+	m_pMeshes["quad"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
+	m_pMeshes["hylian shield"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
+	m_pMeshes["minecraft player"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
+
+
+}
+
+void Game::CreateEntities()
 {
 #pragma region Color defining
 	const XMFLOAT3 C_BLACK = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -269,7 +285,7 @@ void Game::LoadMeshesAndCreateEntities()
 	metalPlateMaterial->AddTextureSRV("SpecularMap", m_metalPlateSpec);
 	metalPlateMaterial->AddTextureSRV("NormalMap", m_metalPlateNormal);
 	metalPlateMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-
+	
 	std::shared_ptr<Material> stoneTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	stoneTilesMaterial->AddTextureSRV("DiffuseTexture", m_stoneTilesDiff);
 	stoneTilesMaterial->AddTextureSRV("NormalMap", m_stoneTilesNormal);
@@ -300,23 +316,13 @@ void Game::LoadMeshesAndCreateEntities()
 	forestGroundMaterial->AddTextureSRV("NormalMap", m_forestGroundNormal);
 	forestGroundMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 #pragma endregion
-
-	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
-	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
-	std::shared_ptr<Mesh> helixMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
-	std::shared_ptr<Mesh> sphereMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
-	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
-	std::shared_ptr<Mesh> quadMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
-	std::shared_ptr<Mesh> hylianShieldMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
-	std::shared_ptr<Mesh> minecraftPlayerMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
-
-	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
-	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
-	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
-	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMaterial, "Hylian Shield");
+	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(m_pMeshes["cube"], blueMaterial, "Cube");
+	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(m_pMeshes["cylinder"], greenMaterial, "Cylinder");
+	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(m_pMeshes["helix"], redMaterial, "Helix");
+	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(m_pMeshes["sphere"], cyanMaterial, "Sphere");
+	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(m_pMeshes["torus"], magentaMaterial, "Torus");
+	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(m_pMeshes["quad"], yellowMaterial, "Quad");
+	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(m_pMeshes["hylian shield"], hylianShieldMaterial, "Hylian Shield");
 
 	m_pEntities.push_back(cubeEntity);
 	m_pEntities.push_back(cylinderEntity);
@@ -339,11 +345,11 @@ void Game::LoadMeshesAndCreateEntities()
 		}
 	}
 
-	std::shared_ptr<Mesh> testMesh = cubeMesh;
+	std::shared_ptr<Mesh> testMesh = m_pMeshes["cube"];
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rustyMetalMaterial, "Texture Test 1"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, tilesMaterial, "Texture Test 2"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, brokenTilesMaterial, "Texture Test 3"));
-	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMaterial, "Minecraft Player"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["minecraft player"], minecraftPlayerMaterial, "Minecraft Player"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Texture Test 4"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Texture Test 5"));
 	m_pEntities.push_back(std::make_shared<Entity>(testMesh, stoneTilesMaterial, "Texture Test 6"));
