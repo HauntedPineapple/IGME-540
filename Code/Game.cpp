@@ -213,12 +213,13 @@ void Game::LoadMeshes()
 	m_pMeshes["hylian shield"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
 	m_pMeshes["minecraft player"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
 
-
+	m_pMeshes["test mesh"] = m_pMeshes["cube"];
+	m_pMeshes["uv mesh"] = m_pMeshes["cube"];
 }
 
 void Game::CreateEntities()
 {
-#pragma region Color defining
+#pragma region Colors
 	const XMFLOAT3 C_BLACK = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	const XMFLOAT3 C_WHITE = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	const XMFLOAT3 C_RED = XMFLOAT3(1.0f, 0.0f, 0.0f);
@@ -244,6 +245,12 @@ void Game::CreateEntities()
 	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_MAGENTA, 0.74f);
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
+
+	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
+	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
+	m_pEditableMaterial->AddTextureSRV("NormalMap", m_flatNormal);
+	//m_pEditableMaterial->AddTextureSRV("NormalMap", m_normalTestSRV);
+	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiffuseSRV);
@@ -285,7 +292,7 @@ void Game::CreateEntities()
 	metalPlateMaterial->AddTextureSRV("SpecularMap", m_metalPlateSpec);
 	metalPlateMaterial->AddTextureSRV("NormalMap", m_metalPlateNormal);
 	metalPlateMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	
+
 	std::shared_ptr<Material> stoneTilesMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	stoneTilesMaterial->AddTextureSRV("DiffuseTexture", m_stoneTilesDiff);
 	stoneTilesMaterial->AddTextureSRV("NormalMap", m_stoneTilesNormal);
@@ -316,74 +323,62 @@ void Game::CreateEntities()
 	forestGroundMaterial->AddTextureSRV("NormalMap", m_forestGroundNormal);
 	forestGroundMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 #pragma endregion
-	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(m_pMeshes["cube"], blueMaterial, "Cube");
-	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(m_pMeshes["cylinder"], greenMaterial, "Cylinder");
-	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(m_pMeshes["helix"], redMaterial, "Helix");
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(m_pMeshes["sphere"], cyanMaterial, "Sphere");
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(m_pMeshes["torus"], magentaMaterial, "Torus");
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(m_pMeshes["quad"], yellowMaterial, "Quad");
-	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(m_pMeshes["hylian shield"], hylianShieldMaterial, "Hylian Shield");
 
-	m_pEntities.push_back(cubeEntity);
-	m_pEntities.push_back(cylinderEntity);
-	m_pEntities.push_back(helixEntity);
-	m_pEntities.push_back(hylianShieldEntity);
-	m_pEntities.push_back(sphereEntity);
-	m_pEntities.push_back(torusEntity);
-	m_pEntities.push_back(quadEntity);
+	float meshSpacing = 4;
+	int previousSize = 0;
+	int currentSize = 0;
+	std::vector<std::shared_ptr<Entity>> entityRow;
 
-	int space = 3;
-	float moveBack = 5;
-	for (int i = 0; i < 7; i++) {
-		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0.0f, 0.0f, moveBack));
-		if (i < m_pEntities.size() / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-space * (i + 1.0f), 0.0f, 0.0f));
-		}
-		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3.0f), 0.0f, 0.0f));
-		}
-	}
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"], blueMaterial, "Cube"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cylinder"], greenMaterial, "Cylinder"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["helix"], redMaterial, "Helix"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["hylian shield"], hylianShieldMaterial, "Hylian Shield"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["sphere"], cyanMaterial, "Sphere"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["torus"], magentaMaterial, "Torus"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["quad"], yellowMaterial, "Quad"));
+	currentSize = (int)m_pEntities.size() - previousSize;
+	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+		XMFLOAT3(0.0f, 0.0f, 10.0f), meshSpacing);
+	previousSize = (int)m_pEntities.size();
 
-	std::shared_ptr<Mesh> testMesh = m_pMeshes["cube"];
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rustyMetalMaterial, "Texture Test 1"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, tilesMaterial, "Texture Test 2"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, brokenTilesMaterial, "Texture Test 3"));
+
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], rustyMetalMaterial, "Texture Test 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], tilesMaterial, "Texture Test 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], brokenTilesMaterial, "Texture Test 3"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["minecraft player"], minecraftPlayerMaterial, "Minecraft Player"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Texture Test 4"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Texture Test 5"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, stoneTilesMaterial, "Texture Test 6"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], bluePlanksMaterial, "Texture Test 4"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], metalPlateMaterial, "Texture Test 5"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], stoneTilesMaterial, "Texture Test 6"));
+	currentSize = (int)m_pEntities.size() - previousSize;
+	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+		XMFLOAT3(0.0f, -1.0f, 5.0f), meshSpacing);
+	previousSize = (int)m_pEntities.size();
 
-	for (int i = 7; i < m_pEntities.size(); i++) {
-		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0.0f, -2.0f, 0.0f));
-		if (i < (m_pEntities.size() - 7) / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-space * ((i - 7) + 1.0f), 0.0f, 0.0f));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cobblestoneMaterial, "Normal Test 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cushionMaterial, "Normal Test 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["uv mesh"], m_pEditableMaterial, "UV Mesh"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], rockMaterial, "Normal Test 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], forestGroundMaterial, "Normal Test 4"));
+	currentSize = (int)m_pEntities.size() - previousSize;
+	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+		XMFLOAT3(0.0f, -2.0f, 0.0f), meshSpacing);
+	previousSize = (int)m_pEntities.size();
+}
+
+void Game::SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, XMFLOAT3 a_origin, float a_spacing)
+{
+	printf("BHYDWgjyw");
+	int halfway = (int)a_pEntities.size() / 2;
+	for (int i = 0; i < a_pEntities.size(); i++) {
+		Transform* p_entityTransform = a_pEntities[i]->GetTransform();
+		p_entityTransform->SetPosition(a_origin);
+		if (i < halfway) {
+			p_entityTransform->MoveRelative(XMFLOAT3(-a_spacing * (i + 1), 0.0f, 0.0f));
 		}
-		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(space * ((i - 7) - 3.0f), 0.0f, 0.0f));
+		else if (i > halfway) {
+			p_entityTransform->MoveRelative(XMFLOAT3(a_spacing * (i - halfway), 0.0f, 0.0f));
 		}
 	}
-
-	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
-	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
-	m_pEditableMaterial->AddTextureSRV("NormalMap", m_flatNormal);
-	//m_pEditableMaterial->AddTextureSRV("NormalMap", m_normalTestSRV);
-	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, m_pEditableMaterial, "UV Test Mesh"));
-	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(0.0f, -3.0f, -3.0f));
-
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cobblestoneMaterial, "Normal Test 1"));
-	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(-6.0f, -3.0f, -3.0f));
-
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cushionMaterial, "Normal Test 2"));
-	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(-3.0f, -3.0f, -3.0f));
-
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rockMaterial, "Normal Test 3"));
-	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(3.0f, -3.0f, -3.0f));
-
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, forestGroundMaterial, "Normal Test 4"));
-	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(6.0f, -3.0f, -3.0f));
 }
 
 void Game::CreateSky(std::shared_ptr<Mesh> a_pSkyMesh)
@@ -438,8 +433,8 @@ void Game::CreateLights()
 	m_lights.push_back(directionalLightA);
 	m_lights.push_back(directionalLightB);
 	m_lights.push_back(directionalLightC);
-	m_lights.push_back(pointLightA);
-	m_lights.push_back(pointLightB);
+	//m_lights.push_back(pointLightA);
+	//m_lights.push_back(pointLightB);
 }
 
 // --------------------------------------------------------
@@ -468,7 +463,7 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
-	
+
 	if (m_stopEntityMovement == false) {
 		for (int i = 0; i < m_pEntities.size(); i++)
 		{
@@ -506,6 +501,12 @@ void Game::Update(float deltaTime, float totalTime)
 				if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
 					entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
 			}
+
+			//if (entityName.find("Test") != -1) {
+			//	entityTransform->SetRotation(0, entityRot.y - (deltaTime / 8), 0);
+			//	if (abs(entityRot.y - deltaTime) >= DirectX::XMConvertToRadians(360))
+			//		entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+			//}
 		}
 	}
 

@@ -41,6 +41,7 @@ private:
 	void LoadTextures();
 	void LoadMeshes();
 	void CreateEntities();
+	void SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, DirectX::XMFLOAT3 a_origin, float a_spacing);
 	void CreateSky(std::shared_ptr<Mesh> a_pSkyMesh);
 	void CreateLights();
 
@@ -77,6 +78,7 @@ private:
 	std::shared_ptr<Material> m_pEditableMaterial;
 
 	std::unordered_map<std::string, std::shared_ptr<Mesh>> m_pMeshes;
+	std::unordered_map<std::string, std::shared_ptr<Material>> m_pMaterials;
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_pTextureSRVs;
 
 	bool m_stopEntityMovement;
