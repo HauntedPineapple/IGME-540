@@ -369,7 +369,6 @@ void Game::CreateEntities()
 
 void Game::SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, XMFLOAT3 a_origin, float a_spacing)
 {
-	printf("BHYDWgjyw");
 	int halfway = (int)a_pEntities.size() / 2;
 	for (int i = 0; i < a_pEntities.size(); i++) {
 		Transform* p_entityTransform = a_pEntities[i]->GetTransform();
@@ -408,7 +407,6 @@ void Game::CreateLights()
 	directionalLightC.direction = { -1, 1, -0.5f };
 	directionalLightC.color = XMFLOAT3(1, 1, 1);
 	directionalLightC.intensity = 1.0f;
-
 
 	//directionalLightA.direction = { 1 ,0, 0 };
 	//directionalLightA.color = { 1, 0, 0 };
@@ -535,6 +533,7 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	ImGui::Begin("App Interface");
 
 	ImGui::Checkbox("Stop Entity Movement", &m_stopEntityMovement);
+	ImGui::SliderFloat("Gamma", &m_gamma, 0.1f, 10.0f);
 
 	if (ImGui::CollapsingHeader("App Info"))
 	{
