@@ -4,6 +4,7 @@
 
 cbuffer ExternalData : register(b0)
 {
+    float gamma;
     float roughness;
     float3 colorTint;
     float3 ambientColor;

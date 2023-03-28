@@ -728,6 +728,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
 		std::shared_ptr<SimplePixelShader> pixelShader = entity->GetMaterial()->GetPixelShader();
 		pixelShader->SetFloat("time", totalTime);
+		pixelShader->SetFloat("gamma", 2.2);
 
 		pixelShader->SetFloat3("ambientColor", m_ambientLightColor);
 

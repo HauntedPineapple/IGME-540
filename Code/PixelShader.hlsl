@@ -4,6 +4,7 @@
 
 cbuffer ExternalData : register(b0)
 {
+	float gamma;
 	float roughness;
 	float3 colorTint;
 	float3 ambientColor;
@@ -32,5 +33,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 		}
 
 	}
+    finalPixelColor = pow(finalPixelColor, 1.0f / gamma);
 	return float4(finalPixelColor, 1);
 }
