@@ -77,11 +77,11 @@ void Game::Init()
 	ImGui_ImplDX11_Init(device.Get(), context.Get());
 	ImGui::StyleColorsDark();
 
-	// Helper methods for loading shaders, creating some basic
-	// geometry to draw and some simple camera matrices.
+	// Helper methods for loading and creating stuff
 	LoadShaders();
 	LoadTextures();
-	LoadMeshesAndCreateEntities();
+	LoadMeshes();
+	CreateEntities();
 	CreateLights();
 
 	// Set initial graphics API state
@@ -110,6 +110,8 @@ void Game::Init()
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -15.0f), XMFLOAT3(0, 0.0f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(1.7f, 0.3f, 10.5f), XMFLOAT3(0.1f, -0.9f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
+
+	m_stopEntityMovement = false;
 }
 
 // --------------------------------------------------------
@@ -194,11 +196,30 @@ void Game::LoadTextures()
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/forest_ground_diff.png").c_str(), 0, m_forestGroundDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/forest_ground_n.png").c_str(), 0, m_forestGroundNormal.GetAddressOf());
+
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/normalTestN.png").c_str(), 0, m_normalTestSRV.GetAddressOf());
 }
 
-void Game::LoadMeshesAndCreateEntities()
+void Game::LoadMeshes()
 {
-#pragma region Color defining
+	// https://www.geeksforgeeks.org/unordered_map-in-cpp-stl/
+	// https://en.cppreference.com/w/cpp/container/unordered_map
+	m_pMeshes["cube"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
+	m_pMeshes["cylinder"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
+	m_pMeshes["helix"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
+	m_pMeshes["sphere"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
+	m_pMeshes["torus"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
+	m_pMeshes["quad"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
+	m_pMeshes["hylian shield"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
+	m_pMeshes["minecraft player"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
+
+	m_pMeshes["test mesh"] = m_pMeshes["cube"];
+	m_pMeshes["uv mesh"] = m_pMeshes["cube"];
+}
+
+void Game::CreateEntities()
+{
+#pragma region Colors
 	const XMFLOAT3 C_BLACK = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	const XMFLOAT3 C_WHITE = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	const XMFLOAT3 C_RED = XMFLOAT3(1.0f, 0.0f, 0.0f);
@@ -224,6 +245,12 @@ void Game::LoadMeshesAndCreateEntities()
 	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_MAGENTA, 0.74f);
 	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
 	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
+
+	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
+	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
+	m_pEditableMaterial->AddTextureSRV("NormalMap", m_flatNormal);
+	//m_pEditableMaterial->AddTextureSRV("NormalMap", m_normalTestSRV);
+	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiffuseSRV);
@@ -297,70 +324,65 @@ void Game::LoadMeshesAndCreateEntities()
 	forestGroundMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 #pragma endregion
 
-	std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cube.obj").c_str(), device);
-	std::shared_ptr<Mesh> cylinderMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/cylinder.obj").c_str(), device);
-	std::shared_ptr<Mesh> helixMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/helix.obj").c_str(), device);
-	std::shared_ptr<Mesh> sphereMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
-	std::shared_ptr<Mesh> torusMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
-	std::shared_ptr<Mesh> quadMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
-	std::shared_ptr<Mesh> hylianShieldMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
-	std::shared_ptr<Mesh> minecraftPlayerMesh = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
+	float meshSpacing = 4;
+	int previousSize = 0;
+	int currentSize = 0;
+	std::vector<std::shared_ptr<Entity>> entityRow;
 
-	std::shared_ptr<Entity> cubeEntity = std::make_shared<Entity>(cubeMesh, blueMaterial, "Cube");
-	std::shared_ptr<Entity> cylinderEntity = std::make_shared<Entity>(cylinderMesh, greenMaterial, "Cylinder");
-	std::shared_ptr<Entity> helixEntity = std::make_shared<Entity>(helixMesh, redMaterial, "Helix");
-	std::shared_ptr<Entity> sphereEntity = std::make_shared<Entity>(sphereMesh, cyanMaterial, "Sphere");
-	std::shared_ptr<Entity> torusEntity = std::make_shared<Entity>(torusMesh, magentaMaterial, "Torus");
-	std::shared_ptr<Entity> quadEntity = std::make_shared<Entity>(quadMesh, yellowMaterial, "Quad");
-	std::shared_ptr<Entity> hylianShieldEntity = std::make_shared<Entity>(hylianShieldMesh, hylianShieldMaterial, "Hylian Shield");
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"], blueMaterial, "Cube"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cylinder"], greenMaterial, "Cylinder"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["helix"], redMaterial, "Helix"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["hylian shield"], hylianShieldMaterial, "Hylian Shield"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["sphere"], cyanMaterial, "Sphere"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["torus"], magentaMaterial, "Torus"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["quad"], yellowMaterial, "Quad"));
+	currentSize = (int)m_pEntities.size() - previousSize;
+	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+		XMFLOAT3(0.0f, 0.0f, 10.0f), meshSpacing);
+	previousSize = (int)m_pEntities.size();
 
-	m_pEntities.push_back(cubeEntity);
-	m_pEntities.push_back(cylinderEntity);
-	m_pEntities.push_back(helixEntity);
-	m_pEntities.push_back(hylianShieldEntity);
-	m_pEntities.push_back(sphereEntity);
-	m_pEntities.push_back(torusEntity);
-	m_pEntities.push_back(quadEntity);
 
-	int space = 3;
-	float moveBack = 5;
-	for (int i = 0; i < 7; i++) {
-		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0.0f, 0.0f, moveBack));
-		if (i < m_pEntities.size() / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-space * (i + 1.0f), 0.0f, 0.0f));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], rustyMetalMaterial, "Texture Test 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], tilesMaterial, "Texture Test 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], brokenTilesMaterial, "Texture Test 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["minecraft player"], minecraftPlayerMaterial, "Minecraft Player"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], bluePlanksMaterial, "Texture Test 4"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], metalPlateMaterial, "Texture Test 5"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], stoneTilesMaterial, "Texture Test 6"));
+	currentSize = (int)m_pEntities.size() - previousSize;
+	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+		XMFLOAT3(0.0f, -1.0f, 5.0f), meshSpacing);
+	previousSize = (int)m_pEntities.size();
+
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cobblestoneMaterial, "Normal Test 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cushionMaterial, "Normal Test 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["uv mesh"], m_pEditableMaterial, "UV Mesh"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], rockMaterial, "Normal Test 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], forestGroundMaterial, "Normal Test 4"));
+	currentSize = (int)m_pEntities.size() - previousSize;
+	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+		XMFLOAT3(0.0f, -2.0f, 0.0f), meshSpacing);
+	previousSize = (int)m_pEntities.size();
+}
+
+void Game::SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, XMFLOAT3 a_origin, float a_spacing)
+{
+	printf("BHYDWgjyw");
+	int halfway = (int)a_pEntities.size() / 2;
+	for (int i = 0; i < a_pEntities.size(); i++) {
+		Transform* p_entityTransform = a_pEntities[i]->GetTransform();
+		p_entityTransform->SetPosition(a_origin);
+		if (i < halfway) {
+			p_entityTransform->MoveRelative(XMFLOAT3(-a_spacing * (i + 1), 0.0f, 0.0f));
 		}
-		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(space * (i - 3.0f), 0.0f, 0.0f));
-		}
-	}
-
-	std::shared_ptr<Mesh> testMesh = cubeMesh;
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cushionMaterial, "Test Mesh 1"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, rockMaterial, "Test Mesh 2"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, cobblestoneMaterial, "Test Mesh 3"));
-	m_pEntities.push_back(std::make_shared<Entity>(minecraftPlayerMesh, minecraftPlayerMaterial, "Minecraft Player"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, bluePlanksMaterial, "Test Mesh 4"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, metalPlateMaterial, "Test Mesh 5"));
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, stoneTilesMaterial, "Test Mesh 6"));
-
-	for (int i = 7; i < m_pEntities.size(); i++) {
-		Transform* p_entityTransform = m_pEntities[i]->GetTransform();
-		p_entityTransform->SetPosition(XMFLOAT3(0.0f, -2.0f, 0.0f));
-		if (i < (m_pEntities.size() - 7) / 2) {
-			p_entityTransform->MoveRelative(XMFLOAT3(-space * ((i - 7) + 1.0f), 0.0f, 0.0f));
-		}
-		else {
-			p_entityTransform->MoveRelative(XMFLOAT3(space * ((i - 7) - 3.0f), 0.0f, 0.0f));
+		else if (i > halfway) {
+			p_entityTransform->MoveRelative(XMFLOAT3(a_spacing * (i - halfway), 0.0f, 0.0f));
 		}
 	}
+}
 
-	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
-	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
-	m_pEditableMaterial->AddTextureSRV("NormalMap", m_flatNormal);
-	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
-	m_pEntities.push_back(std::make_shared<Entity>(testMesh, m_pEditableMaterial, "Test Mesh"));
-	m_pEntities[m_pEntities.size() - 1]->GetTransform()->MoveRelative(XMFLOAT3(0.0f, -3.0f, -3.0f));
+void Game::CreateSky(std::shared_ptr<Mesh> a_pSkyMesh)
+{
 }
 
 void Game::CreateLights()
@@ -411,8 +433,8 @@ void Game::CreateLights()
 	m_lights.push_back(directionalLightA);
 	m_lights.push_back(directionalLightB);
 	m_lights.push_back(directionalLightC);
-	m_lights.push_back(pointLightA);
-	m_lights.push_back(pointLightB);
+	//m_lights.push_back(pointLightA);
+	//m_lights.push_back(pointLightB);
 }
 
 // --------------------------------------------------------
@@ -441,41 +463,50 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
-	for (int i = 0; i < m_pEntities.size(); i++)
-	{
-		std::string entityName = m_pEntities[i]->GetEntityName();
-		Transform* entityTransform = m_pEntities[i]->GetTransform();
-		XMFLOAT3 entityRot = entityTransform->GetRotation();
-		XMFLOAT3 entityPos = entityTransform->GetPosition();
-		XMFLOAT3 entityScale = entityTransform->GetScale();
 
-		if (entityName == "Helix") {
-			entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
-			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
-		}
-		if (entityName == "Cylinder") {
-			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
-		}
-		if (entityName == "Cube") {
-			entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
-			if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
-			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
-		}
-		if (entityName == "Sphere") {
-			entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
-		}
-		if (entityName == "Torus") {
-			entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
-			if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(0, entityRot.y, entityRot.z);
-		}
-		if (entityName == "Quad") {
-			entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
-			if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
-				entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+	if (m_stopEntityMovement == false) {
+		for (int i = 0; i < m_pEntities.size(); i++)
+		{
+			std::string entityName = m_pEntities[i]->GetEntityName();
+			Transform* entityTransform = m_pEntities[i]->GetTransform();
+			XMFLOAT3 entityRot = entityTransform->GetRotation();
+			XMFLOAT3 entityPos = entityTransform->GetPosition();
+			XMFLOAT3 entityScale = entityTransform->GetScale();
+
+			if (entityName == "Helix") {
+				entityTransform->SetRotation(0, entityRot.y + deltaTime, 0);
+				if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+			}
+			if (entityName == "Cylinder") {
+				entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+			}
+			if (entityName == "Cube") {
+				entityTransform->SetRotation(0, entityRot.y + deltaTime, entityRot.z + deltaTime);
+				if (entityRot.y + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+				if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+			}
+			if (entityName == "Sphere") {
+				entityTransform->SetPosition(entityPos.x, sin(totalTime), entityPos.z);
+			}
+			if (entityName == "Torus") {
+				entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
+				if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(0, entityRot.y, entityRot.z);
+			}
+			if (entityName == "Quad") {
+				entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
+				if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+			}
+
+			//if (entityName.find("Test") != -1) {
+			//	entityTransform->SetRotation(0, entityRot.y - (deltaTime / 8), 0);
+			//	if (abs(entityRot.y - deltaTime) >= DirectX::XMConvertToRadians(360))
+			//		entityTransform->SetRotation(entityRot.x, 0, entityRot.z);
+			//}
 		}
 	}
 
@@ -500,6 +531,8 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	input.SetMouseCapture(io.WantCaptureMouse);
 
 	ImGui::Begin("App Interface");
+
+	ImGui::Checkbox("Stop Entity Movement", &m_stopEntityMovement);
 
 	if (ImGui::CollapsingHeader("App Info"))
 	{

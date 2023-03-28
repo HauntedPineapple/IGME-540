@@ -39,7 +39,9 @@ private:
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
 	void LoadTextures();
-	void LoadMeshesAndCreateEntities();
+	void LoadMeshes();
+	void CreateEntities();
+	void SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, DirectX::XMFLOAT3 a_origin, float a_spacing);
 	void CreateSky(std::shared_ptr<Mesh> a_pSkyMesh);
 	void CreateLights();
 
@@ -57,7 +59,6 @@ private:
 	int m_currentCamIndex;
 
 	DirectX::XMFLOAT3 m_ambientLightColor;
-
 	std::vector<Light> m_lights;
 	std::vector<std::shared_ptr<Camera>> m_pCameras;
 	std::vector<std::shared_ptr<Entity>> m_pEntities;
@@ -76,6 +77,11 @@ private:
 
 	std::shared_ptr<Material> m_pEditableMaterial;
 
+	std::unordered_map<std::string, std::shared_ptr<Mesh>> m_pMeshes;
+	std::unordered_map<std::string, std::shared_ptr<Material>> m_pMaterials;
+	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_pTextureSRVs;
+
+	bool m_stopEntityMovement;
 #pragma region SRVs
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
@@ -120,7 +126,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rockNormal;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundNormal;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_normalTestSRV;
 #pragma endregion
 };
