@@ -57,6 +57,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
 	int m_currentCamIndex;
+	float m_gamma;
 
 	DirectX::XMFLOAT3 m_ambientLightColor;
 	std::vector<Light> m_lights;

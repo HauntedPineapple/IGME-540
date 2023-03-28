@@ -112,6 +112,8 @@ void Game::Init()
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(1.7f, 0.3f, 10.5f), XMFLOAT3(0.1f, -0.9f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 
 	m_stopEntityMovement = false;
+
+	m_gamma = 2.2f;
 }
 
 // --------------------------------------------------------
@@ -728,7 +730,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	for (std::shared_ptr<Entity> entity : m_pEntities) {
 		std::shared_ptr<SimplePixelShader> pixelShader = entity->GetMaterial()->GetPixelShader();
 		pixelShader->SetFloat("time", totalTime);
-		pixelShader->SetFloat("gamma", 2.2);
+		pixelShader->SetFloat("gamma", m_gamma);
 
 		pixelShader->SetFloat3("ambientColor", m_ambientLightColor);
 
