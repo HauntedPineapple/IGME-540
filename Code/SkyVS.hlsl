@@ -2,11 +2,24 @@
 
 cbuffer ExternalData : register(b0)
 {
-    matrix view;
-    matrix projection;
+    matrix viewMatrix;
+    matrix projectionMatrix;
 }
 
-float4 main(float4 pos : POSITION) : SV_POSITION
+VertexToSkyPixel main(VertexShaderInput input)
 {
-    return pos;
+    // Set up output struct
+    VertexToSkyPixel output;
+
+	// Combine all matrices
+    matrix viewNoTranslation = viewMatrix;
+    viewNoTranslation._14 = 0;
+    viewNoTranslation._24 = 0;
+    viewNoTranslation._34 = 0;
+    
+    output.screenPosition = mul(mul(projectionMatrix, viewNoTranslation), float4(input.localPosition, 1.0f));
+    output.screenPosition.z = output.screenPosition.w;
+    output.sampleDir = input.localPosition;
+    
+    return output;
 }

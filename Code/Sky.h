@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include <wrl/client.h>
 
 #include "Mesh.h"
@@ -11,10 +12,11 @@ class Sky
 public:
 	Sky( 	// Create a sky by passing in the filepaths to the six images for the cubemap
 		std::shared_ptr<Mesh> a_pSkyMesh,
-		Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerState,
-		Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pDevice,
-		std::shared_ptr<SimpleVertexShader> a_pSkyPS,
-		std::shared_ptr<SimplePixelShader> a_pSkyVS,
+		Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions,
+		Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice,
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext,
+		std::shared_ptr<SimplePixelShader> a_pSkyPS,
+		std::shared_ptr<SimpleVertexShader> a_pSkyVS,
 		const wchar_t* a_right,
 		const wchar_t* a_left,
 		const wchar_t* a_up,
@@ -22,13 +24,14 @@ public:
 		const wchar_t* a_front,
 		const wchar_t* a_back);
 
-	Sky(
-		std::shared_ptr<Mesh> a_pSkyMesh,
-		Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions,
-		Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pDevice,
-		std::shared_ptr<SimpleVertexShader> a_pSkyPS,
-		std::shared_ptr<SimplePixelShader> a_pSkyVS,
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_pCubeMapSRV);
+	//Sky(
+	//	std::shared_ptr<Mesh> a_pSkyMesh,
+	//	Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions,
+	//	Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice,
+	//	Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext,
+	//	std::shared_ptr<SimplePixelShader> a_pSkyPS,
+	//	std::shared_ptr<SimpleVertexShader> a_pSkyVS,
+	//	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_pCubeMapSRV);
 
 	~Sky();
 
@@ -53,7 +56,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pCubeMapSRV;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pSamplerOptions;
-	Microsoft::WRL::ComPtr<ID3D10DepthStencilState> m_pDepthState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_pRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pContext;
 };

@@ -130,6 +130,8 @@ void Game::LoadShaders()
 	// the string literal must be preceded by an L.
 	m_pVertexShader = std::make_shared<SimpleVertexShader>(device, context, FixPath(L"VertexShader.cso").c_str());
 	m_pPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"PixelShader.cso").c_str());
+	m_pSkyVS = std::make_shared<SimpleVertexShader>(device, context, FixPath(L"SkyVS.cso").c_str());
+	m_pSkyPS = std::make_shared<SimplePixelShader>(device, context, FixPath(L"SkyPS.cso").c_str());
 	m_pTexturePixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"TexturePixelShader.cso").c_str());
 	//m_pStaticEffectPixelShader = std::make_shared<SimplePixelShader>(device, context, FixPath(L"StaticPS.cso").c_str());
 }
@@ -384,6 +386,27 @@ void Game::SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, XM
 
 void Game::CreateSky(std::shared_ptr<Mesh> a_pSkyMesh)
 {
+	D3D11_SAMPLER_DESC samplerStateDescription = {};
+	samplerStateDescription.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerStateDescription.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerStateDescription.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerStateDescription.Filter = D3D11_FILTER_ANISOTROPIC;
+	samplerStateDescription.MaxAnisotropy = 16;
+	samplerStateDescription.MaxLOD = D3D11_FLOAT32_MAX; // enable mipmapping at any range
+	device->CreateSamplerState(&samplerStateDescription, m_pTextureSampler.GetAddressOf());
+
+
+	m_sky = std::make_shared<Sky>(m_pMeshes["cube"],
+		samplerStateDescription,
+		device, context,
+		m_pSkyPS, m_pSkyVS,
+		FixPath(L"../../../Assets/Skies/Clouds Blue/right.png").c_str(),
+		FixPath(L"../../../Assets/Skies/Clouds Blue/left.png").c_str(),
+		FixPath(L"../../../Assets/Skies/Clouds Blue/up.png").c_str(),
+		FixPath(L"../../../Assets/Skies/Clouds Blue/down.png").c_str(),
+		FixPath(L"../../../Assets/Skies/Clouds Blue/front.png").c_str(),
+		FixPath(L"../../../Assets/Skies/Clouds Blue/back.png").c_str()
+	);
 }
 
 void Game::CreateLights()
@@ -740,6 +763,8 @@ void Game::Draw(float deltaTime, float totalTime)
 
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}
+
+	m_sky->Draw(m_pCameras[m_currentCamIndex]);
 
 	// Frame END
 	// - These should happen exactly ONCE PER FRAME

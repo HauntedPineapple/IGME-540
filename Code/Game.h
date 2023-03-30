@@ -56,6 +56,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
+	std::shared_ptr <Sky> m_sky;
 	int m_currentCamIndex;
 	float m_gamma;
 
