@@ -395,18 +395,17 @@ void Game::CreateSky(std::shared_ptr<Mesh> a_pSkyMesh)
 	samplerStateDescription.MaxLOD = D3D11_FLOAT32_MAX; // enable mipmapping at any range
 	device->CreateSamplerState(&samplerStateDescription, m_pTextureSampler.GetAddressOf());
 
-
-	m_sky = std::make_shared<Sky>(m_pMeshes["cube"],
+	m_pSky = std::make_shared<Sky>(m_pMeshes["cube"],
 		samplerStateDescription,
 		device, context,
 		m_pSkyPS, m_pSkyVS,
-		FixPath(L"../../../Assets/Skies/Clouds Blue/right.png").c_str(),
-		FixPath(L"../../../Assets/Skies/Clouds Blue/left.png").c_str(),
-		FixPath(L"../../../Assets/Skies/Clouds Blue/up.png").c_str(),
-		FixPath(L"../../../Assets/Skies/Clouds Blue/down.png").c_str(),
-		FixPath(L"../../../Assets/Skies/Clouds Blue/front.png").c_str(),
-		FixPath(L"../../../Assets/Skies/Clouds Blue/back.png").c_str()
-	);
+		FixPath(L"../../Assets/Skies/Clouds Blue/right.png").c_str(),
+		FixPath(L"../../Assets/Skies/Clouds Blue/left.png").c_str(),
+		FixPath(L"../../Assets/Skies/Clouds Blue/up.png").c_str(),
+		FixPath(L"../../Assets/Skies/Clouds Blue/down.png").c_str(),
+		FixPath(L"../../Assets/Skies/Clouds Blue/front.png").c_str(),
+		FixPath(L"../../Assets/Skies/Clouds Blue/back.png").c_str()
+		);
 }
 
 void Game::CreateLights()
@@ -764,7 +763,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}
 
-	m_sky->Draw(m_pCameras[m_currentCamIndex]);
+	m_pSky->Draw(m_pCameras[m_currentCamIndex]);
 
 	// Frame END
 	// - These should happen exactly ONCE PER FRAME
