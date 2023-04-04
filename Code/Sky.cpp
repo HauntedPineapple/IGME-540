@@ -3,7 +3,14 @@
 
 using namespace DirectX;
 
-Sky::Sky(std::shared_ptr<Mesh> a_pSkyMesh, Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, std::shared_ptr<SimplePixelShader> a_pSkyPS, std::shared_ptr<SimpleVertexShader> a_pSkyVS, const wchar_t* a_right, const wchar_t* a_left, const wchar_t* a_up, const wchar_t* a_down, const wchar_t* a_front, const wchar_t* a_back)
+Sky::Sky(
+	std::shared_ptr<Mesh> a_pSkyMesh, 
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions, 
+	Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, 
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, 
+	std::shared_ptr<SimplePixelShader> a_pSkyPS, 
+	std::shared_ptr<SimpleVertexShader> a_pSkyVS, 
+	const wchar_t* a_right, const wchar_t* a_left, const wchar_t* a_up, const wchar_t* a_down, const wchar_t* a_front, const wchar_t* a_back)
 {
 	m_pSkyMesh = a_pSkyMesh;
 	m_pSamplerOptions = a_pSamplerOptions;
