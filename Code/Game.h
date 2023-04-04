@@ -42,7 +42,7 @@ private:
 	void LoadMeshes();
 	void CreateEntities();
 	void SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, DirectX::XMFLOAT3 a_origin, float a_spacing);
-	void CreateSky(std::shared_ptr<Mesh> a_pSkyMesh);
+	void CreateSky();
 	void CreateLights();
 
 	// Note the usage of ComPtr below

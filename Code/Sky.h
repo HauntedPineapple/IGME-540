@@ -10,7 +10,7 @@
 class Sky
 {
 public:
-	Sky( 	// Create a sky by passing in the filepaths to the six images for the cubemap
+	Sky( // Create a sky by passing in the filepaths to the six images for the cubemap
 		std::shared_ptr<Mesh> a_pSkyMesh,
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions,
 		Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice,
@@ -24,14 +24,14 @@ public:
 		const wchar_t* a_front,
 		const wchar_t* a_back);
 
-	//Sky(
-	//	std::shared_ptr<Mesh> a_pSkyMesh,
-	//	Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions,
-	//	Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice,
-	//	Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext,
-	//	std::shared_ptr<SimplePixelShader> a_pSkyPS,
-	//	std::shared_ptr<SimpleVertexShader> a_pSkyVS,
-	//	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_pCubeMapSRV);
+	Sky(
+		std::shared_ptr<Mesh> a_pSkyMesh,
+		Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions,
+		Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice,
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext,
+		std::shared_ptr<SimplePixelShader> a_pSkyPS,
+		std::shared_ptr<SimpleVertexShader> a_pSkyVS,
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_pCubeMapSRV);
 
 	~Sky();
 

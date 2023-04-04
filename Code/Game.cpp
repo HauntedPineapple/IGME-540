@@ -367,6 +367,8 @@ void Game::CreateEntities()
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
 		XMFLOAT3(0.0f, -2.0f, 0.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
+
+	CreateSky();
 }
 
 void Game::SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, XMFLOAT3 a_origin, float a_spacing)
@@ -384,7 +386,7 @@ void Game::SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, XM
 	}
 }
 
-void Game::CreateSky(std::shared_ptr<Mesh> a_pSkyMesh)
+void Game::CreateSky()
 {
 	D3D11_SAMPLER_DESC samplerStateDescription = {};
 	samplerStateDescription.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -394,7 +396,7 @@ void Game::CreateSky(std::shared_ptr<Mesh> a_pSkyMesh)
 	samplerStateDescription.MaxAnisotropy = 16;
 	samplerStateDescription.MaxLOD = D3D11_FLOAT32_MAX; // enable mipmapping at any range
 	device->CreateSamplerState(&samplerStateDescription, m_pTextureSampler.GetAddressOf());
-
+	
 	m_pSky = std::make_shared<Sky>(m_pMeshes["cube"],
 		samplerStateDescription,
 		device, context,

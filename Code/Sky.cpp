@@ -23,14 +23,14 @@ Sky::Sky(std::shared_ptr<Mesh> a_pSkyMesh, Microsoft::WRL::ComPtr<ID3D11SamplerS
 	m_pDevice->CreateDepthStencilState(&depthDescription, m_pDepthState.GetAddressOf());
 }
 
-//Sky::Sky(std::shared_ptr<Mesh> a_pSkyMesh, Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, std::shared_ptr<SimplePixelShader> a_pSkyPS, std::shared_ptr<SimpleVertexShader> a_pSkyVS, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_pCubeMapSRV)
-//{
-//	m_pSkyMesh = a_pSkyMesh;
-//	m_pSamplerOptions = a_pSamplerOptions;
-//	m_pDevice = a_pDevice;
-//	m_pSkyPS = a_pSkyPS;
-//	m_pCubeMapSRV = a_pCubeMapSRV;
-//}
+Sky::Sky(std::shared_ptr<Mesh> a_pSkyMesh, Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions, Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, std::shared_ptr<SimplePixelShader> a_pSkyPS, std::shared_ptr<SimpleVertexShader> a_pSkyVS, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_pCubeMapSRV)
+{
+	m_pSkyMesh = a_pSkyMesh;
+	m_pSamplerOptions = a_pSamplerOptions;
+	m_pDevice = a_pDevice;
+	m_pSkyPS = a_pSkyPS;
+	m_pCubeMapSRV = a_pCubeMapSRV;
+}
 
 Sky::~Sky() {}
 
