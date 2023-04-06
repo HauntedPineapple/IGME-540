@@ -47,6 +47,8 @@ IGME-540: Foundations of Game Graphics Programming
 * [Textures](./Readings/10%20-%20Textures.pdf)
 * [Normal Mapping](./Readings/11%20-%20Normal%20Mapping.pdf)
 * [Skyboxes & Cube Maps](./Readings/12%20-%20Skyboxes%20%26%20Cube%20Maps.pdf)
+* [Gamma Correction](./Readings/13%20-%20Gamma%20Correction.pdf)
+* [PBR](./Readings/14%20-%20Physically%20Based%20Rendering.pdf)
 <!-- * [NAME](./Readings) -->
 
 <!-- ## Lecture Slides -->
