@@ -70,6 +70,7 @@ private:
 	std::shared_ptr<SimplePixelShader> m_pPixelShader;
 	std::shared_ptr<SimplePixelShader> m_pSkyPS;
 	std::shared_ptr<SimplePixelShader> m_pTexturePixelShader;
+	std::shared_ptr<SimplePixelShader> m_pPBRShader;
 	//std::shared_ptr<SimplePixelShader> m_pStaticEffectPixelShader;
 	//std::shared_ptr<SimplePixelShader> m_pTestPixelShader;
 
@@ -85,8 +86,9 @@ private:
 
 	bool m_stopEntityMovement;
 #pragma region SRVs
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_normalTestSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_minecraftSkinSRV;
 
@@ -106,20 +108,22 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksSpec;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksORM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluePlanksNormal;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateSpec;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateORM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_metalPlateNormal;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesDiff;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesORM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesORM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_stoneTilesNormal;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cobblestoneRough;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cushionDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_cushionNormal;
@@ -130,6 +134,34 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_forestGroundNormal;
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_normalTestSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bronzeDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bronzeNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bronzeMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bronzeRough;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_floorDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_floorNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_floorMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_floorRough;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_scratchedDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_scratchedNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_scratchedMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_scratchedRough;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_paintDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_paintNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_paintMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_paintRough;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_roughDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_roughNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_roughMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_roughRough;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_woodDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_woodNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_woodMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_woodRough;
 #pragma endregion
 };
