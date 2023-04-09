@@ -17,6 +17,7 @@ Sky::Sky(
 	m_pDevice = a_pDevice;
 	m_pContext = a_pContext;
 	m_pSkyPS = a_pSkyPS;
+	m_pSkyVS = a_pSkyVS;
 	m_pCubeMapSRV = CreateCubemap(a_right, a_left, a_up, a_down, a_front, a_back);
 
 	// Create render and rasterizer states

@@ -399,7 +399,7 @@ void Game::CreateSky()
 
 	m_pSky = std::make_shared<Sky>(
 		m_pMeshes["cube"],
-		samplerStateDescription,
+		m_pTextureSampler,
 		device,
 		context,
 		m_pSkyPS,
