@@ -24,10 +24,12 @@ Sky::Sky(
 	D3D11_RASTERIZER_DESC rasterizerDescription = {};
 	rasterizerDescription.FillMode = D3D11_FILL_SOLID;
 	rasterizerDescription.CullMode = D3D11_CULL_FRONT;
+	rasterizerDescription.DepthClipEnable = true;
 	m_pDevice->CreateRasterizerState(&rasterizerDescription, m_pRasterizerState.GetAddressOf());
 	D3D11_DEPTH_STENCIL_DESC depthDescription = {};
 	depthDescription.DepthEnable = true;
 	depthDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	depthDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	m_pDevice->CreateDepthStencilState(&depthDescription, m_pDepthState.GetAddressOf());
 }
 
