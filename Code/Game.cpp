@@ -290,8 +290,8 @@ void Game::CreateEntities()
 	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiff);
 	hylianShieldMaterial->AddTextureSRV("SpecularMap", m_shieldSpec);
 	hylianShieldMaterial->AddTextureSRV("NormalMap", m_shieldNormal);
-	hylianShieldMaterial->AddTextureSRV("Roughness", m_shieldRough);
 	hylianShieldMaterial->AddTextureSRV("Metalness", m_shieldMetal);
+	hylianShieldMaterial->AddTextureSRV("Roughness", m_shieldRough);
 	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> minecraftPlayerMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
