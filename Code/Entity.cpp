@@ -16,6 +16,8 @@ Transform* Entity::GetTransform() { return &m_transform; }
 
 void Entity::SetMaterial(std::shared_ptr<Material> a_pMaterial) { m_pMaterial = a_pMaterial; }
 
+void Entity::SetMesh(std::shared_ptr<Mesh> a_pMesh) { m_pMesh = a_pMesh; }
+
 void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, std::shared_ptr<Camera> a_pCamera)
 {
 	m_pMaterial->SendDataToShader(&m_transform, a_pCamera);

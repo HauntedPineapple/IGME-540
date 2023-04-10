@@ -108,7 +108,7 @@ void Game::Init()
 	float nearClipDistance = 0.01f;
 	float farClipDistance = 100;
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 0.0f, -15.0f), XMFLOAT3(0, 0.0f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
-	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(-5.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, XMConvertToRadians(90), 0.0f), aspectRatio, moveSpeed, rotationSpeed, DirectX::XM_PIDIV2, nearClipDistance, farClipDistance));
+	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(0.0f, 15.0f, -30.0f), XMFLOAT3(0.475f, 0.0f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, 32.0f, nearClipDistance, farClipDistance));
 	m_pCameras.push_back(std::make_shared<Camera>(XMFLOAT3(1.7f, 0.3f, 10.5f), XMFLOAT3(0.1f, -0.9f, 0.0f), aspectRatio, moveSpeed, rotationSpeed, (DirectX::XM_PIDIV4 / 2) + DirectX::XM_PIDIV4, nearClipDistance, farClipDistance));
 
 	m_stopEntityMovement = false;
@@ -579,7 +579,6 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
-
 	if (m_stopEntityMovement == false) {
 		for (int i = 0; i < m_pEntities.size(); i++)
 		{
@@ -649,7 +648,30 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	ImGui::Begin("App Interface");
 
 	ImGui::Checkbox("Stop Entity Movement", &m_stopEntityMovement);
-	ImGui::SliderFloat("Gamma", &m_gamma, 0.1f, 10.0f);
+	/*ImGui::SliderFloat("Gamma", &m_gamma, 0.1f, 10.0f);*/
+
+	// Test and UV Mesh Shape Changer
+	const char* shapes[] = { "sphere", "cylinder", "cube", "helix", "torus", "quad" };
+	static int currentTestShape = 0;
+	if (ImGui::Combo("Test Mesh Shape", &currentTestShape, shapes, IM_ARRAYSIZE(shapes))) {
+		for (int i = 0; i < m_pEntities.size(); i++)
+		{
+			std::string entityName = m_pEntities[i]->GetEntityName();
+			if (entityName.find("Test") != -1) {
+				m_pEntities[i]->SetMesh(m_pMeshes[(std::string)shapes[currentTestShape]]);
+			}
+		}
+	}
+	static int currentUVShape = 0;
+	if (ImGui::Combo("UV Mesh Shape", &currentUVShape, shapes, IM_ARRAYSIZE(shapes))) {
+		for (int i = 0; i < m_pEntities.size(); i++)
+		{
+			std::string entityName = m_pEntities[i]->GetEntityName();
+			if (entityName.find("UV Mesh") != -1) {
+				m_pEntities[i]->SetMesh(m_pMeshes[(std::string)shapes[currentUVShape]]);
+			}
+		}
+	}
 
 	if (ImGui::CollapsingHeader("App Info"))
 	{
