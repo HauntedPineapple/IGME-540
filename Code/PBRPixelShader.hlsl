@@ -45,7 +45,9 @@ float4 main(VertexToPixel input) : SV_TARGET
     // multiply normal map vector by TBN
     input.normal = mul(unpackedNormal, TBN);
 
-    float3 surfaceColor = DiffuseTexture.Sample(BasicSampler, input.uv).rgb * colorTint;
+    // Un-Gamma correct diffuse texture
+    float3 surfaceColor = pow(DiffuseTexture.Sample(BasicSampler, input.uv).rgb, gamma) * colorTint;
+
     float3 finalPixelColor = ambientColor * surfaceColor;
     for (int i = 0; i < NUM_LIGHTS; i++)
     {
@@ -62,5 +64,6 @@ float4 main(VertexToPixel input) : SV_TARGET
         }
 
     }
+    finalPixelColor = pow(finalPixelColor, 1.0f / gamma);
     return float4(finalPixelColor, 1);
 }
