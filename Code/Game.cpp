@@ -161,10 +161,11 @@ void Game::LoadTextures()
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/flat_normals.png").c_str(), 0, m_flatNormal.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/normalTestN.png").c_str(), 0, m_normalTestSRV.GetAddressOf());
 
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_BC.png").c_str(), 0, m_shieldDiffuseSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Specular.png").c_str(), 0, m_shieldSpecularSRV.GetAddressOf());
-	//CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_ORM.png").c_str(), 0, m_shieldORMSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_N.png").c_str(), 0, m_shieldNormalSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_BC.png").c_str(), 0, m_shieldDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Specular.png").c_str(), 0, m_shieldSpec.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_N.png").c_str(), 0, m_shieldNormal.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Metal.png").c_str(), 0, m_shieldMetal.GetAddressOf());
+CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Roughness.png").c_str(), 0, m_shieldRough.GetAddressOf());
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/minecraft/T_Player.png").c_str(), 0, m_minecraftSkinSRV.GetAddressOf());
 
@@ -285,10 +286,12 @@ void Game::CreateEntities()
 	//m_pEditableMaterial->AddTextureSRV("NormalMap", m_normalTestSRV);
 	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
-	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiffuseSRV);
-	hylianShieldMaterial->AddTextureSRV("SpecularMap", m_shieldSpecularSRV);
-	hylianShieldMaterial->AddTextureSRV("NormalMap", m_shieldNormalSRV);
+	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 0.0f, true);
+	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiff);
+	hylianShieldMaterial->AddTextureSRV("SpecularMap", m_shieldSpec);
+	hylianShieldMaterial->AddTextureSRV("NormalMap", m_shieldNormal);
+	hylianShieldMaterial->AddTextureSRV("Roughness", m_shieldRough);
+	hylianShieldMaterial->AddTextureSRV("Metalness", m_shieldMetal);
 	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> minecraftPlayerMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);

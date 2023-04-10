@@ -92,10 +92,11 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_minecraftSkinSRV;
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldDiffuseSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldSpecularSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldORMSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldNormalSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldSpec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldRough;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalSpec;
