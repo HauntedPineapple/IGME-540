@@ -62,8 +62,9 @@ float4 main(VertexToPixel input) : SV_TARGET
             case 2: //spot
                 break;
         }
-
     }
+        
+    // Apply gamma correction
     finalPixelColor = pow(finalPixelColor, 1.0f / gamma);
     return float4(finalPixelColor, 1);
 }

@@ -128,7 +128,7 @@ float3 PointLight(Light light, float3 surfaceColor, float3 normal, float3 camera
     float3 lightColor = DiffuseBRDF(normal, directionToLight) * surfaceColor;
     lightColor += SpecularBRDF(normal, -directionToLight, viewVector, roughness) * specularScale;
     
-    return (lightColor * light.color) * attenuate * light.intensity;
+    return lightColor * attenuate * light.color * light.intensity;
 }
 
 float3 SpotLight(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float specularScale = 1)
@@ -137,41 +137,17 @@ float3 SpotLight(Light light, float3 surfaceColor, float3 normal, float3 cameraP
     float penumbra = pow(saturate(dot(-toLight, light.direction)), light.spotFalloff);
 
     // Combine with the point light calculation
-    return PointLight(light, normal, worldPosition, cameraPosition, roughness, surfaceColor) * penumbra;
+    return PointLight(light, surfaceColor, normal, cameraPosition, worldPosition, roughness, specularScale) * penumbra;
 }
 
 // ================ PBR FUNCTIONS ================
-
-// Lambert diffuse BRDF - Same as the basic lighting diffuse calculation!
-// - NOTE: this function assumes the vectors are already NORMALIZED!
-float DiffusePBR(float3 normal, float3 dirToLight)
-{
-    return saturate(dot(normal, dirToLight));
-}
-
-// Calculates diffuse amount based on energy conservation
-//
-// diffuse   - Diffuse amount
-// F         - Fresnel result from microfacet BRDF
-// metalness - surface metalness amount 
-float3 DiffuseEnergyConserve(float3 diffuse, float3 F, float metalness)
-{
-    return diffuse * (1 - F) * (1 - metalness);
-}
-
 // Normal Distribution Function: GGX (Trowbridge-Reitz)
-//
-// a - Roughness
-// h - Half vector
-// n - Normal
-// 
-// D(h, n, a) = a^2 / pi * ((n dot h)^2 * (a^2 - 1) + 1)^2
-float D_GGX(float3 n, float3 h, float roughness)
+// D(n, h, a) = a^2 / pi * ((n dot h)^2 * (a^2 - 1) + 1)^2
+float D_GGX(float3 a_normal, float3 a_halfwayVector, float a_roughness)
 {
-    // Pre-calculations
-    float NdotH = saturate(dot(n, h));
+    float NdotH = saturate(dot(a_normal, a_halfwayVector));
     float NdotH2 = NdotH * NdotH;
-    float a = roughness * roughness;
+    float a = a_roughness * a_roughness;
     float a2 = max(a * a, MIN_ROUGHNESS); // Applied after remap!
 
     // ((n dot h)^2 * (a^2 - 1) + 1)
@@ -183,74 +159,72 @@ float D_GGX(float3 n, float3 h, float roughness)
 }
 
 // Fresnel term - Schlick approx.
-// 
-// v - View vector
-// h - Half vector
 // f0 - Value when l = n
-//
 // F(v,h,f0) = f0 + (1-f0)(1 - (v dot h))^5
-float3 F_Schlick(float3 v, float3 h, float3 f0)
+float3 F_Schlick(float3 a_toCamera, float3 a_halfwayVector, float3 a_specularColor)
 {
-    // Pre-calculations
-    float VdotH = saturate(dot(v, h));
-
-    // Final value
-    return f0 + (1 - f0) * pow(1 - VdotH, 5);
+    float VdotH = saturate(dot(a_toCamera, a_halfwayVector));
+    return a_specularColor + (1 - a_specularColor) * pow(1 - VdotH, 5);
 }
 
 // Geometric Shadowing - Schlick-GGX
 // - k is remapped to a / 2, roughness remapped to (r+1)/2 before squaring!
-//
-// n - Normal
-// v - View vector
-//
 // G_Schlick(n,v,a) = (n dot v) / ((n dot v) * (1 - k) * k)
-//
-// Full G(n,v,l,a) term = G_SchlickGGX(n,v,a) * G_SchlickGGX(n,l,a)
-float G_SchlickGGX(float3 n, float3 v, float roughness)
+// G(n,v,l,a) = G_SchlickGGX(n,v,a) * G_SchlickGGX(n,l,a)
+float G_SchlickGGX(float3 a_normal, float3 a_vector, float a_roughness)
 {
-    // End result of remapping:
-    float k = pow(roughness + 1, 2) / 8.0f;
-    float NdotV = saturate(dot(n, v));
-
-    // Final value
-    // Note: Numerator should be NdotV (or NdotL depending on parameters).
-    // However, these are also in the BRDF's denominator, so they'll cancel!
-    // We're leaving them out here AND in the BRDF function as the
-    // dot products can get VERY small and cause rounding errors.
+    float k = pow(a_roughness + 1, 2) / 8.0f;
+    float NdotV = saturate(dot(a_normal, a_vector));
     return 1 / (NdotV * (1 - k) + k);
 }
 
 // Cook-Torrance Microfacet BRDF (Specular)
-//
 // f(l,v) = D(h)F(v,h)G(l,v,h) / 4(n dot l)(n dot v)
-// - parts of the denominator are canceled out by numerator (see below)
-//
-// D() - Normal Distribution Function - Trowbridge-Reitz (GGX)
-// F() - Fresnel - Schlick approx
-// G() - Geometric Shadowing - Schlick-GGX
-float3 MicrofacetBRDF(float3 n, float3 l, float3 v, float roughness, float3 f0, out float3 F_out)
+float3 MicrofacetBRDF(float3 a_normal, float3 a_toLight, float3 a_toCamera, float a_roughness, float3 a_specularColor, out float3 F_out)
 {
-    // Other vectors
-    float3 h = normalize(v + l);
-
-    // Run numerator functions
-    float  D = D_GGX(n, h, roughness);
-    float3 F = F_Schlick(v, h, f0);
-    float  G = G_SchlickGGX(n, v, roughness) * G_SchlickGGX(n, l, roughness);
-
-    // Pass F out of the function for diffuse balance
-    F_out = F;
-
-    // Final specular formula
-    // Note: The denominator SHOULD contain (NdotV)(NdotL), but they'd be
-    // canceled out by our G() term.  As such, they have been removed
-    // from BOTH places to prevent floating point rounding errors.
+    float3 halfwayVector = normalize(a_toCamera + a_toLight);
+    
+    float D = D_GGX(a_normal, halfwayVector, a_roughness);
+    float3 F = F_out = F_Schlick(a_toCamera, halfwayVector, a_specularColor);
+    float G = G_SchlickGGX(a_normal, a_toCamera, a_roughness) * G_SchlickGGX(a_normal, a_toLight, a_roughness);
+    
     float3 specularResult = (D * F * G) / 4;
+    return specularResult * max(dot(a_normal, a_toLight), 0);
+}
 
-    // One last non-obvious requirement: According to the rendering equation,
-    // specular must have the same NdotL applied as diffuse!  We'll apply
-    // that here so that minimal changes are required elsewhere.
-    return specularResult * max(dot(n, l), 0);
+// Calculates diffuse amount based on energy conservation
+// F - Fresnel result from microfacet BRDF
+float3 DiffuseEnergyConserve(float3 diffuse, float3 F, float metalness)
+{
+    return diffuse * (1 - F) * (1 - metalness);
+}
+
+float3 DirectionalLightPBR(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float metalness, float3 specularColor)
+{
+    float3 viewVector = normalize(cameraPosition - worldPosition); // vector from surface to camera
+    float3 directionToLight = normalize(-light.direction);
+    
+    // Calculate the light amounts
+    float diff = DiffuseBRDF(normal, directionToLight);
+    float3 F;
+    float3 specular = MicrofacetBRDF(normal, directionToLight, viewVector, roughness, specularColor, F);
+    // Calculate diffuse with energy conservation, including cutting diffuse for metals
+    float3 balancedDiff = DiffuseEnergyConserve(diff, F, metalness);
+    // Combine the final diffuse and specular values for this light
+    return (balancedDiff * surfaceColor + specular) * light.intensity * light.color;
+}
+
+float3 PointLightPBR(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float metalness, float3 specularColor)
+{
+    return Attenuate(light, worldPosition) * DirectionalLightPBR(light, surfaceColor, normal, cameraPosition, worldPosition, roughness, metalness, specularColor);
+}
+
+float3 SpotLightPBR(Light light, float3 surfaceColor, float3 normal, float3 cameraPosition, float3 worldPosition, float roughness, float metalness, float3 specularColor)
+{
+    float3 toLight = normalize(light.position - worldPosition);
+    float penumbra = pow(saturate(dot(-toLight, light.direction)), light.spotFalloff);
+
+    // Combine with the point light calculation
+    return PointLightPBR(light, surfaceColor, normal, cameraPosition, worldPosition, roughness, metalness, specularColor) * penumbra;
 }
 #endif

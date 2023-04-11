@@ -290,8 +290,8 @@ void Game::CreateEntities()
 	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiff);
 	hylianShieldMaterial->AddTextureSRV("SpecularMap", m_shieldSpec);
 	hylianShieldMaterial->AddTextureSRV("NormalMap", m_shieldNormal);
-	hylianShieldMaterial->AddTextureSRV("Metalness", m_shieldMetal);
-	hylianShieldMaterial->AddTextureSRV("Roughness", m_shieldRough);
+	hylianShieldMaterial->AddTextureSRV("MetalMap", m_shieldMetal);
+	hylianShieldMaterial->AddTextureSRV("RoughnessMap", m_shieldRough);
 	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> minecraftPlayerMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
@@ -362,50 +362,50 @@ void Game::CreateEntities()
 	std::shared_ptr<Material> cobblestonePBRMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 1.0f, false);
 	cobblestonePBRMaterial->AddTextureSRV("DiffuseTexture", m_cobblestoneDiff);
 	cobblestonePBRMaterial->AddTextureSRV("NormalMap", m_cobblestoneNormal);
-	cobblestonePBRMaterial->AddTextureSRV("Metalness", m_cobblestoneMetal);
-	cobblestonePBRMaterial->AddTextureSRV("Roughness", m_cobblestoneRough);
+	cobblestonePBRMaterial->AddTextureSRV("MetalMap", m_cobblestoneMetal);
+	cobblestonePBRMaterial->AddTextureSRV("RoughnessMap", m_cobblestoneRough);
 	cobblestonePBRMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> bronzePBRMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 1.0f, false);
 	bronzePBRMaterial->AddTextureSRV("DiffuseTexture", m_bronzeDiff);
 	bronzePBRMaterial->AddTextureSRV("NormalMap", m_bronzeNormal);
-	bronzePBRMaterial->AddTextureSRV("Metalness", m_bronzeMetal);
-	bronzePBRMaterial->AddTextureSRV("Roughness", m_bronzeRough);
+	bronzePBRMaterial->AddTextureSRV("MetalMap", m_bronzeMetal);
+	bronzePBRMaterial->AddTextureSRV("RoughnessMap", m_bronzeRough);
 	bronzePBRMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> floorPBRMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 1.0f, false);
 	floorPBRMaterial->AddTextureSRV("DiffuseTexture", m_floorDiff);
 	floorPBRMaterial->AddTextureSRV("NormalMap", m_floorNormal);
-	floorPBRMaterial->AddTextureSRV("Metalness", m_floorMetal);
-	floorPBRMaterial->AddTextureSRV("Roughness", m_floorRough);
+	floorPBRMaterial->AddTextureSRV("MetalMap", m_floorMetal);
+	floorPBRMaterial->AddTextureSRV("RoughnessMap", m_floorRough);
 	floorPBRMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> scratchedPBRMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 1.0f, false);
 	scratchedPBRMaterial->AddTextureSRV("DiffuseTexture", m_scratchedDiff);
 	scratchedPBRMaterial->AddTextureSRV("NormalMap", m_scratchedNormal);
-	scratchedPBRMaterial->AddTextureSRV("Metalness", m_scratchedMetal);
-	scratchedPBRMaterial->AddTextureSRV("Roughness", m_scratchedRough);
+	scratchedPBRMaterial->AddTextureSRV("MetalMap", m_scratchedMetal);
+	scratchedPBRMaterial->AddTextureSRV("RoughnessMap", m_scratchedRough);
 	scratchedPBRMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> paintPBRMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 1.0f, false);
 	paintPBRMaterial->AddTextureSRV("DiffuseTexture", m_paintDiff);
 	paintPBRMaterial->AddTextureSRV("NormalMap", m_paintNormal);
-	paintPBRMaterial->AddTextureSRV("Metalness", m_paintMetal);
-	paintPBRMaterial->AddTextureSRV("Roughness", m_paintRough);
+	paintPBRMaterial->AddTextureSRV("MetalMap", m_paintMetal);
+	paintPBRMaterial->AddTextureSRV("RoughnessMap", m_paintRough);
 	paintPBRMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> roughPBRMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 1.0f, false);
 	roughPBRMaterial->AddTextureSRV("DiffuseTexture", m_roughDiff);
 	roughPBRMaterial->AddTextureSRV("NormalMap", m_bronzeNormal);
-	roughPBRMaterial->AddTextureSRV("Metalness", m_roughMetal);
-	roughPBRMaterial->AddTextureSRV("Roughness", m_roughRough);
+	roughPBRMaterial->AddTextureSRV("MetalMap", m_roughMetal);
+	roughPBRMaterial->AddTextureSRV("RoughnessMap", m_roughRough);
 	roughPBRMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> woodPBRMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 1.0f, false);
 	woodPBRMaterial->AddTextureSRV("DiffuseTexture", m_woodDiff);
 	woodPBRMaterial->AddTextureSRV("NormalMap", m_woodNormal);
-	woodPBRMaterial->AddTextureSRV("Metalness", m_woodMetal);
-	woodPBRMaterial->AddTextureSRV("Roughness", m_woodRough);
+	woodPBRMaterial->AddTextureSRV("MetalMap", m_woodMetal);
+	woodPBRMaterial->AddTextureSRV("RoughnessMap", m_woodRough);
 	woodPBRMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 #pragma endregion
 
@@ -552,8 +552,8 @@ void Game::CreateLights()
 	m_lights.push_back(directionalLightA);
 	m_lights.push_back(directionalLightB);
 	m_lights.push_back(directionalLightC);
-	//m_lights.push_back(pointLightA);
-	//m_lights.push_back(pointLightB);
+	m_lights.push_back(pointLightA);
+	m_lights.push_back(pointLightB);
 }
 
 // --------------------------------------------------------
@@ -729,7 +729,7 @@ void Game::ScaleMaterialGUI(std::shared_ptr<Material> a_pScalableMaterial)
 	DirectX::XMFLOAT2 uvOffset = a_pScalableMaterial->GetUVOffset();
 	DirectX::XMFLOAT3 colorTint = a_pScalableMaterial->GetColorTint();
 
-	if (ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f))
+	if (ImGui::SliderFloat("RoughnessMap", &roughness, 0.0f, 1.0f))
 		a_pScalableMaterial->SetRoughness(roughness);
 	if (ImGui::DragFloat("U Scale", &uvScale.x, 0.1f))
 		a_pScalableMaterial->SetUVScale(uvScale);
