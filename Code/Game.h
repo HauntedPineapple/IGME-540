@@ -82,9 +82,10 @@ private:
 
 	std::unordered_map<std::string, std::shared_ptr<Mesh>> m_pMeshes;
 	std::unordered_map<std::string, std::shared_ptr<Material>> m_pMaterials;
-	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_pTextureSRVs;
+	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_pTextureSRVs;
 
 	bool m_stopEntityMovement;
+
 #pragma region SRVs
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_flatNormal;
@@ -97,6 +98,16 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldNormal;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldMetal;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shieldRough;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_daggerDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_daggerNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_daggerMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_daggerRough;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_swordDiff;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_swordNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_swordMetal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_swordRough;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalDiff;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rustyMetalSpec;

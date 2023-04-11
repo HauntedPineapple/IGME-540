@@ -161,13 +161,23 @@ void Game::LoadTextures()
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/flat_normals.png").c_str(), 0, m_flatNormal.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/normalTestN.png").c_str(), 0, m_normalTestSRV.GetAddressOf());
 
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/minecraft/T_Player.png").c_str(), 0, m_minecraftSkinSRV.GetAddressOf());
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_BC.png").c_str(), 0, m_shieldDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Specular.png").c_str(), 0, m_shieldSpec.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_N.png").c_str(), 0, m_shieldNormal.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Metal.png").c_str(), 0, m_shieldMetal.GetAddressOf());
-CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Roughness.png").c_str(), 0, m_shieldRough.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/T_HylianShield_Roughness.png").c_str(), 0, m_shieldRough.GetAddressOf());
 
-	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/minecraft/T_Player.png").c_str(), 0, m_minecraftSkinSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/FarronDagger_High_Diffuse.png").c_str(), 0, m_daggerDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/FarronDagger_High_Normal.png").c_str(), 0, m_daggerNormal.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/FarronDagger_High_Metal.png").c_str(), 0, m_daggerMetal.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/FarronDagger_High_Roughness.png").c_str(), 0, m_daggerRough.GetAddressOf());
+
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/artorias-sword_diffuse.png").c_str(), 0, m_swordDiff.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/artorias-sword_normal.png").c_str(), 0, m_swordNormal.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/artorias-sword_metal.png").c_str(), 0, m_swordMetal.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/model_textures/artorias-sword_roughness.png").c_str(), 0, m_swordRough.GetAddressOf());
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal.png").c_str(), 0, m_rustyMetalDiff.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), FixPath(L"../../Assets/Textures/rustymetal_specular.png").c_str(), 0, m_rustyMetalSpec.GetAddressOf());
@@ -244,8 +254,10 @@ void Game::LoadMeshes()
 	m_pMeshes["sphere"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sphere.obj").c_str(), device);
 	m_pMeshes["torus"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/torus.obj").c_str(), device);
 	m_pMeshes["quad"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/quad_double_sided.obj").c_str(), device);
-	m_pMeshes["hylian shield"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
 	m_pMeshes["minecraft player"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/Steve.obj").c_str(), device);
+	m_pMeshes["hylian shield"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/hylian_shield.obj").c_str(), device);
+	m_pMeshes["dagger"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/farron-dagger-highpoly.obj").c_str(), device);
+	m_pMeshes["sword"] = std::make_shared<Mesh>(FixPath(L"../../Assets/Models/sword-of-artorias.obj").c_str(), device);
 
 	m_pMeshes["test mesh"] = m_pMeshes["sphere"];
 	m_pMeshes["uv mesh"] = m_pMeshes["sphere"];
@@ -286,6 +298,11 @@ void Game::CreateEntities()
 	//m_pEditableMaterial->AddTextureSRV("NormalMap", m_normalTestSRV);
 	m_pEditableMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
+	std::shared_ptr<Material> minecraftPlayerMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
+	minecraftPlayerMaterial->AddTextureSRV("DiffuseTexture", m_minecraftSkinSRV);
+	minecraftPlayerMaterial->AddTextureSRV("NormalMap", m_flatNormal);
+	minecraftPlayerMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
 	std::shared_ptr<Material> hylianShieldMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 0.0f, true);
 	hylianShieldMaterial->AddTextureSRV("DiffuseTexture", m_shieldDiff);
 	hylianShieldMaterial->AddTextureSRV("SpecularMap", m_shieldSpec);
@@ -294,10 +311,19 @@ void Game::CreateEntities()
 	hylianShieldMaterial->AddTextureSRV("RoughnessMap", m_shieldRough);
 	hylianShieldMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
-	std::shared_ptr<Material> minecraftPlayerMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
-	minecraftPlayerMaterial->AddTextureSRV("DiffuseTexture", m_minecraftSkinSRV);
-	minecraftPlayerMaterial->AddTextureSRV("NormalMap", m_flatNormal);
-	minecraftPlayerMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+	std::shared_ptr<Material> daggerMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 0.0f, true);
+	daggerMaterial->AddTextureSRV("DiffuseTexture", m_daggerDiff);
+	daggerMaterial->AddTextureSRV("NormalMap", m_daggerNormal);
+	daggerMaterial->AddTextureSRV("MetalMap", m_daggerMetal);
+	daggerMaterial->AddTextureSRV("RoughnessMap", m_daggerRough);
+	daggerMaterial->AddSampler("BasicSampler", m_pTextureSampler);
+
+	std::shared_ptr<Material> swordMaterial = std::make_shared<Material>(m_pVertexShader, m_pPBRShader, C_WHITE, 0.0f, true);
+	swordMaterial->AddTextureSRV("DiffuseTexture", m_swordDiff);
+	swordMaterial->AddTextureSRV("NormalMap", m_swordNormal);
+	swordMaterial->AddTextureSRV("MetalMap", m_swordMetal);
+	swordMaterial->AddTextureSRV("RoughnessMap", m_swordRough);
+	swordMaterial->AddSampler("BasicSampler", m_pTextureSampler);
 
 	std::shared_ptr<Material> rustyMetalMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 0.0f, true);
 	rustyMetalMaterial->AddTextureSRV("DiffuseTexture", m_rustyMetalDiff);
