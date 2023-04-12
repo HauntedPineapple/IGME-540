@@ -467,9 +467,21 @@ void Game::CreateEntities()
 
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cobblestoneMaterial, "Normal Test 1"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cushionMaterial, "Normal Test 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["dagger"], daggerMaterial, "Farron Dagger"));
+	{
+		Transform* daggerTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
+		daggerTransform->SetScale({ 2.0f, 2.0f, 2.0f });
+		//daggerTransform->SetRotation({ 0.0f, 0.0f, 0.42f });
+	}
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["uv mesh"], m_pEditableMaterial, "UV Mesh"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], rockMaterial, "Normal Test 3"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], forestGroundMaterial, "Normal Test 4"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["sword"], swordMaterial, "Sword of Artorias"));
+	{
+		Transform* swordTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
+		swordTransform->SetScale({ 3.0f, 3.0f, 3.0f });
+		//swordTransform->SetRotation({0.0f, 0.0f, 0.82f});
+	}
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
 		XMFLOAT3(0.0f, -2.0f, 0.0f), meshSpacing);
@@ -677,7 +689,7 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	ImGui::Begin("App Interface");
 
 	ImGui::Checkbox("Stop Entity Movement", &m_stopEntityMovement);
-	/*ImGui::SliderFloat("Gamma", &m_gamma, 0.1f, 10.0f);*/
+	ImGui::SliderFloat("Gamma", &m_gamma, 0.0f, 10.0f);
 
 	// Test and UV Mesh Shape Changer
 	const char* shapes[] = { "sphere", "cylinder", "cube", "helix", "torus", "quad" };
