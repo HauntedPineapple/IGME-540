@@ -11,13 +11,13 @@ VertexToSkyPixel main(VertexShaderInput input)
     // Set up output struct
     VertexToSkyPixel output;
 
-	// Combine all matrices
     matrix viewNoTranslation = viewMatrix;
     viewNoTranslation._14 = 0;
     viewNoTranslation._24 = 0;
     viewNoTranslation._34 = 0;
     
-    output.screenPosition = mul(mul(projectionMatrix, viewNoTranslation), float4(input.localPosition, 1.0f));
+    matrix vp = mul(projectionMatrix, viewNoTranslation);
+    output.screenPosition = mul(vp, float4(input.localPosition, 1.0f));
     output.screenPosition.z = output.screenPosition.w;
     output.sampleDir = input.localPosition;
     

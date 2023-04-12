@@ -4,12 +4,12 @@
 using namespace DirectX;
 
 Sky::Sky(
-	std::shared_ptr<Mesh> a_pSkyMesh, 
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions, 
-	Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice, 
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext, 
-	std::shared_ptr<SimplePixelShader> a_pSkyPS, 
-	std::shared_ptr<SimpleVertexShader> a_pSkyVS, 
+	std::shared_ptr<Mesh> a_pSkyMesh,
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> a_pSamplerOptions,
+	Microsoft::WRL::ComPtr<ID3D11Device> a_pDevice,
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> a_pContext,
+	std::shared_ptr<SimplePixelShader> a_pSkyPS,
+	std::shared_ptr<SimpleVertexShader> a_pSkyVS,
 	const wchar_t* a_right, const wchar_t* a_left, const wchar_t* a_up, const wchar_t* a_down, const wchar_t* a_front, const wchar_t* a_back)
 {
 	m_pSkyMesh = a_pSkyMesh;
@@ -38,6 +38,7 @@ Sky::Sky(std::shared_ptr<Mesh> a_pSkyMesh, Microsoft::WRL::ComPtr<ID3D11SamplerS
 	m_pSkyMesh = a_pSkyMesh;
 	m_pSamplerOptions = a_pSamplerOptions;
 	m_pDevice = a_pDevice;
+	m_pSkyVS = a_pSkyVS;
 	m_pSkyPS = a_pSkyPS;
 	m_pCubeMapSRV = a_pCubeMapSRV;
 }
@@ -58,6 +59,8 @@ void Sky::Draw(std::shared_ptr<Camera> a_pCamera)
 	m_pSkyPS->SetShaderResourceView("CubeMap", m_pCubeMapSRV);
 	m_pSkyPS->SetSamplerState("BasicSampler", m_pSamplerOptions);
 
+	m_pSkyMesh->Draw(m_pContext);
+
 	m_pContext->RSSetState(0); // Null (or 0) puts back the defaults
 	m_pContext->OMSetDepthStencilState(0, 0);
 }
@@ -68,22 +71,27 @@ std::shared_ptr<SimplePixelShader> Sky::GetPixelShader() { return m_pSkyPS; }std
 
 void Sky::SetSkyMesh(std::shared_ptr<Mesh> a_pSkyMesh)
 {
+	m_pSkyMesh = a_pSkyMesh;
 }
 
 void Sky::SetCubeMap(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> a_pCubeMapSRV)
 {
+	m_pCubeMapSRV = a_pCubeMapSRV;
 }
 
 void Sky::SetCubeMap(const wchar_t* a_right, const wchar_t* a_left, const wchar_t* a_up, const wchar_t* a_down, const wchar_t* a_front, const wchar_t* a_back)
 {
+	m_pCubeMapSRV = CreateCubemap(a_right, a_left, a_up, a_down, a_front, a_back);
 }
 
 void Sky::SetPixelShader(std::shared_ptr<SimplePixelShader> a_pSkyPS)
 {
+	m_pSkyPS = a_pSkyPS;
 }
 
 void Sky::SetVertexShader(std::shared_ptr<SimpleVertexShader> a_pSkyVS)
 {
+	m_pSkyVS = a_pSkyVS;
 }
 
 // --------------------------------------------------------
