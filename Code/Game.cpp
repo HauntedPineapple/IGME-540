@@ -83,6 +83,7 @@ void Game::Init()
 	LoadMeshes();
 	CreateEntities();
 	CreateLights();
+	CreateShadowResources();
 
 	// Set initial graphics API state
 	//  - These settings persist until we change them
@@ -449,7 +450,7 @@ void Game::CreateEntities()
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["quad"], yellowMaterial, "Quad"));
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, 1.0f, 10.0f), meshSpacing);
+		XMFLOAT3(0.0f, 1.0f, 20.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
 
 	// Texture Tests
@@ -462,7 +463,7 @@ void Game::CreateEntities()
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], stoneTilesMaterial, "Texture Test 6"));
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, 0.0f, 5.0f), meshSpacing);
+		XMFLOAT3(0.0f, 0.0f, 15.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
 
 	// Normal Tests
@@ -479,7 +480,7 @@ void Game::CreateEntities()
 	swordTransform->SetScale({ 3.0f, 3.0f, 3.0f });
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, -1.0f, 0.0f), meshSpacing);
+		XMFLOAT3(0.0f, -1.0f, 10.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
 
 	// PBR Tests
@@ -492,8 +493,15 @@ void Game::CreateEntities()
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], woodPBRMaterial, "PBR Test 7"));
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, -2.0f, -5.0f), meshSpacing);
+		XMFLOAT3(0.0f, -2.0f, 5.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
+
+	// Shadow Tests
+	// m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"], bronzePBRMaterial, "Shadow Test 1"));
+	//currentSize = (int)m_pEntities.size() - previousSize;
+	//SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+	//	XMFLOAT3(0.0f, -3.75f, 0.0f), meshSpacing);
+	//previousSize = (int)m_pEntities.size();
 
 	// Create floor
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"],
@@ -596,6 +604,56 @@ void Game::CreateLights()
 	m_lights.push_back(directionalLightC);
 	m_lights.push_back(pointLightA);
 	m_lights.push_back(pointLightB);
+}
+
+void Game::CreateShadowResources() {
+	// Create the shadow map texture
+	D3D11_TEXTURE2D_DESC shadowDesc = {};
+	shadowDesc.Width = 1024; // Ideally a power of 2 (like 1024)
+	shadowDesc.Height = 1024; // Ideally a power of 2 (like 1024)
+	shadowDesc.ArraySize = 1;
+	shadowDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	shadowDesc.CPUAccessFlags = 0;
+	shadowDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	shadowDesc.MipLevels = 1;
+	shadowDesc.MiscFlags = 0;
+	shadowDesc.SampleDesc.Count = 1;
+	shadowDesc.SampleDesc.Quality = 0;
+	shadowDesc.Usage = D3D11_USAGE_DEFAULT;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowTexture;
+	device->CreateTexture2D(&shadowDesc, 0, shadowTexture.GetAddressOf());
+
+	// Create the associated views (DSV and SRV)
+	D3D11_DEPTH_STENCIL_VIEW_DESC shadowDSDesc = {};
+	shadowDSDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	shadowDSDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	shadowDSDesc.Texture2D.MipSlice = 0;
+	device->CreateDepthStencilView(shadowTexture.Get(), &shadowDSDesc, m_shadowDSV.GetAddressOf());
+	/* 
+	* ViewDimension describes the dimensionality of the resource. In this case it’s just a 2D texture
+	* MipSlice tells the depth view which mip map to render into. We only have 1, so it’s index 0
+	* MipLevels and MostDetailedMip tell the SRV which mips it can read. Again, we only have 1.
+	* Format is slightly different for each view (D32_FLOAT vs. R32_FLOAT). These both mean “treat
+	* all 32 bits as a single value”, but D32_FLOAT is specific to depth views.
+	*/
+	D3D11_SHADER_RESOURCE_VIEW_DESC shadowSRVDesc = {};
+	shadowSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	shadowSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shadowSRVDesc.Texture2D.MipLevels = 1;
+	shadowSRVDesc.Texture2D.MostDetailedMip = 0;
+	device->CreateShaderResourceView(shadowTexture.Get(), &shadowSRVDesc, m_shadowSRV.GetAddressOf());
+
+	// Create the light matrices: 
+	// To render from the light’s point of view, we’ll need view and projection matrices that match the light.
+
+	// Create the rasterizer state
+
+	// Create the sampler for comparison
+
+}
+
+void Game::RenderToShadowMap() {
+
 }
 
 // --------------------------------------------------------

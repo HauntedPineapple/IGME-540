@@ -44,6 +44,9 @@ private:
 	void SetEntitiesInRow(std::vector<std::shared_ptr<Entity>> a_pEntities, DirectX::XMFLOAT3 a_origin, float a_spacing);
 	void CreateSky();
 	void CreateLights();
+	void CreateShadowResources();
+	
+	void RenderToShadowMap();
 
 	// Note the usage of ComPtr below
 	//  - This is a smart pointer for objects that abide by the
@@ -85,6 +88,13 @@ private:
 	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_pTextureSRVs;
 
 	bool m_stopEntityMovement;
+
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_shadowDSV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shadowSRV;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_shadowRasterizer;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_shadowSampler;
+	DirectX::XMFLOAT4X4 m_shadowViewMatrix;
+	DirectX::XMFLOAT4X4 m_shadowProjectionMatrix;
 
 #pragma region SRVs
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;
