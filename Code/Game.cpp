@@ -449,10 +449,10 @@ void Game::CreateEntities()
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["quad"], yellowMaterial, "Quad"));
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, 0.0f, 10.0f), meshSpacing);
+		XMFLOAT3(0.0f, 1.0f, 10.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
 
-
+	// Texture Tests
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], rustyMetalMaterial, "Texture Test 1"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], tilesMaterial, "Texture Test 2"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], brokenTilesMaterial, "Texture Test 3"));
@@ -462,31 +462,27 @@ void Game::CreateEntities()
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], stoneTilesMaterial, "Texture Test 6"));
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, -1.0f, 5.0f), meshSpacing);
+		XMFLOAT3(0.0f, 0.0f, 5.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
 
+	// Normal Tests
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cobblestoneMaterial, "Normal Test 1"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], cushionMaterial, "Normal Test 2"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["dagger"], daggerMaterial, "Farron Dagger"));
-	{
-		Transform* daggerTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
-		daggerTransform->SetScale({ 2.0f, 2.0f, 2.0f });
-		//daggerTransform->SetRotation({ 0.0f, 0.0f, 0.42f });
-	}
+	Transform* daggerTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
+	daggerTransform->SetScale({ 2.0f, 2.0f, 2.0f });
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["uv mesh"], m_pEditableMaterial, "UV Mesh"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], rockMaterial, "Normal Test 3"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], forestGroundMaterial, "Normal Test 4"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["sword"], swordMaterial, "Sword of Artorias"));
-	{
-		Transform* swordTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
-		swordTransform->SetScale({ 3.0f, 3.0f, 3.0f });
-		//swordTransform->SetRotation({0.0f, 0.0f, 0.82f});
-	}
+	Transform* swordTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
+	swordTransform->SetScale({ 3.0f, 3.0f, 3.0f });
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, -2.0f, 0.0f), meshSpacing);
+		XMFLOAT3(0.0f, -1.0f, 0.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
 
+	// PBR Tests
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], bronzePBRMaterial, "PBR Test 1"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], floorPBRMaterial, "PBR Test 2"));
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], scratchedPBRMaterial, "PBR Test 3"));
@@ -496,8 +492,16 @@ void Game::CreateEntities()
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["test mesh"], woodPBRMaterial, "PBR Test 7"));
 	currentSize = (int)m_pEntities.size() - previousSize;
 	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-		XMFLOAT3(0.0f, -3.0f, -5.0f), meshSpacing);
+		XMFLOAT3(0.0f, -2.0f, -5.0f), meshSpacing);
 	previousSize = (int)m_pEntities.size();
+
+	// Create floor
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"],
+		std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT3(0.84f, 0.87f, 0.83f), 1.0f),
+		"Floor"));
+	Transform* floorTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
+	floorTransform->SetScale({ 25.0f, 0.25f, 25.0f });
+	floorTransform->MoveRelative({ 0.0f, -4.0f, 0.0f });
 
 	CreateSky();
 }
