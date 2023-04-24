@@ -96,8 +96,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_shadowSampler;
 	DirectX::XMFLOAT4X4 m_shadowViewMatrix;
 	DirectX::XMFLOAT4X4 m_shadowProjectionMatrix;
-	float m_shadowMapResolution;
-	float m_lightProjectionSize;
+	UINT m_shadowMapResolution;
+	UINT m_lightProjectionSize;
 
 #pragma region SRVs
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;

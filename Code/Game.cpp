@@ -1084,8 +1084,8 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	m_pSky->Draw(m_pCameras[m_currentCamIndex]);
 
-	ID3D11ShaderResourceView* nullSRVs[16] = {};
-	context->PSSetShaderResources(0, 16, nullSRVs);
+	ID3D11ShaderResourceView* nullSRVs[128] = {};
+	context->PSSetShaderResources(0, 128, nullSRVs);
 
 	// Frame END
 	// - These should happen exactly ONCE PER FRAME
