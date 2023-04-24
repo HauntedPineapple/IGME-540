@@ -571,7 +571,7 @@ void Game::CreateLights()
 
 	Light directionalLightA = {};
 	directionalLightA.type = 0;
-	directionalLightA.direction = { 1, 0.25f, -0.65f };
+	directionalLightA.direction = { 0.4f, -1.0f, 0.65f };
 	directionalLightA.color = XMFLOAT3(1, 1, 1);
 	directionalLightA.intensity = 1.0f;
 
@@ -610,8 +610,8 @@ void Game::CreateLights()
 	pointLightB.range = 25.0f;
 
 	m_lights.push_back(directionalLightA);
-	//m_lights.push_back(directionalLightB);
-	//m_lights.push_back(directionalLightC);
+	m_lights.push_back(directionalLightB);
+	m_lights.push_back(directionalLightC);
 	//m_lights.push_back(pointLightA);
 	//m_lights.push_back(pointLightB);
 }
@@ -668,18 +668,33 @@ void Game::CreateShadowResources() {
 	XMMATRIX lightProjection = XMMatrixOrthographicLH(
 		m_lightProjectionSize,
 		m_lightProjectionSize,
-		1.0f, 100.0f);
+		1.0f, 300.0f);
 	XMStoreFloat4x4(&m_shadowProjectionMatrix, lightProjection);
 
 	// Create the rasterizer state
+	D3D11_RASTERIZER_DESC shadowRastDesc = {};
+	shadowRastDesc.FillMode = D3D11_FILL_SOLID;
+	shadowRastDesc.CullMode = D3D11_CULL_BACK;
+	shadowRastDesc.DepthClipEnable = true;
+	shadowRastDesc.DepthBias = 1000; // Min. precision units, not world units!
+	shadowRastDesc.SlopeScaledDepthBias = 1.0f; // Bias more based on slope
+	device->CreateRasterizerState(&shadowRastDesc, &m_shadowRasterizer);
 
 	// Create the sampler for comparison
-
+	D3D11_SAMPLER_DESC shadowSampDesc = {};
+	shadowSampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	shadowSampDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+	shadowSampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSampDesc.BorderColor[0] = 1.0f; // Only need the first component
+	device->CreateSamplerState(&shadowSampDesc, &m_shadowSampler);
 }
 
 void Game::RenderToShadowMap() {
 	// Clear the shadow map
 	context->ClearDepthStencilView(m_shadowDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	context->RSSetState(m_shadowRasterizer.Get());
 
 	// Set up the output merger stage
 	ID3D11RenderTargetView* nullRTV{};
@@ -819,7 +834,7 @@ void Game::UpdateGUI(float deltaTime, float totalTime)
 	input.SetMouseCapture(io.WantCaptureMouse);
 
 	ImGui::Begin("App Interface");
-	ImGui::Image(m_shadowSRV.Get(), ImVec2(512, 512));
+	ImGui::Image(m_shadowSRV.Get(), ImVec2(50, 50));
 	ImGui::Checkbox("Stop Entity Movement", &m_stopEntityMovement);
 	ImGui::SliderFloat("Gamma", &m_gamma, 0.0f, 10.0f);
 
@@ -1062,7 +1077,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		pixelShader->SetData("lights", &m_lights[0], sizeof(Light) * (int)m_lights.size());
 
 		pixelShader->SetShaderResourceView("ShadowMap", m_shadowSRV);
-		pixelShader->SetSamplerState("BasicSampler", m_pTextureSampler);
+		pixelShader->SetSamplerState("ShadowSampler", m_shadowSampler);
 
 		entity->Draw(context, m_pCameras[m_currentCamIndex]);
 	}

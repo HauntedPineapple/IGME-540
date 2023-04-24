@@ -21,6 +21,7 @@ Texture2D SpecularMap : register(t1);
 Texture2D NormalMap : register(t2);
 Texture2D ShadowMap : register(t3);
 SamplerState BasicSampler : register(s0); // "s" registers for samplers
+SamplerComparisonState ShadowSampler : register(s1);
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
@@ -31,10 +32,10 @@ float4 main(VertexToPixel input) : SV_TARGET
     shadowUV.y = 1 - shadowUV.y; // Flip the Y
     // Grab the distances we need: light-to-pixel and closest-surface
     float distToLight = input.shadowMapPos.z;
-    float distShadowMap = ShadowMap.Sample(BasicSampler, shadowUV).r;
-    // For testing, just return black where there are shadows.
-    if (distShadowMap < distToLight) 
-        return float4(0, 0, 0, 1);
+    float shadowAmount = ShadowMap.SampleCmpLevelZero(
+    ShadowSampler,
+    shadowUV,
+    distToLight).r;
     
     // Must renormalize any interpolated vectors
     input.normal = normalize(input.normal);
@@ -68,6 +69,10 @@ float4 main(VertexToPixel input) : SV_TARGET
         {
             case 0: //directional
                 finalPixelColor += DirectionalLight(lights[i], surfaceColor, input.normal, cameraPosition, input.worldPosition, roughness, specularScale);
+                if (i == 0)
+                {
+                    finalPixelColor *= shadowAmount;
+                }
                 break;
             case 1: //point
                 finalPixelColor += PointLight(lights[i], surfaceColor, input.normal, cameraPosition, input.worldPosition, roughness, specularScale);

@@ -22,6 +22,7 @@ Texture2D MetalMap : register(t2);
 Texture2D RoughnessMap : register(t3);
 Texture2D ShadowMap : register(t4);
 SamplerState BasicSampler : register(s0); // "s" registers for samplers
+SamplerComparisonState ShadowSampler : register(s1);
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
@@ -32,11 +33,15 @@ float4 main(VertexToPixel input) : SV_TARGET
     shadowUV.y = 1 - shadowUV.y; // Flip the Y
     // Grab the distances we need: light-to-pixel and closest-surface
     float distToLight = input.shadowMapPos.z;
-    float distShadowMap = ShadowMap.Sample(BasicSampler, shadowUV).r;
+    // float distShadowMap = ShadowMap.Sample(BasicSampler, shadowUV).r;
     // For testing, just return black where there are shadows.
-    if (distShadowMap < distToLight) 
-        return float4(0, 0, 0, 1);
-    
+    //if (distShadowMap < distToLight) 
+    //    return float4(0, 0, 0, 1);
+    // Get a ratio of comparison results using SampleCmpLevelZero()
+    float shadowAmount = ShadowMap.SampleCmpLevelZero(
+    ShadowSampler,
+    shadowUV,
+    distToLight).r;
     
     // Must renormalize any interpolated vectors
     input.normal = normalize(input.normal);
@@ -68,6 +73,10 @@ float4 main(VertexToPixel input) : SV_TARGET
         {
             case 0: //directional
                 finalPixelColor += DirectionalLightPBR(lights[i], surfaceColor, input.normal, cameraPosition, input.worldPosition, roughness, metalness, specularColor);
+                if (i == 0)
+                {
+                    finalPixelColor *= shadowAmount;
+                }
                 break;
             case 1: //point
                 finalPixelColor += PointLightPBR(lights[i], surfaceColor, input.normal, cameraPosition, input.worldPosition, roughness, metalness, specularColor);
