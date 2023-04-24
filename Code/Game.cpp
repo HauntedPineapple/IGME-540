@@ -284,14 +284,20 @@ void Game::CreateEntities()
 #pragma endregion
 
 #pragma region Materials
+	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 	std::shared_ptr<Material> whiteMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_WHITE, 1.0f);
 	std::shared_ptr<Material> redMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_RED, 0.43f);
+	std::shared_ptr<Material> orangeMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_ORANGE, 0.43f);
+	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.43f);
+	std::shared_ptr<Material> chartreuseMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_CHARTREUSE, 0.43f);
 	std::shared_ptr<Material> greenMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_GREEN, 0.14f);
-	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLUE, 0.56f);
+	std::shared_ptr<Material> springMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_SPRING, 0.56f);
 	std::shared_ptr<Material> cyanMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_CYAN, 1.0f);
+	std::shared_ptr<Material> azureMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_AZURE, 1.0f);
+	std::shared_ptr<Material> blueMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLUE, 0.56f);
+	std::shared_ptr<Material> violetMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_VIOLET, 0.56f);
+	std::shared_ptr<Material> pinkMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_PINK, 0.26f);
 	std::shared_ptr<Material> magentaMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_MAGENTA, 0.74f);
-	std::shared_ptr<Material> yellowMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_YELLOW, 0.26f);
-	std::shared_ptr<Material> blackMaterial = std::make_shared<Material>(m_pVertexShader, m_pPixelShader, C_BLACK, 1.0f);
 
 	m_pEditableMaterial = std::make_shared<Material>(m_pVertexShader, m_pTexturePixelShader, C_WHITE, 1.0f);
 	m_pEditableMaterial->AddTextureSRV("DiffuseTexture", m_uvTexture);
@@ -497,15 +503,19 @@ void Game::CreateEntities()
 	previousSize = (int)m_pEntities.size();
 
 	// Shadow Tests
-	// m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"], bronzePBRMaterial, "Shadow Test 1"));
-	//currentSize = (int)m_pEntities.size() - previousSize;
-	//SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
-	//	XMFLOAT3(0.0f, -3.75f, 0.0f), meshSpacing);
-	//previousSize = (int)m_pEntities.size();
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"], chartreuseMaterial, "Shadow Caster 1"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cylinder"], violetMaterial, "Shadow Caster 2"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["helix"], pinkMaterial, "Shadow Caster 3"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["torus"], azureMaterial, "Shadow Caster 4"));
+	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["sphere"], orangeMaterial, "Shadow Caster 5"));
+	currentSize = (int)m_pEntities.size() - previousSize;
+	SetEntitiesInRow(std::vector<std::shared_ptr<Entity>>(m_pEntities.begin() + previousSize, m_pEntities.begin() + currentSize + previousSize),
+		XMFLOAT3(0.0f, -3.0f, 0.0f), meshSpacing);
+	previousSize = (int)m_pEntities.size();
 
 	// Create floor
 	m_pEntities.push_back(std::make_shared<Entity>(m_pMeshes["cube"],
-		std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT3(0.84f, 0.87f, 0.83f), 1.0f),
+		std::make_shared<Material>(m_pVertexShader, m_pPixelShader, XMFLOAT3(0.95f, 0.85f, 0.69f), 1.0f),
 		"Floor"));
 	Transform* floorTransform = m_pEntities[(int)m_pEntities.size() - 1]->GetTransform();
 	floorTransform->SetScale({ 25.0f, 0.25f, 25.0f });
@@ -602,8 +612,8 @@ void Game::CreateLights()
 	m_lights.push_back(directionalLightA);
 	m_lights.push_back(directionalLightB);
 	m_lights.push_back(directionalLightC);
-	m_lights.push_back(pointLightA);
-	m_lights.push_back(pointLightB);
+	//m_lights.push_back(pointLightA);
+	//m_lights.push_back(pointLightB);
 }
 
 void Game::CreateShadowResources() {
@@ -629,7 +639,7 @@ void Game::CreateShadowResources() {
 	shadowDSDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	shadowDSDesc.Texture2D.MipSlice = 0;
 	device->CreateDepthStencilView(shadowTexture.Get(), &shadowDSDesc, m_shadowDSV.GetAddressOf());
-	/* 
+	/*
 	* ViewDimension describes the dimensionality of the resource. In this case it’s just a 2D texture
 	* MipSlice tells the depth view which mip map to render into. We only have 1, so it’s index 0
 	* MipLevels and MostDetailedMip tell the SRV which mips it can read. Again, we only have 1.
@@ -718,6 +728,13 @@ void Game::Update(float deltaTime, float totalTime)
 				entityTransform->SetRotation(0, 0, entityRot.z + deltaTime);
 				if (entityRot.z + deltaTime >= DirectX::XMConvertToRadians(360))
 					entityTransform->SetRotation(entityRot.x, entityRot.y, 0);
+			}
+
+			if (entityName.find("Shadow") != -1) {
+				entityTransform->SetPosition(entityPos.x, sin(totalTime)-3.0f, entityPos.z);
+				entityTransform->SetRotation(entityRot.x + deltaTime, 0, 0);
+				if (entityRot.x + deltaTime >= DirectX::XMConvertToRadians(360))
+					entityTransform->SetRotation(0, entityRot.y, entityRot.z);
 			}
 
 			//if (entityName.find("Test") != -1) {
