@@ -89,12 +89,15 @@ private:
 
 	bool m_stopEntityMovement;
 
+	std::shared_ptr<SimpleVertexShader> m_pShadowVS;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_shadowDSV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shadowSRV;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_shadowRasterizer;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_shadowSampler;
 	DirectX::XMFLOAT4X4 m_shadowViewMatrix;
 	DirectX::XMFLOAT4X4 m_shadowProjectionMatrix;
+	float m_shadowMapResolution;
+	float m_lightProjectionSize;
 
 #pragma region SRVs
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_uvTexture;

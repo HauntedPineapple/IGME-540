@@ -1,6 +1,14 @@
 #include "ShaderIncludes.hlsli"
 
-float4 main( float4 pos : POSITION ) : SV_POSITION
+cbuffer externalData : register(b0)
 {
-	return pos;
+    matrix world;
+    matrix view;
+    matrix projection;
+}
+
+float4 main(VertexShaderInput input) : SV_POSITION
+{
+    matrix wvp = mul(projection, mul(view, world));
+    return mul(wvp, float4(input.localPosition, 1.0f));
 }
