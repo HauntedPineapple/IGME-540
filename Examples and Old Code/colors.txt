@@ -1,0 +1,22 @@
+const XMFLOAT3 C_BLACK = XMFLOAT3(0.0f, 0.0f, 0.0f);
+const XMFLOAT3 C_WHITE = XMFLOAT3(1.0f, 1.0f, 1.0f);
+const XMFLOAT3 C_RED = XMFLOAT3(1.0f, 0.0f, 0.0f);
+const XMFLOAT3 C_ORANGE = XMFLOAT3(1.0f, 0.5f, 0.0f);
+const XMFLOAT3 C_YELLOW = XMFLOAT3(1.0f, 1.0f, 0.0f);
+const XMFLOAT3 C_CHARTREUSE = XMFLOAT3(0.5f, 1.0f, 0.0f);
+const XMFLOAT3 C_GREEN = XMFLOAT3(0.0f, 1.0f, 0.0f);
+const XMFLOAT3 C_SPRING = XMFLOAT3(0.0f, 1.0f, 0.5f);
+const XMFLOAT3 C_CYAN = XMFLOAT3(0.0f, 1.0f, 1.0f);
+const XMFLOAT3 C_AZURE = XMFLOAT3(0.0f, 0.5f, 1.0f);
+const XMFLOAT3 C_BLUE = XMFLOAT3(0.0f, 0.0f, 1.0f);
+const XMFLOAT3 C_VIOLET = XMFLOAT3(0.5f, 0.0f, 1.0f);
+const XMFLOAT3 C_PINK = XMFLOAT3(1.0f, 0.0f, 1.0f);
+const XMFLOAT3 C_MAGENTA = XMFLOAT3(1.0f, 0.0f, 0.5f);
+
+Feldgrau 76, 91, 92
+English Violet 89, 65, 87
+Chinese Violet 112, 86, 109
+Mustard 247, 206, 91
+Amaranth purple 152, 38, 73
+Pistachio 136, 209, 138
+Purpureus 168, 51, 185
